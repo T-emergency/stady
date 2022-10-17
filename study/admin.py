@@ -1,3 +1,7 @@
 from django.contrib import admin
+from .models import StudyLog, InStudy, OutStudy
 
-# Register your models here.
+
+admin.site.register(StudyLog)
+admin.site.register(InStudy)
+admin.site.register(OutStudy)
