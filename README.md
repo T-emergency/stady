@@ -36,23 +36,25 @@ stay와 study의 합성어로 자리에 머물러 공부를 한다는 의미로,
 
 ## Wireframe
 
-![login.jpg](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/32a5eadf-2f33-4f89-b0b2-c4f3554d6c6e/login.jpg)
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/6a825726-38ae-4faa-912d-fa747db49e9d/Untitled.png)
+![login](https://user-images.githubusercontent.com/113074274/196135459-ea184583-61e6-466c-8d05-51462f75d3a4.jpg)
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/ff66d614-fb03-47b7-96ac-e96d32be02ab/Untitled.png)
+![Untitled](https://user-images.githubusercontent.com/113074274/196135857-6dcbb025-ba38-4298-8dd9-e003e34cf101.png)
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/890f76ce-db03-47de-8993-d44f80adfeca/Untitled.png)
+![Untitled 1](https://user-images.githubusercontent.com/113074274/196135871-dfcc32e2-e8ff-4f9d-913a-d859cba3da0d.png)
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/47cb6365-42ea-4537-8a83-664e52c5dbb2/Untitled.png)
+![Untitled 2](https://user-images.githubusercontent.com/113074274/196135891-76a2cdea-9963-4033-bd45-e40b212d69ed.png)
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/eb57150e-5148-4de2-a12f-cd554747fb34/Untitled.png)
+![Untitled 3](https://user-images.githubusercontent.com/113074274/196135902-cf115049-c1fe-4f50-a7f7-7be27a0069e7.png)
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/10c30d4f-4dd6-4792-9863-0e67e747d7e4/Untitled.png)
+![Untitled 4](https://user-images.githubusercontent.com/113074274/196135914-00b696b9-37e8-4066-b5d2-ac583b8f2a56.png)
+
+![Untitled 5](https://user-images.githubusercontent.com/113074274/196135922-c4de645e-ab53-478c-b227-15ad3ae95407.png)
+
 
 ## ERD
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/04d8a2c3-d66a-4468-b77a-f2689c140644/Untitled.png)
+![Untitled 6](https://user-images.githubusercontent.com/113074274/196135948-aefaf871-dcaa-4a71-bfd8-5586497912e9.png)
 
 ## 기능
 
