@@ -1,0 +1,97 @@
+
+
+<button id="start_btn">공부시작</button>
+<button id="end_btn">공부종료</button>
+
+<video id="video" width="320" height="240" style="border: 1px solid black;"  autoplay></video>
+<canvas id="canvas" width="960" height="720" style="display: none;"></canvas>
+
+
+
+
+
+<script>
+
+var video = document.getElementById('video');
+var localstream;
+
+
+
+document.getElementById("start_btn").addEventListener("click",function() {
+    if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+	    navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
+            console.log(stream)
+		    video.srcObject = stream;
+            localstream = stream;
+		    video.play();
+	    });
+    }
+    startStudy()
+    setTimeout(uploadImage, 5000) 
+    roop = setInterval(uploadImage, 5000);
+    roop;
+});
+document.getElementById("end_btn").addEventListener("click",function() {
+    clearInterval(roop);
+    video.pause();
+    video.src = "";
+    localstream.getTracks()[0].stop();
+});
+var canvas = document.getElementById('canvas');
+console.log(canvas, typeof(canvas))
+var context = canvas.getContext('2d');
+var video = document.getElementById('video');
+
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $.ajaxSetup({
+        headers: {
+          "X-CSRFToken": '{{csrf_token}}'
+        }
+      });
+</script>
+<script>
+
+    function uploadImage() {
+        context.drawImage(video,0,0,960,720);
+        var drawCanvas = document.getElementById('canvas');
+
+        var request = $.ajax({
+    
+            type:'POST',
+    
+            data: {imgUpload:drawCanvas.toDataURL('image/png')},
+    
+            url:'/study/check/',
+    
+            success:function(result){
+    
+                // alert(result);
+                console.log('success')
+    
+            }
+    
+        });
+    
+    }
+
+    function startStudy(){
+        $.ajax({
+        
+        type:'GET',
+
+        data: {},
+
+        url:'/study/start/',
+
+        success:function(result){
+            console.log('start')
+
+        }
+
+    });
+
+    }
+    
+</script>
