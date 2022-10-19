@@ -1,0 +1,30 @@
+{% extends "base.html" %} {% block content %}
+
+<h1>사용자님 환영합니다.</h1>
+
+<div class="cam_size">
+  <img src="/study/webcam" style="width: 300px" />
+</div>
+
+<p class="stady_btn">
+  <a
+    href="/study/frame_save/"
+    class="btn btn-lg btn-secondary fw-bold border-black bg-white"
+    style="width: 300px; margin-bottom: 10px"
+    >공부시작</a
+  >
+  <a
+    href="#"
+    class="btn btn-lg btn-secondary fw-bold border-black bg-white"
+    style="width: 300px; margin-bottom: 10px"
+    >끝 내기</a
+  >
+  <a
+    href="#"
+    class="btn btn-lg btn-secondary fw-bold border-black bg-white"
+    style="width: 300px; margin-bottom: 10px"
+    >내 공부 로그</a
+  >
+</p>
+
+{% endblock %}
