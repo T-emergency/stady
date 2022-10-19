@@ -17,15 +17,18 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from . import views
-from study.views import index
+# from . import views
+from study import views
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', index),
+    path('', views.index, name='index'),
     path('user/', include('user.urls')),
     # path('profile/', include('user.urls')),
     path('study/', include('study.urls')),
     
     # test urls
-    path('profile/', views.profile, name='profile')
+    path('profile/', views.profile, name='profile'),
+    # path('accounts/', include('allauth.urls')), 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+

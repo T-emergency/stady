@@ -1,5 +1,3 @@
-{% extends 'base.html' %} {% block content %}
-
 <!-- base에 옮기실 것 -->
 <link
   rel="stylesheet"
@@ -39,17 +37,27 @@
       </span> -->
     </p>
   </div>
-  <div class="col-lg-6" style="height: 400px; overflow-y: scroll">
-    {% if study_log %}
-    <div id="today-log">
-      {% for log in study_log %}
-      <div>
-        {{log.start_time}} ~ {% if log.end_time %} {{log.end_time}} {% else %}
-        현재 {% endif %}
+  <div
+    class="col-lg-6"
+    style="height: 400px; overflow-y: scroll; border: 1px solid black"
+  >
+    <div>
+      <h3 class="text-center">오늘날짜</h3>
+      <div id="today-log">
+        {% for log in study_log_list %}
+        <div class="row">
+          <div class="col-4">{{log.start_time}} ~ {{log.end_time}}</div>
+          <div class="col-8 row">
+            <div class="col-8">메모란</div>
+            <div class="col-4 text-end">
+              <button onclick="writeMemo(`{{log.id}}`)">메모/수정</button>
+            </div>
+          </div>
+        </div>
+
+        {% endfor %}
       </div>
-      {% endfor %}
     </div>
-    {% endif %}
   </div>
 </div>
 
@@ -74,100 +82,112 @@
     context.drawImage(video, 0, 0, 960, 720);
     var drawCanvas = document.getElementById('canvas');
 
-    var request = $.ajax({
-      type: 'POST',
+    function uploadImage() {
+      context.drawImage(video, 0, 0, 960, 720);
+      var drawCanvas = document.getElementById('canvas');
 
-      data: { imgUpload: drawCanvas.toDataURL('image/png') }, // 이미지를 인코딩
+      var request = $.ajax({
+        type: 'POST',
 
-      url: '/study/check/',
+        data: { imgUpload: drawCanvas.toDataURL('image/png') }, // 이미지를 인코딩
 
-      success: function (result) {
-        console.log(result);
-        stdLogList = result['study_log_list'];
-        if (stdLogList) {
-          let totalTemp = '';
-          for (let i = 0; i < stdLogList.length; i++) {
-            let temp = `
+        url: '/study/check/',
+
+        success: function (result) {
+          stdLogList = result['study_log_list'];
+          if (stdLogList) {
+            let totalTemp = '';
+            for (let i = 0; i < stdLogList.length; i++) {
+              let temp = `
                         <div>
                             ${stdLogList[i]['start_time']} ~ ${stdLogList[i]['end_time']}
                         </div>
                         `;
-            totalTemp += temp;
+              totalTemp += temp;
+            }
+            $('#today-log').empty();
+            $('#today-log').append(totalTemp);
           }
-          $('#today-log').empty();
-          $('#today-log').append(totalTemp);
-        }
-      },
-    });
-  }
+        },
+      });
+    }
 
-  function startStudy() {
-    $.ajax({
-      type: 'GET',
+    function startStudy() {
+      $.ajax({
+        type: 'GET',
 
-      data: {},
+        data: {},
 
-      url: '/study/start/',
+        url: '/study/start/',
 
-      success: function (result) {
-        console.log('성공:', result);
-        stdLogList = result['study_log_list'];
-        if (stdLogList) {
-          let totalTemp = '';
-          for (let i = 0; i < stdLogList.length; i++) {
-            let temp = `
+        success: function (result) {
+          stdLogList = result['study_log_list'];
+          if (stdLogList) {
+            let totalTemp = '';
+            for (let i = 0; i < stdLogList.length; i++) {
+              let temp = `
                     <div>
                         ${stdLogList[i]['start_time']} ~ ${stdLogList[i]['end_time']}
                     </div>
                     `;
-            totalTemp += temp;
+              totalTemp += temp;
+            }
+            $('#today-log').empty();
+            $('#today-log').append(totalTemp);
           }
-          $('#today-log').empty();
-          $('#today-log').append(totalTemp);
-        }
-      },
-    });
-  }
+        },
+      });
+    }
 
-  function finishStudy() {
-    $.ajax({
-      type: 'GET',
+    function finishStudy() {
+      $.ajax({
+        type: 'GET',
 
-      data: {},
+        data: {},
 
-      url: '/study/finish/',
+        url: '/study/finish/',
 
-      success: function (result) {
-        console.log('finishStudy()');
+        success: function (result) {
+          stdLogList = result['study_log_list'];
 
-        stdLogList = result['study_log_list'];
-
-        if (stdLogList) {
-          let totalTemp = '';
-          for (let i = 0; i < stdLogList.length; i++) {
-            let temp = `
+          if (stdLogList) {
+            let totalTemp = '';
+            for (let i = 0; i < stdLogList.length; i++) {
+              let temp = `
                     <div>
                         ${stdLogList[i]['start_time']} ~ ${stdLogList[i]['end_time']}
                     </div>
                     `;
-            totalTemp += temp;
+              totalTemp += temp;
+            }
+            $('#today-log').empty();
+            $('#today-log').append(totalTemp);
           }
-          $('#today-log').empty();
-          $('#today-log').append(totalTemp);
-        }
-      },
-    });
-  }
+        },
+      });
+    }
 
-  function pushStartBtn() {
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      navigator.mediaDevices
-        .getUserMedia({ video: true })
-        .then(function (stream) {
-          video.srcObject = stream;
-          localstream = stream;
-          video.play();
-        });
+    function writeMemo(logId) {}
+
+    function pushStartBtn() {
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices
+          .getUserMedia({ video: true })
+          .then(function (stream) {
+            video.srcObject = stream;
+            localstream = stream;
+            video.play();
+          });
+      }
+      startStudy();
+      root = setInterval(uploadImage, 5000); // 반복 시키는 함수
+    }
+    function pushFinishBtn() {
+      clearInterval(root);
+      setTimeout(finishStudy, 3000); //이미지 처리 전 코드 실행 방지
+      video.pause();
+      video.src = '';
+      localstream.getTracks()[0].stop();
     }
     startStudy();
     root = setInterval(uploadImage, 5000); // 반복 시키는 함수

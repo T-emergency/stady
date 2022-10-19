@@ -22,24 +22,24 @@ from .machine import is_study
 # TODO 하루 지나고 계속 공부 중일때(check함수에 새로운 공부로그 생성)
 
 
-@login_required(login_url='login')
+@login_required(login_url='user:login')
 def index(request):
 
     user = request.user
 
     if request.method == "GET":
 
-        study_log = user.studylog_set.filter(date = date.today()).order_by('start_time')
-
+        study_log_list = user.studylog_set.filter(date = date.today()).order_by('start_time')
+        study_log_list = log_to_json(study_log_list)
         context = {
-            'study_log' : study_log
+            'study_log_list' : study_log_list
         }
         return render(request, 'index.html', context)
 
     return render(request, 'index.html')
 
 
-@login_required(login_url='login')
+@login_required(login_url='user:login')
 def start_study(request):
 
     if request.method == 'GET':
@@ -65,7 +65,7 @@ def start_study(request):
     return JsonResponse({'msg':'올바른 접근 아님'})
 
 
-@login_required(login_url='login')
+@login_required(login_url='user:login')
 def finish_study(request):
     
     user = request.user
@@ -84,7 +84,7 @@ def finish_study(request):
 
     
 
-@login_required(login_url='login')
+@login_required(login_url='user:login')
 def check_study(request):
 
     user = request.user
