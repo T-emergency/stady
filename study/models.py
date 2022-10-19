@@ -11,9 +11,9 @@ class StudyLog(models.Model):
 
 class InStudy(models.Model):
     log = models.ForeignKey(StudyLog, on_delete = models.CASCADE)
-    in_time = models.DateTimeField(auto_add_now = True)
+    in_time = models.DateTimeField(auto_now_add = True)
     out_time = models.DateTimeField(blank = True, null = True)
 
 class OutStudy(models.Model):
     log = models.ForeignKey(StudyLog, on_delete = models.CASCADE)
-    out_time = models.DateTimeField(auto_add_now = True)
+    out_time = models.DateTimeField(auto_now_add = True)
