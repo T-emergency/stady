@@ -35,7 +35,7 @@
   </head>
 
   <body>
-    <link href="/static/css/password_reset_sent.css" rel="stylesheet"/>
+    <link href="/static/css/join_style.css?" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js"  crossorigin="anonymous"></script>
 
 
@@ -54,20 +54,27 @@
         </div>
       </div>
       <div class="container">
-        <form method="POST" class="text-center">
-          {% csrf_token %}
-          
-          <h3 style="text-align: center;">이메일 전송완료</h3>
-
-          <hr>
-          <input type="button" value="로그인 하러가기" onclick="location.href='/user/login/'"/ class="btn">
+        {% block content %}
+        <form method="POST" action="{% url 'delete' %}">
+            {% csrf_token %}
+            이메일 : <input name="eamil" type="email">        
+            현재 비밀번호 : <input name="password" type="password">
+            {% if error %}
+            <div class="alert alert-danger" role="alert">
+                {{ error }}
+            </div>
+            {% endif %}
+            <hr>
+            <input style="background-color: rgb(255, 125, 125);" type="submit" value="회원탈퇴" class="btn"/>
         </form>
-      </div>
-    </div>
-    <div>
-    </div>
-    <div class="footer">
+        {% endblock %}
 
     </div>
-  </main>
-  </body>
+  </div>
+  </div>
+  <div class="footer">
+  </div>
+</main>
+</body>
+
+</html>
