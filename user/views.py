@@ -7,20 +7,9 @@ from .models import User
 
 from django.contrib import auth
 
-# Create your views here.
-
-
-
-
 
 def index(request):
-    user = request.user
-    context={
-        # 'follow_users':[f.follow for f in Follow.objects.filter(user=user)]
-        'follow_users':Follow.objects.filter(user=user)
-    }
-    
-    return render(request, 'user/index.html', context)
+    return render(request, 'user/index.html')
 
 
 
