@@ -6,7 +6,6 @@ app_name = 'user'
 urlpatterns = [ 
     path('', views.index, name='index'),
     path('login/', views.login , name = 'login'),
-    path('follow/<int:user_id>/', views.follow, name='follow'),
     
     # kakao로그인 요청을 보낼 url
     path('account/login/kakao/', views.kakao_social_login, name='kakao_login'),

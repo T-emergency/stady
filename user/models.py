@@ -14,9 +14,3 @@ class User(AbstractUser):
     # local = models.CharField(max_length = 150, null = True)
 
 
-
-class Follow(models.Model):
-    class Meta:
-        db_table ='follow'
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user')
-    follow = models.ForeignKey(User, on_delete =models.CASCADE, related_name ='follow')

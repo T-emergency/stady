@@ -2,8 +2,8 @@ from django.shortcuts import render, redirect
 from stady.settings import MY_SECRET
 import requests
 from django.http import JsonResponse
-from .models import Follow, User
-from django.contrib.auth.decorators import login_required
+from .models import User
+
 
 from django.contrib import auth
 
@@ -16,7 +16,8 @@ from django.contrib import auth
 def index(request):
     user = request.user
     context={
-        'follow_users':Follow.objects.filter(user = user),
+        # 'follow_users':[f.follow for f in Follow.objects.filter(user=user)]
+        'follow_users':Follow.objects.filter(user=user)
     }
     
     return render(request, 'user/index.html', context)
@@ -104,32 +105,4 @@ def login(request):
         return render(request, 'user/login.html')
 
 
-
-
-
-     
-@login_required(login_url='login')
-def follow(request, user_id):
-    """
-    Switching follow & unfollow
-        Parameters:
-            user_id (int) : A specipical user's PK
-    """
-    # pk https://stackoverflow.com/questions/2165865/django-queries-id-vs-pk
-    
-    
-    user = User.objects.get(pk=request.user.id) # 지금 로그인한 사람 
-    follow = User.objects.get(pk=user_id) #팔로우 하고 싶은 사람
-
-    try:
-        follower = Follow.objects.get(user=user, follow=follow)
-        follower.delete()
-        return redirect('/')
-    except Follow.DoesNotExist:
-        Follow.objects.create(user=user, follow=follow)
-        return redirect('/')
-
-
-
-   
 
