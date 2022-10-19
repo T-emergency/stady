@@ -71,7 +71,7 @@ ROOT_URLCONF = 'stady.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [ BASE_DIR / 'templates' ],
+        'DIRS': [ os.path.join(BASE_DIR, 'templates') ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -103,7 +103,6 @@ MY_SECRET = {
 #     }
 # }
 DATABASES = my_settings.DATABASES
-
 
 
 
@@ -149,6 +148,10 @@ STATICFILES_DIRS = [
     STATIC_DIR
 # BASE_DIR / 'static',
 ]
+
+STATIC_DIR = os.path.join(BASE_DIR,'static')
+
+STATICFILES_DIRS = [STATIC_DIR]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
