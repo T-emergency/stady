@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import my_settings
 from pathlib import Path
 import os
+# from telnetlib import AUTHENTICATION
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -40,6 +42,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'django.contrib.sites', #sns login
+
+    #provider
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    # select google
+    'allauth.socialaccount.providers.google',
 
     # service app
     'user',
@@ -75,6 +85,12 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'stady.wsgi.application'
+
+
+#카카오 로그인을 위한 클라이언트 키
+MY_SECRET = {
+    'CLIENT_ID' :'24e2cbef93a5a8aabb012c7036866a27',
+}
 
 
 # Database
@@ -149,3 +165,18 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'splendent77@gmail.com'
 EMAIL_HOST_PASSWORD = my_settings.EMAIL_KEY
 EMAIL_USE_TLS = True
+
+
+#sns login
+AUTHENTICATION_BACKENDS = (
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+
+SITE_ID = 1
+
+LOGIN_REDIRECT_URL = '/' #오류 생기면 홈으로 돌아와라.
+
