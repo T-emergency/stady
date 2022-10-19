@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
+from telnetlib import AUTHENTICATION
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -38,6 +40,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'django.contrib.sites', #sns login
+
+    #provider
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    # select google
+    'allauth.socialaccount.providers.google',
 
     # service app
     'user',
@@ -75,16 +85,25 @@ TEMPLATES = [
 WSGI_APPLICATION = 'stady.wsgi.application'
 
 
+#카카오 로그인을 위한 클라이언트 키
+MY_SECRET = {
+    'CLIENT_ID' :'24e2cbef93a5a8aabb012c7036866a27',
+}
+
+
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    'default' : {
+        'ENGINE': 'django.db.backends.mysql',    
+        'NAME': 'stadying',                  
+        'USER': 'root',                          
+        'PASSWORD': 'narare48!',                  
+        'HOST': 'localhost',                     
+        'PORT': '3306',                          
     }
 }
-
 
 
 
@@ -112,7 +131,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'ko-kr'
 
-TIME_ZONE = 'Aisa/Seoul'
+TIME_ZONE = 'Asia/Seoul'
 
 USE_I18N = True
 
@@ -131,3 +150,19 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # 유저모델을 지정
 AUTH_USER_MODEL = 'user.User'
+
+
+
+#sns login
+AUTHENTICATION_BACKENDS = (
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+
+SITE_ID = 1
+
+LOGIN_REDIRECT_URL = '/' #오류 생기면 홈으로 돌아와라.
+
