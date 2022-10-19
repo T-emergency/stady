@@ -17,8 +17,8 @@ def is_study(request):
         arr = np.fromstring(imgdata, np.uint8) # 디코딩된 문자열을 ndrray로 변환
 
         img = cv2.imdecode(arr, cv2.IMREAD_ANYCOLOR) # 이미지로 변환
-        image = cv2.resize(arr, (img.shape[0], img.shape[1])) # 3차원으로 변경
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB) # 컬러 변경
+        # image = cv2.resize(arr, (img.shape[0], img.shape[1])) # 3차원으로 변경
+        # image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB) # 컬러 변경
 
         results = model(img) # 모델에 따른 이미지 결과 도출
         result = results.pandas().xyxy[0].to_numpy()

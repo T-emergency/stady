@@ -1,4 +1,4 @@
-
+<!-- 브러우저 종료 인식후 참여 종료 시점 지정 -->
 
 <button id="start_btn">공부시작</button>
 <button id="end_btn">공부종료</button>
@@ -6,9 +6,20 @@
 <video id="video" width="320" height="240" style="border: 1px solid black;"  autoplay></video>
 <canvas id="canvas" width="960" height="720" style="display: none;"></canvas>
 
-
-
-
+{% if study_log %}
+<div id="today_log">
+    {% for log in study_log %}
+    <div>
+        {{log.start_time}} ~
+        {% if log.end_time %}
+            {{log.end_time}}
+        {% else %}
+            현재
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
 
 <script>
 
@@ -20,25 +31,25 @@ var localstream;
 document.getElementById("start_btn").addEventListener("click",function() {
     if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
 	    navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
-            console.log(stream)
+
 		    video.srcObject = stream;
             localstream = stream;
 		    video.play();
 	    });
     }
     startStudy()
-    setTimeout(uploadImage, 5000) 
-    roop = setInterval(uploadImage, 5000);
+    setTimeout(uploadImage, 5000) // 지연 시키는 함수
+    roop = setInterval(uploadImage, 5000); // 반복 시키는 함수
     roop;
 });
 document.getElementById("end_btn").addEventListener("click",function() {
     clearInterval(roop);
+    finishStudy()
     video.pause();
     video.src = "";
     localstream.getTracks()[0].stop();
 });
 var canvas = document.getElementById('canvas');
-console.log(canvas, typeof(canvas))
 var context = canvas.getContext('2d');
 var video = document.getElementById('video');
 
@@ -52,7 +63,7 @@ var video = document.getElementById('video');
       });
 </script>
 <script>
-
+    const todayLog = document.getElementById('today_log')
     function uploadImage() {
         context.drawImage(video,0,0,960,720);
         var drawCanvas = document.getElementById('canvas');
@@ -61,14 +72,14 @@ var video = document.getElementById('video');
     
             type:'POST',
     
-            data: {imgUpload:drawCanvas.toDataURL('image/png')},
+            data: {imgUpload:drawCanvas.toDataURL('image/png')}, // 이미지를 인코딩
     
             url:'/study/check/',
     
             success:function(result){
     
                 // alert(result);
-                console.log('success')
+                todayLog.insertAdjacentHTML('beforeend', result)
     
             }
     
@@ -86,7 +97,24 @@ var video = document.getElementById('video');
         url:'/study/start/',
 
         success:function(result){
-            console.log('start')
+            console.log(result)
+
+        }
+
+    });
+
+    }
+    function finishStudy(){
+        $.ajax({
+        
+        type:'GET',
+
+        data: {},
+
+        url:'/study/finish/',
+
+        success:function(result){
+            console.log(result)
 
         }
 
@@ -95,3 +123,5 @@ var video = document.getElementById('video');
     }
     
 </script>
+
+<!-- 시작 누르고 새로고침 이후 종료 버튼 누를 시 오류 -->
