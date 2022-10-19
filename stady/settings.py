@@ -88,9 +88,7 @@ WSGI_APPLICATION = 'stady.wsgi.application'
 
 
 #카카오 로그인을 위한 클라이언트 키
-MY_SECRET = {
-    'CLIENT_ID' :'24e2cbef93a5a8aabb012c7036866a27',
-}
+
 
 
 # Database
