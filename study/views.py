@@ -29,10 +29,10 @@ def index(request):
 
     if request.method == "GET":
 
-        study_log = user.studylog_set.filter(date = date.today()).order_by('start_time')
-
+        study_log_list = user.studylog_set.filter(date = date.today()).order_by('start_time')
+        study_log_list = log_to_json(study_log_list)
         context = {
-            'study_log' : study_log
+            'study_log_list' : study_log_list
         }
         return render(request, 'index.html', context)
 
