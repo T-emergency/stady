@@ -1,13 +1,4 @@
 from django.shortcuts import render, redirect
-<<<<<<< HEAD
-from . import webcam
-
-# Create your views here.
-def test(request):
-    return render(request, 'temp.html')
-
-
-=======
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 
@@ -136,4 +127,3 @@ def check_study(request):
 
 def get_profile(request):
     pass
->>>>>>> upstream/feature/study

@@ -21,7 +21,4 @@ class OutStudy(models.Model):
     # 불참여 로그
     log = models.ForeignKey(StudyLog, on_delete = models.CASCADE)
     out_time = models.DateTimeField(auto_now_add = True)
-<<<<<<< HEAD
-=======
     in_time = models.DateTimeField(null = True)
->>>>>>> upstream/feature/study
