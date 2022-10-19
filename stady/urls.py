@@ -15,17 +15,20 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-# from . import views
+from django.conf import settings
+from django.conf.urls.static import static
+from .views import profile
 from study import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name='index'),
     path('user/', include('user.urls')),
-    path('profile/', include('user.urls')),
+    # path('profile/', include('user.urls')),
     path('study/', include('study.urls')),
     
-    path('accounts/', include('allauth.urls')), 
+    # test urls
+    path('profile/', profile, name='profile'),
+    # path('accounts/', include('allauth.urls')), 
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
-    
-]

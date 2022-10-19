@@ -1,0 +1,31 @@
+{% extends 'base.html' %} {% block extra-style %}
+<style>
+  .profile_box {
+    display: flex;
+
+    justify-content: row;
+  }
+  .profile_time_box {
+    width: 300px;
+    height: 1000px;
+    margin-right: 50px;
+    background-color: aqua;
+  }
+  .profile_log_box {
+    width: 300px;
+    margin-right: 50px;
+    background-color: aqua;
+  }
+  .profile_memo_box {
+    width: 300px;
+    background-color: aqua;
+  }
+</style>
+{% endblock %} {% block content %}
+
+<div class="profile_box">
+  <div class="profile_time_box">1번</div>
+  <div class="profile_log_box">2번</div>
+  <div class="profile_memo_box">3번</div>
+</div>
+{% endblock %}
