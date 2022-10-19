@@ -4,10 +4,12 @@ from django.http import JsonResponse
 
 # utils
 from datetime import datetime, date
+from django.utils import timezone
+from study.serializer import log_to_json
 
 # models part
 from user.models import User
-from .models import StudyLog, InStudy, OutStudy
+from .models import StudyLog
 
 # machine-learning part
 from .machine import is_study
@@ -52,11 +54,15 @@ def start_study(request):
         except StudyLog.DoesNotExist:
 
             StudyLog.objects.create(user=user)
-            # user.studylog_set.create()
+            # user.study_set.create()
+                            
+            study_log_list = user.studylog_set.filter(date = date.today()).order_by('start_time')
+            study_log_list = log_to_json(study_log_list)
 
-        return JsonResponse({'msg':'성공'})
+            return JsonResponse({'study_log_list':study_log_list})
 
-    return JsonResponse({'msg':'실패'})
+
+    return JsonResponse({'msg':'올바른 접근 아님'})
 
 
 @login_required(login_url='login')
@@ -69,10 +75,12 @@ def finish_study(request):
     except StudyLog.DoesNotExist:
         return JsonResponse({'msg':'성공'})
 
-    log.end_time = datetime.now()
+    log.end_time = timezone.now()
     log.save()
+    study_log_list = user.studylog_set.filter(date = date.today()).order_by('start_time')
+    study_log_list = log_to_json(study_log_list)
 
-    return JsonResponse({'msg':'수고하셨습니다.'})
+    return JsonResponse({'study_log_list':study_log_list})
 
     
 
@@ -92,8 +100,9 @@ def check_study(request):
             except StudyLog.DoesNotExist:
 
                 StudyLog.objects.create(user=user)
-
-                return JsonResponse({'msg':'error'})
+                study_log_list = user.studylog_set.filter(date = date.today()).order_by('start_time')
+                study_log_list = log_to_json(study_log_list)
+                return JsonResponse({'study_log_list':study_log_list})
 
             except : # 많을 때 방어코드 구현 할 것인지
                 pass
@@ -102,15 +111,18 @@ def check_study(request):
 
             try:
                 log = user.studylog_set.get(date = date.today(), end_time = None)
-
             except StudyLog.DoesNotExist:
                 return JsonResponse({'msg':'None'}) # 날짜가 바뀐 상태에서도 요청이 오고, 사람이 없다면 아무 일을 할 필요가 없다
 
-            log.end_time = datetime.now()
+            log.end_time = timezone.now()
             log.save()
+                
+            study_log_list = user.studylog_set.filter(date = date.today()).order_by('start_time')
+            study_log_list = log_to_json(study_log_list)
 
 
-    return JsonResponse({'msg':'success'})
+            return JsonResponse({'study_log_list':study_log_list})
+        return JsonResponse({'msg':'공부중'})
 
 
 def get_profile(request):

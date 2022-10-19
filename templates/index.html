@@ -21,6 +21,7 @@
 {% endif %}
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<!-- 추후에 지웠다 다시 그리는 방식이 아닌 추가&변경으로 사용 가능한 것으로 변경하기 -->
 <script>
     $.ajaxSetup({
         headers: {
@@ -50,10 +51,21 @@
             url:'/study/check/',
     
             success:function(result){
-    
-                // alert(result);
-                todayLog.insertAdjacentHTML('beforeend', result)
-    
+                stdLogList = result['study_log_list']
+                if (stdLogList){
+                    let totalTemp = ''
+                    for(let i = 0; i<stdLogList.length ;i++){
+                        let temp = `
+                        <div>
+                            ${stdLogList[i]['start_time']} ~ ${stdLogList[i]['end_time']}
+                        </div>
+                        `
+                        totalTemp += temp
+                    }
+                    $('#today-log').empty()
+                    $('#today-log').append(totalTemp)
+                    
+                }
             }
     
         });
@@ -70,8 +82,22 @@
         url:'/study/start/',
 
         success:function(result){
-            console.log(result)
 
+            stdLogList = result['study_log_list']
+            if (stdLogList){
+                let totalTemp = ''
+                for(let i = 0; i<stdLogList.length ;i++){
+                    let temp = `
+                    <div>
+                        ${stdLogList[i]['start_time']} ~ ${stdLogList[i]['end_time']}
+                    </div>
+                    `
+                    totalTemp += temp
+                }
+                $('#today-log').empty()
+                $('#today-log').append(totalTemp)
+                
+            }
         }
     });
     }
@@ -86,12 +112,26 @@
         url:'/study/finish/',
 
         success:function(result){
-            console.log(result)
+            stdLogList = result['study_log_list']
 
+            if (stdLogList){
+                let totalTemp = ''
+                for(let i = 0; i<stdLogList.length ;i++){
+                    let temp = `
+                    <div>
+                        ${stdLogList[i]['start_time']} ~ ${stdLogList[i]['end_time']}
+                    </div>
+                    `
+                    totalTemp += temp
+                }
+                $('#today-log').empty()
+                $('#today-log').append(totalTemp)
+                
+            }
         }
     });
     }
-    
+
     function pushStartBtn(){
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             navigator.mediaDevices.getUserMedia({ video: true }).then(function (stream) {
