@@ -33,12 +33,6 @@ urlpatterns = [
     # path('profile/', include('user.urls')),
     path('study/', include('study.urls')),
 
-    # kakao로그인 요청을 보낼 url
-    path('account/login/kakao/', view.kakao_social_login, name='kakao_login'),
-    #받은 인가 코드로 접근 토큰을 받아 유저의 정보를 가져올 url
-    path('account/login/kakao/callback/', view.kakao_social_login_callback, name='kakao_login_callback'),
-    
-
     path('profile/', profile, name='profile'),
     # path('accounts/', include('allauth.urls')), 
      # kakao로그인 요청을 보낼 url

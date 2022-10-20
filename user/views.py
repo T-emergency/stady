@@ -77,6 +77,22 @@ def kakao_social_login(request):
         f'https://kauth.kakao.com/oauth/authorize?client_id={client_id}&redirect_uri={redirect_uri}&response_type=code'
         )
 
+#nickname 만들어 주는 함수
+def make_username():
+    _LENGTH = 8 #8자리
+    string_pool = string.ascii_lowercase #소문자
+    while True:
+        result = ''
+        for _ in range(_LENGTH):
+            result += random.choice(string_pool)
+        
+        if User.objects.filter(username = result).exists():
+            pass
+        else:
+            break
+
+    return result
+
 
 def kakao_social_login_callback(request):
     """
@@ -117,25 +133,12 @@ def kakao_social_login_callback(request):
     print(profile_json)
 
 
-    #nickname 만들어 주는 함수
-    def make_nickname():
-        _LENGTH = 8 #8자리
-        string_pool = string.ascii_lowercase #소문자
-        result = ''
-
-        for _ in range(_LENGTH):
-            result += random.choice(string_pool)
-        return result
-
-    
-
-    
     kakao_id = profile_json.get('id')
-    username = profile_json['properties']['nickname']
-
+    username = make_username()
+    # username = profile_json['properties']['nickname'] # 진짜 이름
 
     if User.objects.filter(kakao_id = kakao_id).exists():
-        user = User.objects.get(username = username)
+        user = User.objects.get(kakao_id = kakao_id)
         auth.login(request,user,backend='django.contrib.auth.backends.ModelBackend')
         return redirect('/')
     
@@ -144,26 +147,25 @@ def kakao_social_login_callback(request):
 
     except:
         context = {
-            'nickname' : make_nickname(),
-            'username' : username,
+            'username' : make_username(),
+            # 'username' : username,
             'kakao_id' : kakao_id,
         }
         return render(request,'user/kakao_email.html', context)
     
 
-    if User.objects.filter(nickname = nickname).exists():
-        nickname = make_nickname()
+    
         
-    else:
-        User.objects.create_user(
-            username =username,
-            nickname = nickname,
-            email = email
-        )
-        user = User.objects.filter(username = username)
-        auth.login(request,user,backend='django.contrib.auth.backends.ModelBackend')
-        #error
-        #You have multiple authentication backends configured and therefore must provide the `backend` argument or set the `backend` attribute on the user.
+
+    User.objects.create_user(
+        kakao_id = kakao_id,
+        # username =username,
+        username = username,
+        email = email
+    )
+    user = User.objects.filter(kakao_id = kakao_id)
+    auth.login(request, user)
+
         
     return redirect('/')
 
