@@ -12,6 +12,8 @@ def log_to_json(logs):
             'start_time' : utils.get_now_time(log.start_time),
             'end_time' : utils.get_now_time(log.end_time),
             'memo' : log.memo,
+            'date' : log.date,
+            'sub_time': utils.get_sub_time(log.start_time, log.end_time)
         }
 
         log_list.append(log_dict)
