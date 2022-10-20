@@ -1,8 +1,6 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<!-- base에 옮기실 것 -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" />
 
 <!-- 카메라 & 메모장 섹션 -->
 <div class="row container" style="height: 400px">
@@ -31,8 +29,8 @@
                     <div class="col-8 row">
                         <div class="col-8" id="memo-{{log.id}}"">{{log.memo}}</div>
                         <div class=" col-4 text-end">
-                            <button onclick="writeMemo(`{{log.id}}`)" type="button" class="btn btn-success" style="font-size : 12px;"
-                                data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                            <button onclick="writeMemo(`{{log.id}}`)" type="button" class="btn btn-success"
+                                style="font-size : 12px;" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                                 메모/수정
                             </button>
 
