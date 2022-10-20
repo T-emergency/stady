@@ -27,9 +27,8 @@ urlpatterns = [
     # path('profile/', include('user.urls')),
     path('study/', include('study.urls')),
     
-    # test urls
-    path('profile/<str:nickname>', profile, name='profile'),
+
+    path('profile/', profile, name='profile'),
     # path('accounts/', include('allauth.urls')), 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

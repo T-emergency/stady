@@ -125,5 +125,27 @@ def check_study(request):
         return JsonResponse({'msg':'공부중'})
 
 
+@login_required(login_url='user:login')
+def create_memo(request):
+    user = request.user
+    # TODO form을 이용한 유효성 검사
+    if request.method == "POST":
+        log_id = request.POST.get('logId', '')
+        memo_title = request.POST.get('memoTitle', '')
+
+        study_log = StudyLog.objects.get(pk = int(log_id))
+
+        if user != study_log.user:
+            return JsonResponse({'msg':'작성권한 없음'})
+
+
+        study_log.memo = memo_title
+        study_log.save()
+
+        return JsonResponse({'msg':'저장 완료'})
+
+    return JsonResponse({'msg':'바르지 않은 접근'})
+
+
 def get_profile(request):
     pass
