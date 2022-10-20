@@ -100,13 +100,11 @@ def kakao_social_login_callback(request):
         #-------------받은 토큰---------------#
         access_token = token_json.get("access_token")
 
-        
-
     except KeyError:
         return JsonResponse({"message": "INVALID_TOKEN"}, status=400)
 
-    # except access_token.DoesNotExist:
-    #     return JsonResponse({"message": "INVALID_TOKEN"}, status=400)
+    except access_token.DoesNotExist:
+        return JsonResponse({"message": "INVALID_TOKEN"}, status=400)
 
     #------토큰을 이용하여 사용자 정보 조회------#
     profile_request = requests.get(
@@ -116,8 +114,8 @@ def kakao_social_login_callback(request):
     profile_json = profile_request.json()
     print(profile_json)
 
-    #딕셔너리 검색부분 궁금
 
+    #nickname 만들어 주는 함수
     def make_nickname():
         _LENGTH = 8 #8자리
         string_pool = string.ascii_lowercase #소문자
@@ -128,17 +126,29 @@ def kakao_social_login_callback(request):
         return result
 
     
+
+    
     kakao_id = profile_json.get('id')
     username = profile_json['properties']['nickname']
-    email = profile_json['kakao_account']['email']
-    nickname = make_nickname()
-    
 
-    if User.objects.filter(username = username).exists():
+    if User.objects.filter(kakao_id = kakao_id).exists():
         user = User.objects.get(username = username)
         auth.login(request,user,backend='django.contrib.auth.backends.ModelBackend')
+        return redirect('/')
+    
+    try:
+        email = profile_json['kakao_account']['email']
 
-    elif User.objects.filter(nickname = nickname).exists():
+    except:
+        context = {
+            'nickname' : make_nickname(),
+            'username' : username,
+            'kakao_id' : kakao_id,
+        }
+        return render(request,'user/kakao_email.html', context)
+    
+
+    if User.objects.filter(nickname = nickname).exists():
         nickname = make_nickname()
         
     else:
@@ -151,8 +161,36 @@ def kakao_social_login_callback(request):
         auth.login(request,user,backend='django.contrib.auth.backends.ModelBackend')
         #error
         #You have multiple authentication backends configured and therefore must provide the `backend` argument or set the `backend` attribute on the user.
-    return render(request, 'index.html')
+    return redirect('/')
+    
 
+#카카오 이메일 페이지에서 이메일 받아오기
+
+def kakao_email(request, kakao_id, username, nickname):
+    if request.method == 'GET':
+        return redirect('user:kakao_email')
+    
+    elif request.method=='POST':
+        username =username
+        kakao_id = kakao_id
+        nickname = nickname
+        email = request.POST.get('email')
+
+        print(username, kakao_id, nickname, email)
+        exist_user = get_user_model().objects.filter(email=email)
+        if not exist_user:
+            User.objects.create_user(
+                username = username,
+                email = email,
+                kakao_id = kakao_id,
+                nickname = nickname,
+            )
+            return render(request, 'user/login.html')
+        else:
+            return JsonResponse({"message": "이미 존재하는 계정입니다."}, status=400)
+
+
+        
 
 def login(request):
     if request.method == 'GET':
@@ -193,6 +231,7 @@ def login(request):
         else:
             print('로그인 실패')
             return render(request, 'user/login.html', {'error': '유저 정보를 찾을 수 없습니다.'})
+
 
 
 

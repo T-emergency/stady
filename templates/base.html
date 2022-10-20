@@ -17,6 +17,10 @@
     <!-- JS 파일 -->
     <script src="/static/js/bootstrap.bundle.min.js?after"></script>
 
+    <!-- google icon -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
     <style>
       .stady_btn {
         display: flex;
@@ -52,7 +56,15 @@
         padding-top: 1rem;
         padding-bottom: 1rem;
         background-color: #fff;
+
       }
+      .searchbar{
+        border: 0PX;
+        border-bottom: solid 1px;
+      }
+
+      input:focus{outline:none;}
+      
     </style>
     {% block extra-style %}{% endblock %}
   </head>
@@ -64,6 +76,13 @@
             <img class="nav_logo" src="/static/images/stady_1.png" />
           </h3>
           <nav class="nav nav-masthead justify-content-center float-md-end">
+            <input type="text" class="searchbar">
+            <!-- <a href="{% url 'user:search_friend' %}">
+              <span class="material-symbols-outlined" 
+              style="margin-right: 10px;">
+                search
+              </span>
+          </a> -->
             <a class="nav-link fw-bold py-1 px-0" aria-current="true" href="/"
               >Home</a
             >
@@ -106,6 +125,7 @@
                 </div>
               </div>
             </div>
+            <div style="margin:5px 10px 0 10px;">{{user.username}} </div>
           </nav>
         </div>
       </header>

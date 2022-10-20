@@ -11,7 +11,7 @@ class User(AbstractUser):
     age = models.CharField(max_length = 10, blank=True)
     nickname = models.CharField(max_length=10, blank=True)
     profile_image = models.ImageField(upload_to='media', height_field=None, width_field=None, default='default.jpeg', blank=True)
-
+    kakao_id = models.CharField(max_length=100, blank=True)
     # local = models.CharField(max_length = 150, null = True)
 
 
