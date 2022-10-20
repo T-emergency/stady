@@ -2,6 +2,7 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=django,python
 
 ### Django ###
+.DS_Store
 *.log
 *.pot
 *.pyc
@@ -256,3 +257,4 @@ cython_debug/
 # End of https://www.toptal.com/developers/gitignore/api/django,python
 
 my_settings.py
+migrations/
