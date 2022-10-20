@@ -88,9 +88,7 @@ WSGI_APPLICATION = 'stady.wsgi.application'
 
 
 #카카오 로그인을 위한 클라이언트 키
-MY_SECRET = {
-    'CLIENT_ID' :'24e2cbef93a5a8aabb012c7036866a27',
-}
+
 
 
 # Database
@@ -168,6 +166,7 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'splendent77@gmail.com'
 EMAIL_HOST_PASSWORD = my_settings.EMAIL_KEY
 EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
 #sns login
@@ -183,3 +182,7 @@ SITE_ID = 1
 
 LOGIN_REDIRECT_URL = '/' #오류 생기면 홈으로 돌아와라.
 
+# Media files -업로드를 하는 url과 디렉토리 설정
+
+MEDIA_URL = 'media/'  # 업로드할 경로
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # 로컬 디렉토리 어디에 저정할 것인지

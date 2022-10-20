@@ -4,6 +4,9 @@ import json
 from . import utils
 
 def log_to_json(logs):
+    """
+    StudyLog의 객체들을 json형식으로 보내기 위한 직렬화 함수
+    """
     log_list = []
 
     for log in logs:
@@ -12,8 +15,19 @@ def log_to_json(logs):
             'start_time' : utils.get_now_time(log.start_time),
             'end_time' : utils.get_now_time(log.end_time),
             'memo' : log.memo,
+            'date' : log.date,
+            'sub_time': utils.get_sub_time(log.start_time, log.end_time)
         }
 
         log_list.append(log_dict)
 
     return log_list
+
+# TODO 공부한 날짜만 관리하는 테이블을 만들어서 조회를 줄인다.
+def get_day_log(user):
+    """
+    공부한 이력이 있는 날짜들을 가져오는 함수
+    """
+    study_day_list = sorted(set([ day.date.strftime('%Y-%m-%d') for day in user.studylog_set.all()]))
+
+    return study_day_list
