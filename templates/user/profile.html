@@ -1,106 +1,97 @@
 {% extends 'base.html' %}
 {% block extra-style %}
+
 <style>
-  .profile_box {
-
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-
-    margin-top: 70px;
-  }
-
-  .profile_time_box {
-    width: 300px;
-    margin-right: 50px;
-    background-color: aqua;
-  }
-
-  .profile_log_box {
-    width: 300px;
-    margin-right: 50px;
-    background-color: aqua;
-  }
-
-  .profile_memo_box {
-    width: 300px;
-    background-color: aqua;
-  }
-
-  .box {
-    width: 150px;
-    height: 150px;
-    border-radius: 70%;
-    overflow: hidden;
-  }
-
-  .profile {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  #study-day-list > div:hover{
+    cursor: pointer;
+    font-size: 20px;
   }
 </style>
 {% endblock %}
 
 {% block content %}
-<div
-  style="display: flex; flex-direction: row;text-align: center; justify-content: center;margin-top: 60px; background-color:#FAFAFA">
-  <div style="padding: 20px 60px">
-    <div class="box" style="width: 175px; height: 175px;">
 
-      <img class="profile" src="{{user.profile_image.url}}">
+<!-- 모달 섹션 -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Memo</h1>
+                <button type="button" onclick="closeMemo()" class="btn-close" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h5>어떤 걸 공부하셨나요??</h5>
+                <input type="text" id="memo-title">
+            </div>
+            <div class="modal-footer">
 
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="memo-submin-btn">저장</button>
+            </div>
+        </div>
     </div>
-  </div>
-  <div style="text-align: left">
-    <div style="display: flex; flex-direction: row; margin: 20px 0">
-      <div style="font-size: 26px; margin-right: 40px">
-        {{ user.nickname }}
+</div>
+
+<div class="container">
+  <div class="row mb-5 py-2" style="background-color: white; border-radius: 10px;">
+    <div class="col-3">
+      <img src="{{user.profile_image.url}}" width="30px" height="30px" alt="">
+      <span>{{user.username}}</span>
+    </div>
+    <div class="col-5 text-start">
+      <span>{{user.username}}의 다짐 :</span>
+      <span>{{user.bio}}</span>
+    </div>
+
+      <div class="col-4 text-start">
+        <span>총 공부 시간 :</span>
+        <span>{{user.total_time}} 분</span>
       </div>
-      {% if is_author%}
-      <button type="button" onclick="location.href = '/user/update/'" id="button_profile_upload"
-        style="margin-right: 40px; border: 0.01px solid rgba(0, 0, 0, 0.1); width: 100px;">
-        프로필 편집
-      </button>
-      {% endif %}
+  </div>
+  <div class="row" style="max-height: 800px;">
+    <div class="col-4 px-0">
+      <div id="study-day-list" style="background-color: #1d7d78; color: white; min-height: 130px; overflow-y : scroll; border-radius: 10px">
+        <h5>날짜</h4>
+        {% for day in study_day_list%}  
+        <div onclick="getLog(`{{day}}`)">
+          {{day}}
+        </div>
+        {% endfor %}
+      </div>
     </div>
+    <div class="col-8" style="background-color: white; border-radius: 10px;">
+      <h5 id="today-date">{{date}}</h5>
+      <div id="today-log" style="max-height: 800px; overflow-y : scroll; ">
+      {% for log in study_log_list %}
+      <div class="row mb-2">
+        <div class="col-4">{{log.start_time}} ~ {{log.end_time}}({{log.sub_time}}분)</div>
+        <div class="col-8 row">
+            <div class="col-8" id="memo-{{log.id}}"">{{log.memo}}</div>
+            <div class=" col-4 text-end">
+                <button onclick="writeMemo(`{{log.id}}`)" type="button" class="btn btn-success" style="font-size : 12px;"
+                    data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                    메모/수정
+                </button>
 
-    <div style="margin-bottom: 20px">
-      게시물
-      {{author_post|length}}
+            </div>
+        </div>
     </div>
-    <div>
-      <b>{{ user.username }}</b> 님 환영합니다
-      <br>
-      <b>{{ user.bio }}</b>
+      {% endfor %}
+      </div>
     </div>
   </div>
 </div>
-<div class="profile_box">
-  <div class="profile_time_box">
-    날짜
-    {% for log in study_log_list %}
-    <div>
-      {{log.date}}
-    </div>
-    {% endfor %}
-  </div>
-  <div class="profile_log_box">
-    공부 로그
-    {% for log in study_log_list %}
-    <div>
-      {{log.start_time}} ~ {{log.end_time}}
-    </div>
-    {% endfor %}
 
-  </div>
-  <div class="profile_memo_box">
-    메모
-    {% for log in study_log_list %}
-    <div>{{log.sub_time}}분 {{log.meno}}</div>
-    {% endfor %}
-  </div>
-</div>
+{% block extra-script %}
+  {% include 'main_script.html' %}
+  <script>
+    $.ajaxSetup({
+        headers: {
+            'X-CSRFToken': '{{csrf_token}}',
+        },
+    });
+  </script>
+{% endblock %}
+
 {% endblock %}

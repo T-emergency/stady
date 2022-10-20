@@ -6,6 +6,7 @@ from django.http import JsonResponse
 from datetime import datetime, date
 from django.utils import timezone
 from study.serializer import log_to_json
+from study.utils import get_sub_time
 
 # models part
 from user.models import User
@@ -77,6 +78,10 @@ def finish_study(request):
 
     log.end_time = timezone.now()
     log.save()
+
+    user.total_time += get_sub_time(log.start_time, log.end_time)
+    user.save()
+
     study_log_list = user.studylog_set.filter(date = date.today()).order_by('start_time')
     study_log_list = log_to_json(study_log_list)
 
@@ -104,9 +109,6 @@ def check_study(request):
                 study_log_list = log_to_json(study_log_list)
                 return JsonResponse({'study_log_list':study_log_list})
 
-            except : # 많을 때 방어코드 구현 할 것인지
-                pass
-
         else: # 공부 중이 아닐 때
 
             try:
@@ -116,6 +118,9 @@ def check_study(request):
 
             log.end_time = timezone.now()
             log.save()
+
+            user.total_time += get_sub_time(log.start_time, log.end_time)
+            user.save()
                 
             study_log_list = user.studylog_set.filter(date = date.today()).order_by('start_time')
             study_log_list = log_to_json(study_log_list)
@@ -147,5 +152,33 @@ def create_memo(request):
     return JsonResponse({'msg':'바르지 않은 접근'})
 
 
-def get_profile(request):
-    pass
+def get_log(request):
+    user = request.user
+
+    if request.method == "GET":
+        day = request.GET.get('day', '')
+
+        log_list = [log for log in StudyLog.objects.filter(user=user) if log.date.strftime('%Y-%m-%d') == day ]
+        study_log_list = log_to_json(log_list)
+
+        return JsonResponse({'study_log_list':study_log_list})
+
+
+
+def callback_log(request):
+    if request.method == 'POST':
+
+        user = request.user
+
+        log_list = StudyLog.objects.filter(user=user, date = date.today(), end_time = None)
+        for log in log_list:
+            print(log)
+            log.delete()
+
+        study_log_list = user.studylog_set.filter(date = date.today()).order_by('start_time')
+        study_log_list = log_to_json(study_log_list)
+
+        return JsonResponse({'study_log_list':study_log_list})
+
+    
+    return JsonResponse({'msg':'올바르지 않은 접근'})
