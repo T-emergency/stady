@@ -24,7 +24,7 @@ def join(request):
             '^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$')
         # TODO
         username = request.POST.get('username', None)
-        nickname = request.POST.get('nickname', None)
+        # nickname = request.POST.get('nickname', None)
         password = request.POST.get('password', None)
         password2 = request.POST.get('password2', None)
         email = request.POST.get('email', None)
@@ -35,7 +35,7 @@ def join(request):
             return render(request, 'user/join.html', {'error': '이메일 양식이 올바르지 않습니다.'})
 
         # 입력칸이 빈칸일 때
-        if username == '' or nickname == '' or password == '' or email == '':
+        if username == '' or password == '' or email == '': # or nickname 
             return render(request, 'user/join.html', {'error': '입력란을 모두 채워주세요'})
 
         # 입력한 패스워드 값이 맞지 않을때
@@ -48,19 +48,19 @@ def join(request):
             return render(request, 'user/join.html', {'error': '이미 가입된 이메일 계정입니다.'})
 
         # nickname 중복체크 추가
-        exist_user = get_user_model().objects.filter(nickname=nickname)
-        if exist_user:
-            return render(request, 'user/join.html', {'error': '이미 가입된 사용자 이름 입니다.'})
+        # exist_user = get_user_model().objects.filter(nickname=nickname)
+        # if exist_user:
+        #     return render(request, 'user/join.html', {'error': '이미 가입된 사용자 이름 입니다.'})
 
         # username 중복체크 추가
         exist_user = get_user_model().objects.filter(username=username)
         if exist_user:
-            return render(request, 'user/join.html', {'error': '이미 가입된 성명 입니다.'})
+            return render(request, 'user/join.html', {'error': '이미 사용중인 아이디 입니다.'})
 
         else:
             User.objects.create_user(
                 username=username,
-                nickname=nickname,
+                # nickname=nickname,
                 password=password,
                 email=email,
             )
@@ -118,7 +118,7 @@ def kakao_social_login_callback(request):
 
     #딕셔너리 검색부분 궁금
     kakao_id = profile_json.get('id')
-    username = profile_json['properties']['nickname']
+    # username = profile_json['properties']['nickname']
     email = profile_json['kakao_account']['email']
 
 
@@ -192,21 +192,22 @@ def update(request):
         bio = request.POST.get('bio')
         email = request.POST.get('email')
         username = request.POST.get('username')
-        nickname = request.POST.get('nickname')
+        # nickname = request.POST.get('nickname')
+
         # filter 를 활용해서 가져온 인스턴스와 입력한 인스턴스를 비교하는 변수를 만들어준다.
-        exist_nickname = get_user_model().objects.filter(nickname=nickname)
+        exist_email = get_user_model().objects.filter(email=email)
         exist_username = get_user_model().objects.filter(username=username)
         # 닉네임은 중복이 불가한 컬럼이다. 회원정보 수정시 원래 닉네임과 같으면 변경이 안되는 걸 막기위한 코드다.
 
         # TODO
         # 입력한 닉네임과 db에 저장되어있는 닉네임이 중복되고 내 닉네임과 다르다면 에러창을 띄운다.
-        if exist_nickname and user.nickname != nickname:
-            return render(request, 'user/update.html', {'error': '이미 사용중인 nickname 입니다.'})
+        if exist_email and user.email != email:
+            return render(request, 'user/update.html', {'error': '이미 사용중인 email 입니다.'})
         elif exist_username and user.username != username:
             return render(request, 'user/update.html', {'error': '이미 사용중인 username 입니다.'})
         # 이게 있어야 하는지 의문이다.
         else:
-            user.nickname = nickname
+            # user.nickname = nickname
             user.bio = bio
             user.email = email
             user.username = username
