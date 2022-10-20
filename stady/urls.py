@@ -27,8 +27,6 @@ urlpatterns = [
     # path('profile/', include('user.urls')),
     path('study/', include('study.urls')),
     
-    # test urls
-    path('profile/', profile, name='profile'),
     # path('accounts/', include('allauth.urls')), 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
