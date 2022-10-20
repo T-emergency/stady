@@ -8,7 +8,7 @@ from .models import User
 from django.contrib.auth import get_user_model
 from django.contrib import auth
 import re
-
+from django.contrib.auth.decorators import login_required
 
 
 def join(request):
@@ -178,3 +178,8 @@ def login(request):
 
 
 
+### 로그아웃 ###
+@login_required
+def logout(request):
+    auth.logout(request)
+    return redirect('user:login')
