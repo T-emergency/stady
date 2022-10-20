@@ -19,10 +19,12 @@ from django.conf import settings
 from django.conf.urls.static import static
 from .views import profile
 from study import views
+
 from user import views as user_views
 
 # 이메일 인증
 from django.contrib.auth import views as auth_views
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,6 +32,11 @@ urlpatterns = [
     path('user/', include('user.urls')),
     # path('profile/', include('user.urls')),
     path('study/', include('study.urls')),
+
+    # kakao로그인 요청을 보낼 url
+    path('account/login/kakao/', view.kakao_social_login, name='kakao_login'),
+    #받은 인가 코드로 접근 토큰을 받아 유저의 정보를 가져올 url
+    path('account/login/kakao/callback/', view.kakao_social_login_callback, name='kakao_login_callback'),
     
 
     path('profile/', profile, name='profile'),
