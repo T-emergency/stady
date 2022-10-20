@@ -1,4 +1,5 @@
-{% extends 'base.html' %} {% block extra-style %}
+{% extends 'base.html' %}
+{% block extra-style %}
 <style>
   .profile_box {
 
@@ -27,19 +28,23 @@
     width: 300px;
     background-color: aqua;
   }
+</style>
+{% endblock %}
 
-  .box {
-    width: 150px;
-    height: 150px;
-    border-radius: 70%;
-    overflow: hidden;
-  }
+{% block content %}
 
-  .profile {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
+.box {
+width: 150px;
+height: 150px;
+border-radius: 70%;
+overflow: hidden;
+}
+
+.profile {
+width: 100%;
+height: 100%;
+object-fit: cover;
+}
 </style>
 {% endblock %}
 

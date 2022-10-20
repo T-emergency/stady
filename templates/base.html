@@ -77,10 +77,10 @@
                   src="/static/images/stady_bear_face.png" data-bs-toggle="dropdown" aria-expanded="false" />
                 <ul class="dropdown-menu">
                   <li>
-                    <a class="dropdown-item" href="{% url 'profile' user.nickname %}">프로필</a>
+                    <a class="dropdown-item" href="{% url 'profile' %}">프로필</a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="/profile/{{username}}">회원정보수정</a>
+                    <a class="dropdown-item" href="/profile">회원정보수정</a>
                   </li>
                   <li>
                     <a class="dropdown-item" href="{% url 'user:logout' %}">로그아웃</a>
