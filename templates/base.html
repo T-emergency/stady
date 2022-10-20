@@ -59,12 +59,14 @@
   {% block extra-style %}{% endblock %}
 </head>
 
-<body class="d-flex h-100 text-center">
+<body class="d-flex h-100 text-center" style="background-color: #1AB4AC;">
   <div class="container w-100 h-100 p-3 mx-auto">
-    <header class="mb-auto">
+    <header class="mb-auto" style="background-color: white;">
       <div class="fixed-top" id="main_nav">
         <h3 class="float-md-start mb-0">
-          <img class="nav_logo" src="/static/images/stady_1.png" />
+          <a href="/">
+            <img class="nav_logo" src="/static/images/stady_1.png" />
+          </a>
         </h3>
         <nav class="nav nav-masthead justify-content-center float-md-end">
           <a class="nav-link fw-bold py-1 px-0" aria-current="true" href="/">Home</a>
@@ -92,10 +94,12 @@
         </nav>
       </div>
     </header>
-    <main class="d-flex stady_wrap mt-5" style="height: 500px">
+    <main class="" style="height: 500px; margin-top : 100px;">
       {% block content %} {% endblock %}
     </main>
   </div>
+  {% block extra-script %}
+  {% endblock %}
 </body>
 
 </html>
