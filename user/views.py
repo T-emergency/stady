@@ -157,7 +157,7 @@ def kakao_social_login_callback(request):
             nickname = nickname,
             email = email
         )
-        user = User.objects.get(username = username)
+        user = User.objects.filter(username = username)
         auth.login(request,user,backend='django.contrib.auth.backends.ModelBackend')
         #error
         #You have multiple authentication backends configured and therefore must provide the `backend` argument or set the `backend` attribute on the user.
@@ -234,4 +234,19 @@ def login(request):
 
 
 
+def search_friend(request):
+    if request.method=='POST':
+        search_name = request.POST.get('search_user')
+        find_user = User.objects.get(email = search_name)
+        print(find_user)
+        print(search_name)
 
+        if not find_user:
+            return render(request, 'index.html', {'error':'user가 없습니다.'})
+        else:
+            context={
+                'find_user':find_user
+            }
+            return render(request, 'user/find_user.html',context )
+    else:
+        return render(request, 'user/find_user.html')
