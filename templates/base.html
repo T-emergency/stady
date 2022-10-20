@@ -59,9 +59,9 @@
   {% block extra-style %}{% endblock %}
 </head>
 
-<body class="d-flex h-100 text-center">
+<body class="d-flex h-100 text-center" style="background-color: #1AB4AC;">
   <div class="container w-100 h-100 p-3 mx-auto">
-    <header class="mb-auto">
+    <header class="mb-auto" style="background-color: white;">
       <div class="fixed-top" id="main_nav">
         <h3 class="float-md-start mb-0">
           <img class="nav_logo" src="/static/images/stady_1.png" />
@@ -77,10 +77,10 @@
                   src="/static/images/stady_bear_face.png" data-bs-toggle="dropdown" aria-expanded="false" />
                 <ul class="dropdown-menu">
                   <li>
-                    <a class="dropdown-item" href="{% url 'profile' user.nickname %}">프로필</a>
+                    <a class="dropdown-item" href="{% url 'profile' %}">프로필</a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="/profile/{{username}}">회원정보수정</a>
+                    <a class="dropdown-item" href="/profile">회원정보수정</a>
                   </li>
                   <li>
                     <a class="dropdown-item" href="{% url 'user:logout' %}">로그아웃</a>

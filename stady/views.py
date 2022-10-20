@@ -7,12 +7,10 @@ from study.serializer import log_to_json
 # from django.utils import timezone
 # from study.serializer import log_to_json
 
-def index(request):
-    return render(request, 'index.html')
 
 
-def profile(request,nickname):
 
+def profile(request):
     if request.method =='GET':
         user = request.user
         study_log_list = user.studylog_set.filter(date = date.today()).order_by('start_time')
