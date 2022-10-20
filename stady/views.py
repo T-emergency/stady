@@ -2,22 +2,23 @@ from django.shortcuts import render, redirect
 from study.models import StudyLog
 from user.models import User
 
-def index(request):
-    return render(request, 'index.html')
+from datetime import datetime, date
+from study.serializer import log_to_json
+# from django.utils import timezone
+# from study.serializer import log_to_json
+
+
 
 
 def profile(request):
-
-    # user = request.user
-    # username = User.objects.fliter(username = username)
-    
-    # user_log = username.studylog_set.all()
-    
-    
-    # context ={
-    #     'username': username,
-    #     'user_log': user_log,
-    # }
-    # print (context)
     if request.method =='GET':
-        return render(request, 'user/profile.html')
+        user = request.user
+        study_log_list = user.studylog_set.filter(date = date.today()).order_by('start_time')
+        study_log_list= log_to_json(study_log_list)
+        
+        context ={
+            'username': user.username,
+            'study_log_list': study_log_list,
+        }
+        print (context)
+        return render(request, 'user/profile.html', context)

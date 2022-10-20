@@ -1,113 +1,101 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="ko" class="h-100">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="" />
-    <meta
-      name="author"
-      content="Mark Otto, Jacob Thornton, and Bootstrap contributors"
-    />
-    <meta name="generator" content="Hugo 0.104.2" />
-    <title>STADY</title>
-    <!-- css 파일 -->
-    <link href="/static/css/bootstrap.min.css?after" rel="stylesheet" />
-    <link href="/static/css/base.css?after" rel="stylesheet" />
-    <!-- JS 파일 -->
-    <script src="/static/js/bootstrap.bundle.min.js?after"></script>
 
-    <style>
-      .stady_btn {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-      }
-      .stady_wrap {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-      }
-      .cam_size {
-        width: 375px;
-        height: 375px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="" />
+  <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors" />
+  <meta name="generator" content="Hugo 0.104.2" />
+  <title>STADY</title>
+  <!-- css 파일 -->
+  <link href="/static/css/bootstrap.min.css?after" rel="stylesheet" />
+  <link href="/static/css/base.css?after" rel="stylesheet" />
+  <!-- JS 파일 -->
+  <script src="/static/js/bootstrap.bundle.min.js?after"></script>
 
-        background-color: #e9ecef;
-        margin-bottom: 10px;
-      }
-      .nav_logo {
-        width: 100px;
-        height: 40px;
-      }
-      #main_nav {
-        padding-top: 1rem;
-        padding-bottom: 1rem;
-        background-color: #fff;
-      }
-    </style>
-    {% block extra-style %}{% endblock %}
-  </head>
-  <body class="d-flex h-100 text-center" style="margin-top: 60px">
-    <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
-      <header class="mb-auto">
-        <div class="fixed-top" id="main_nav">
-          <h3 class="float-md-start mb-0">
-            <img class="nav_logo" src="/static/images/stady_1.png" />
-          </h3>
-          <nav class="nav nav-masthead justify-content-center float-md-end">
-            <a class="nav-link fw-bold py-1 px-0" aria-current="true" href="/"
-              >Home</a
-            >
-            <a
-              class="nav-link fw-bold py-1 px-0"
-              aria-current="true"
-              href="/study/test"
-              >Features</a
-            >
-            <a class="nav-link fw-bold py-1 px-0" aria-current="true" href="#"
-              >Contact</a
-            >
-            <div style="margin-left: 20px">
-              <div class="post_header_more_btn_box">
-                <div class="btn-group">
-                  <img
-                    type="button"
-                    class="img_circle dropdown-toggle"
-                    width="30px"
-                    height="30px"
-                    src="/static/images/stady_bear_face.png"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                  />
-                  <ul class="dropdown-menu">
-                    <li>
-                      <a class="dropdown-item" href="/profile/{{username}}"
-                        >프로필</a
-                      >
-                    </li>
-                    <li>
-                      <a class="dropdown-item" href="#">로그아웃</a>
-                    </li>
-                  </ul>
-                </div>
+  <style>
+    .stady_btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .stady_wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .cam_size {
+      width: 375px;
+      height: 375px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+
+      background-color: #e9ecef;
+      margin-bottom: 10px;
+    }
+
+    .nav_logo {
+      width: 100px;
+      height: 40px;
+    }
+
+    #main_nav {
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+      background-color: #fff;
+    }
+  </style>
+  {% block extra-style %}{% endblock %}
+</head>
+
+<body class="d-flex h-100 text-center" style="background-color: #1AB4AC;">
+  <div class="container w-100 h-100 p-3 mx-auto">
+    <header class="mb-auto" style="background-color: white;">
+      <div class="fixed-top" id="main_nav">
+        <h3 class="float-md-start mb-0">
+          <img class="nav_logo" src="/static/images/stady_1.png" />
+        </h3>
+        <nav class="nav nav-masthead justify-content-center float-md-end">
+          <a class="nav-link fw-bold py-1 px-0" aria-current="true" href="/">Home</a>
+          <a class="nav-link fw-bold py-1 px-0" aria-current="true" href="#">Features</a>
+          <a class="nav-link fw-bold py-1 px-0" aria-current="true" href="#">Contact</a>
+          <div style="margin-left: 20px; margin-right: 10px">
+            <div class="post_header_more_btn_box">
+              <div class="btn-group">
+                <img type="button" class="img_circle dropdown-toggle" width="30px" height="30px"
+                  src="/static/images/stady_bear_face.png" data-bs-toggle="dropdown" aria-expanded="false" />
+                <ul class="dropdown-menu">
+                  <li>
+                    <a class="dropdown-item" href="{% url 'profile' %}">프로필</a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="{% url 'user:update' %}">회원정보수정</a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="{% url 'user:logout' %}">로그아웃</a>
+                  </li>
+                </ul>
               </div>
             </div>
-          </nav>
-        </div>
-      </header>
-      <main class="d-flex stady_wrap">{% block content %} {% endblock %}</main>
-      <footer class="mt-auto text-white-50">
-        <p>footer</p>
-      </footer>
-    </div>
-  </body>
+          </div>
+        </nav>
+      </div>
+    </header>
+    <main class="d-flex stady_wrap mt-5" style="height: 500px">
+      {% block content %} {% endblock %}
+    </main>
+  </div>
+</body>
+
 </html>

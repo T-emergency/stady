@@ -8,6 +8,7 @@ class StudyLog(models.Model):
     date = models.DateField(auto_now_add = True)
     start_time = models.DateTimeField(auto_now_add = True)
     end_time = models.DateTimeField(blank = True, null= True)
+    memo = models.TextField(blank = True)
 
 
 class InStudy(models.Model):
@@ -20,3 +21,4 @@ class OutStudy(models.Model):
     # 불참여 로그
     log = models.ForeignKey(StudyLog, on_delete = models.CASCADE)
     out_time = models.DateTimeField(auto_now_add = True)
+    in_time = models.DateTimeField(null = True)
