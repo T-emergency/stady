@@ -10,6 +10,27 @@
 {% endblock %}
 
 {% block content %}
+<div
+  style="display: flex; flex-direction: row;text-align: center; justify-content: center;margin-top: 60px; background-color:#FAFAFA">
+  <div style="padding: 20px 60px">
+    <div class="box" style="width: 175px; height: 175px;">
+
+      <img class="profile" src="{{user.profile_image.url}}">
+
+    </div>
+  </div>
+  <div style="text-align: left">
+    <div style="display: flex; flex-direction: row; margin: 20px 0">
+      <div style="font-size: 26px; margin-right: 40px">
+        {{ user.nickname }}
+      </div>
+      {% if is_author%}
+      <button type="button" onclick="location.href = '/user/update/'" id="button_profile_upload"
+        style="margin-right: 40px; border: 0.01px solid rgba(0, 0, 0, 0.1); width: 100px;">
+        프로필 편집
+      </button>
+      {% endif %}
+    </div>
 
 <!-- 모달 섹션 -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"

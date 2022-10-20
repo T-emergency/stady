@@ -58,31 +58,23 @@
         </div>
       </div>
       <div class="container">
-        <form method="post">
-
+        {% block content %}
+        <form method="POST" action="{% url 'user:delete' %}">
           {% csrf_token %}
-          <input type="text" placeholder="이메일" name="email">
-          <input type="text" placeholder="아이디" name="nickname">
-          <input type="text" placeholder="이름" name="username">
-          <input type="password" placeholder="비밀번호" name="password">
-          <input type="password" placeholder="비밀번호 확인" name="password2">
-          <p></p>
+          이메일 : <input name="eamil" type="email">
+          현재 비밀번호 : <input name="password" type="password">
           {% if error %}
           <div class="alert alert-danger" role="alert">
             {{ error }}
           </div>
           {% endif %}
           <hr>
-          <input type="submit" value="회원가입 완료" / class="btn">
-
+          <input style="background-color: rgb(255, 125, 125);" type="submit" value="회원탈퇴" class="btn" />
         </form>
+        {% endblock %}
+
       </div>
     </div>
-    </div>
-    <div class="option">
-      <a>계정이 있으신가요?</a>
-      <h></h>
-      <a href="/user/login">로그인</a>
     </div>
     <div class="footer">
     </div>

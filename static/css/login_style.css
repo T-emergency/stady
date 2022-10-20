@@ -103,7 +103,7 @@ main{
   margin: 5px 0;
   border-radius: 10px;
 }
-.page .container form input:hover{
+.page .container form input{
   box-shadow: #00b395;
 }
 
@@ -113,6 +113,10 @@ main{
 }
 
 input[type="submit"].btn:hover {
+  background-color: #00b395;
+}
+
+input[type="button"].btn:hover {
   background-color: #00b395;
 }
 

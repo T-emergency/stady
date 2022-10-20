@@ -70,7 +70,7 @@
         </h3>
         <nav class="nav nav-masthead justify-content-center float-md-end">
           <a class="nav-link fw-bold py-1 px-0" aria-current="true" href="/">Home</a>
-          <a class="nav-link fw-bold py-1 px-0" aria-current="true" href="/study/test">Features</a>
+          <a class="nav-link fw-bold py-1 px-0" aria-current="true" href="#">Features</a>
           <a class="nav-link fw-bold py-1 px-0" aria-current="true" href="#">Contact</a>
           <div style="margin-left: 20px; margin-right: 10px">
             <div class="post_header_more_btn_box">
@@ -82,7 +82,7 @@
                     <a class="dropdown-item" href="{% url 'profile' %}">프로필</a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="/profile">회원정보수정</a>
+                    <a class="dropdown-item" href="{% url 'user:update' %}">회원정보수정</a>
                   </li>
                   <li>
                     <a class="dropdown-item" href="{% url 'user:logout' %}">로그아웃</a>
