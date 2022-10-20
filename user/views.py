@@ -9,6 +9,9 @@ from django.contrib.auth import get_user_model
 from django.contrib import auth
 import re
 
+import string
+import random
+
 
 
 def join(request):
@@ -102,8 +105,8 @@ def kakao_social_login_callback(request):
     except KeyError:
         return JsonResponse({"message": "INVALID_TOKEN"}, status=400)
 
-    except access_token.DoesNotExist:
-        return JsonResponse({"message": "INVALID_TOKEN"}, status=400)
+    # except access_token.DoesNotExist:
+    #     return JsonResponse({"message": "INVALID_TOKEN"}, status=400)
 
     #------토큰을 이용하여 사용자 정보 조회------#
     profile_request = requests.get(
@@ -114,26 +117,41 @@ def kakao_social_login_callback(request):
     print(profile_json)
 
     #딕셔너리 검색부분 궁금
+
+    def make_nickname():
+        _LENGTH = 8 #8자리
+        string_pool = string.ascii_lowercase #소문자
+        result = ''
+
+        for _ in range(_LENGTH):
+            result += random.choice(string_pool)
+        return result
+
+    
     kakao_id = profile_json.get('id')
     username = profile_json['properties']['nickname']
     email = profile_json['kakao_account']['email']
-
+    nickname = make_nickname()
+    
 
     if User.objects.filter(username = username).exists():
         user = User.objects.get(username = username)
         auth.login(request,user,backend='django.contrib.auth.backends.ModelBackend')
+
+    elif User.objects.filter(nickname = nickname).exists():
+        nickname = make_nickname()
         
     else:
         User.objects.create_user(
             username =username,
-            # password = '7009900', #이 값이 없어도 가입이 가능
+            nickname = nickname,
             email = email
         )
         user = User.objects.get(username = username)
         auth.login(request,user,backend='django.contrib.auth.backends.ModelBackend')
         #error
         #You have multiple authentication backends configured and therefore must provide the `backend` argument or set the `backend` attribute on the user.
-    return render(request, 'user/index.html')
+    return render(request, 'index.html')
 
 
 def login(request):
