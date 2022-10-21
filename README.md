@@ -56,43 +56,52 @@ Stay와 Study의 합성어로 자리에 머물러 공부를 한다는 의미이�
 
 ![Untitled 6](https://user-images.githubusercontent.com/113074274/196135948-aefaf871-dcaa-4a71-bfd8-5586497912e9.png)
 
+## 변경 후
+
+- 불참여 로그를 버림으로 참여로그만 남기면 되는 상황
+
+![Untitled 7](https://user-images.githubusercontent.com/113074274/197120777-cbfb40d6-6331-48b5-9eb8-8899b726392c.png)
+
+
 ## 기능
 
 - 회원가입, 로그인, 로그아웃
 - 정보 수정, 비밀번호 변경
 - 공부 로그 자동 기록
 
+
 ## User API
 
-| 기능                               | method | url                          | request | response                          | 비고 |     |
-| ---------------------------------- | ------ | ---------------------------- | ------- | --------------------------------- | ---- | --- |
-| 회원가입                           | GET    | /user/join                   |         | join.html                         |      |     |
-|                                    | POST   | /user/join                   |         |                                   |      |     |
-| 로그인                             | GET    | /user/login                  |         | login.html                        |      |     |
-|                                    | POST   | /user/login                  |         |                                   |      |     |
-| 로그아웃                           | GET    | /user/logout                 |         | login.html                        |      |     |
-|                                    |        |                              |         |                                   |      |     |
-| 정보수정                           | GET    | /user/update/<int:user_id>   |         | user/update.html                  |      |     |
-| 정보수정                           | POST   | /user/update/<int:user_id>   |         |                                   |      |     |
-| 비밀번호변경                       | GET    | /user/change_password        |         | change_password.html              |      |     |
-| 비밀번호변경                       | POST   | /user/change_password        |         |                                   |      |     |
-| 이메일 인증 비밀번호 리셋          | GET    | /user/password_reset         |         | user/reset_password.html          |      |     |
-|                                    | POST   | /user/password_reset         |         |                                   |      |     |
-| 이메일 인증 비밀번호 리셋 완료알림 | GET    | /user/reset_password_done    |         | user/reset_password_done.html     |      |     |
-|                                    | POST   | /user/reset_password_done    |         | user/login.html                   |      |     |
-| 이메일 인증 비밀번호 리셋 결정     | GET    | /user/reset_password_confirm |         | /user/reset_password_confirm.html |      |     |
-|                                    | POST   | /user/reset_password_confirm |         | /user/login/html                  |      |     |
-| 회원탈퇴                           | GET    | /user/delete                 |         | user/delete.html                  |      |     |
-|                                    | POST   | /user/delete                 |         | user/login.html                   |      |     |
+| 기능     | method | url        | request | response  | 비고 |     |
+| -------- | ------ | ---------- | ------- | --------- | ---- | --- |
+| 회원가입 | GET    | /user/join |         | join.html |      |     |
+|          | POST   | /user/join |       | | | | |
+| 로그인 | GET | /user/login | | login.html | | |
+| | POST | /user/login |  | | | |
+| 로그아웃 | GET | /user/logout | | login.html | | |
+| | | | | | | |
+| 정보수정 | GET | /user/update | | user/update.html | | |
+| 정보수정 | POST | /user/update |  | | | |
+| 비밀번호변경 | GET | /user/change_password | | change_password.html | | |
+| 비밀번호변경 | POST | /user/change_password |  | | | |
+| 이메일 인증 비밀번호 리셋 | GET | /user/password_reset | | user/reset_password.html | | |
+| | POST | /user/password_reset |  | | | |
+| 이메일 인증 비밀번호 리셋 완료알림 | GET | /user/reset_password_done | | user/reset_password_done.html | | |
+| | POST | /user/reset_password_done | | user/login.html | | |
+| 이메일 인증 비밀번호 리셋 결정 | GET | /user/reset_password_confirm | | /user/reset_password_confirm.html | | |
+| | POST | /user/reset_password_confirm | | /user/login/html | | |
+| 회원탈퇴 | GET | /user/delete | | user/delete.html | | |
+| | POST | /user/delete | | user/login.html | | |
 
 ## Service API
 
-| 기능           | Method | URL                        | Request | Response          | 비고     |
-| -------------- | ------ | -------------------------- | ------- | ----------------- | -------- |
-| 회원 프로필    | GET    | /profile/<int:user_id>     |         | user/profile.html |          |
-| 회원 로그 메모 | POST   | /profile/memo/<int:log_id> |         |                   | 추가기능 |
-|                |        |                            |         |                   |          |
-| 공부 시작      | GET    | /study/start               |         | -                 |          |
-| 공부 종료      | GET    | /study/end                 |         | -                 |          |
-|                |        |                            |         |                   |          |
-| 공부 참여 체크 | GET    | /study/check               |         | -                 |          |
+| 기능               | Method | URL           | Request | Response          | 비고 |
+| ------------------ | ------ | ------------- | ------- | ----------------- | ---- |
+| 회원 프로필        | GET    | /profile      |         | user/profile.html |      |
+|                    |        |               |         |                   |      |
+| 공부 시작          | GET    | /study/start  |         | -                 |      |
+| 공부 종료          | GET    | /study/finish |         | -                 |      |
+| 공부 참여 체크     | POST   | /study/check  |         | -                 |      |
+| 공부 로그 가져오기 | GET    | /study/log    |       | |  | 특정 날짜의 로그를 보내주는 api |
+| 공부 로그 에러 처리 | POST | /study/callback | - |  | |
+| 공부 메모 | POST | /study/memo |  | | |
