@@ -134,11 +134,12 @@ def kakao_social_login_callback(request):
 
 
     kakao_id = profile_json.get('id')
-    username = make_username()
-    # username = profile_json['properties']['nickname'] # 진짜 이름
+    # username = make_username()
+    username = profile_json['properties']['nickname'] # 진짜 이름
 
     if User.objects.filter(kakao_id = kakao_id).exists():
         user = User.objects.get(kakao_id = kakao_id)
+        user = User.objects.get(username = profile_json['properties']['nickname'])
         auth.login(request,user,backend='django.contrib.auth.backends.ModelBackend')
         return redirect('/')
     
@@ -147,8 +148,7 @@ def kakao_social_login_callback(request):
 
     except:
         context = {
-            'username' : make_username(),
-            # 'username' : username,
+            'username' : username,
             'kakao_id' : kakao_id,
         }
         return render(request,'user/kakao_email.html', context)
@@ -159,12 +159,12 @@ def kakao_social_login_callback(request):
 
     User.objects.create_user(
         kakao_id = kakao_id,
-        # username =username,
         username = username,
         email = email
     )
-    user = User.objects.filter(kakao_id = kakao_id)
-    auth.login(request, user)
+    # user = User.objects.filter(kakao_id = kakao_id)
+    user = User.objects.get(username = username)
+    auth.login(request,user,backend='django.contrib.auth.backends.ModelBackend')
 
         
     return redirect('/')
@@ -324,3 +324,14 @@ def delete(request):
             return render(request, 'user/delete.html', {'error': '비밀번호와 이메일을 다시 확인하세요.'})
     else:
         return render(request, 'user/delete.html')
+
+def google_social_login(request):
+    if request.method =='GET':
+        code = request.GET.get('code')
+        print(code)
+        client_id = my_settings.GOOGLE_CLIENT_ID
+        redirect_uri = 'http://127.0.0.1:8000/accounts/google/login/callback/'
+        return redirect(f'https://accounts.google.com/o/oauth2/auth?client_id={client_id}&redirect_uri={redirect_uri}&scope=profile&response_type=code&state')
+    
+    
+    
