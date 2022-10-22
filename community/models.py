@@ -13,7 +13,7 @@ class Post(models.Model):
     post_title = models.CharField(max_length=50)
     post_content = models.CharField(max_length=200)
     create_date = models.DateTimeField(blank = True)
-    image = models.ImageField(upload_to='post')
+    image = models.ImageField(upload_to='post' , blank = True)
 
 
 
