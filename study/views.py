@@ -31,6 +31,7 @@ def index(request):
     if request.method == "GET":
 
         study_log_list = user.studylog_set.filter(date = date.today()).order_by('start_time')
+        type(study_log_list)
         study_log_list = log_to_json(study_log_list)
         context = {
             'study_log_list' : study_log_list
