@@ -1,4 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+<link href="/static/css/post_comment_detail_style.css" rel="stylesheet" />
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'bootstrap.min.css' %}">
+
 <h1>{{ post.title }}</h1>
 <div>
     {{ post.content }}
 </div>
+<h5>{{ post.postcomment_set.count }}개의 답변이 있습니다.</h5>
+<div>
+    <ul>
+    {% for postcomment in post.postcomment_set.all %}
+        <li>{{ postcomment.content }}</li>
+    {% endfor %}
+    </ul>
+</div>
+<form action="{% url 'comment_create' post.id %}" method="post">
+    {% csrf_token %}
+    <textarea name="content" id="content" rows="15"></textarea>
+    <input type="submit" value="답변등록">
+    </form>

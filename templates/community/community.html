@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load community_filter %}
 {% block content %}
 <div class="container my-3">
     <table class="table">
@@ -17,7 +18,9 @@
         <tr class="text-center">
             <td>
                 <!-- 번호 = 전체건수 - 시작인덱스 - 현재인덱스 + 1 -->
-            </td>            
+                {{ post_list.paginator.count|sub:post_list.start_index|sub:forloop.counter0|add:1 }}
+            </td>
+          
             <td class="text-start">
                 <a href="/community/{{ post.id }}">{{ post.title }}</a>
                 {% if posts.post_content.count > 0 %}
@@ -76,6 +79,6 @@
         {% endif %}
     </ul>
     <!-- 페이징처리 끝 -->
-    <a href="" class="btn btn-primary">질문 등록하기</a>
+    <a href="/community/post_create" class="btn btn-primary">게시글 작성</a>
 </div>
-{% endblock %}ㅕ
+{% endblock %}
