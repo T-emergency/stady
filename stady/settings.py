@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     # service app
     'user',
     'study',
+    'community',
 ]
 
 MIDDLEWARE = [
