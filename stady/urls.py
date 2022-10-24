@@ -19,10 +19,12 @@ from django.conf import settings
 from django.conf.urls.static import static
 from .views import profile
 from study import views
+
 from user import views as user_views
 
 # 이메일 인증
 from django.contrib.auth import views as auth_views
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,6 +32,9 @@ urlpatterns = [
     path('user/', include('user.urls')),
     # path('profile/', include('user.urls')),
     path('study/', include('study.urls')),
+    path('community/', include('community.urls')),
+    # 커뮤니티
+
     
 
     path('profile/', profile, name='profile'),

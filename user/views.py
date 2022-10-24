@@ -8,9 +8,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from django.contrib import auth
 
+import string
+import random
+
 # 비밀번호 변경, 회원탈퇴
 from django.contrib.auth.hashers import check_password
-
 import re
 
 
@@ -75,6 +77,22 @@ def kakao_social_login(request):
         f'https://kauth.kakao.com/oauth/authorize?client_id={client_id}&redirect_uri={redirect_uri}&response_type=code'
         )
 
+#nickname 만들어 주는 함수
+def make_username():
+    _LENGTH = 8 #8자리
+    string_pool = string.ascii_lowercase #소문자
+    while True:
+        result = ''
+        for _ in range(_LENGTH):
+            result += random.choice(string_pool)
+        
+        if User.objects.filter(username = result).exists():
+            pass
+        else:
+            break
+
+    return result
+
 
 def kakao_social_login_callback(request):
     """
@@ -100,8 +118,6 @@ def kakao_social_login_callback(request):
         #-------------받은 토큰---------------#
         access_token = token_json.get("access_token")
 
-        
-
     except KeyError:
         return JsonResponse({"message": "INVALID_TOKEN"}, status=400)
 
@@ -116,28 +132,70 @@ def kakao_social_login_callback(request):
     profile_json = profile_request.json()
     print(profile_json)
 
-    #딕셔너리 검색부분 궁금
+
     kakao_id = profile_json.get('id')
-    # username = profile_json['properties']['nickname']
-    email = profile_json['kakao_account']['email']
+    # username = make_username()
+    username = profile_json['properties']['nickname'] # 진짜 이름
 
-
-    if User.objects.filter(username = username).exists():
-        user = User.objects.get(username = username)
+    if User.objects.filter(kakao_id = kakao_id).exists():
+        user = User.objects.get(kakao_id = kakao_id)
+        user = User.objects.get(username = profile_json['properties']['nickname'])
         auth.login(request,user,backend='django.contrib.auth.backends.ModelBackend')
+        return redirect('/')
+    
+    try:
+        email = profile_json['kakao_account']['email']
+
+    except:
+        context = {
+            'username' : username,
+            'kakao_id' : kakao_id,
+        }
+        return render(request,'user/kakao_email.html', context)
+    
+
+    
         
-    else:
-        User.objects.create_user(
-            username =username,
-            # password = '7009900', #이 값이 없어도 가입이 가능
-            email = email
-        )
-        user = User.objects.get(username = username)
-        auth.login(request,user,backend='django.contrib.auth.backends.ModelBackend')
-        #error
-        #You have multiple authentication backends configured and therefore must provide the `backend` argument or set the `backend` attribute on the user.
-    return render(request, 'index.html')
 
+    User.objects.create_user(
+        kakao_id = kakao_id,
+        username = username,
+        email = email
+    )
+    # user = User.objects.filter(kakao_id = kakao_id)
+    user = User.objects.get(username = username)
+    auth.login(request,user,backend='django.contrib.auth.backends.ModelBackend')
+
+        
+    return redirect('/')
+
+#카카오 이메일 페이지에서 이메일 받아오기
+
+def kakao_email(request, kakao_id, username, nickname):
+    if request.method == 'GET':
+        return redirect('user:kakao_email')
+    
+    elif request.method=='POST':
+        username =username
+        kakao_id = kakao_id
+        nickname = nickname
+        email = request.POST.get('email')
+
+        print(username, kakao_id, nickname, email)
+        exist_user = get_user_model().objects.filter(email=email)
+        if not exist_user:
+            User.objects.create_user(
+                username = username,
+                email = email,
+                kakao_id = kakao_id,
+                nickname = nickname,
+            )
+            return render(request, 'user/login.html')
+        else:
+            return JsonResponse({"message": "이미 존재하는 계정입니다."}, status=400)
+
+
+        
 
 def login(request):
     if request.method == 'GET':
@@ -264,6 +322,16 @@ def delete(request):
             return redirect('/user/login/')
         elif email!=user.email or password!=user.password:
             return render(request, 'user/delete.html', {'error': '비밀번호와 이메일을 다시 확인하세요.'})
-
     else:
         return render(request, 'user/delete.html')
+
+def google_social_login(request):
+    if request.method =='GET':
+        code = request.GET.get('code')
+        print(code)
+        client_id = my_settings.GOOGLE_CLIENT_ID
+        redirect_uri = 'http://127.0.0.1:8000/accounts/google/login/callback/'
+        return redirect(f'https://accounts.google.com/o/oauth2/auth?client_id={client_id}&redirect_uri={redirect_uri}&scope=profile&response_type=code&state')
+    
+    
+    
