@@ -22,3 +22,30 @@ class OutStudy(models.Model):
     log = models.ForeignKey(StudyLog, on_delete = models.CASCADE)
     out_time = models.DateTimeField(auto_now_add = True)
     in_time = models.DateTimeField(null = True)
+
+
+# class 붕어틀:
+#     앙금 =
+#     반죽 =
+
+# 붕어빵 1 = 뿡어틀()
+
+# 붕어빵1.앙금 = 슈크림
+# 붕어빵1.반죽 = 밀가루
+
+# 붕어빵 2 = 뿡어틀()
+
+# 붕어빵2.앙금 = 팥
+# 붕어빵2.반죽 = 밀가루
+
+
+# 붕어빵리스트 = [붕어빵1, 붕어빵2]
+
+# 붕어빵가져오는변수 = 붕어틀.objects.filter(반죽 = 밀가루)
+
+# def 붕어빵 해체함수(붕어빵리스트):
+#     for i in 내맘변수:
+#         print(i,'')
+#     Print('쩝떱')
+
+# 붕어빵 해체함수(내맘변수 = 붕어빵리스트)

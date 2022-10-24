@@ -25,13 +25,28 @@ from .machine import is_study
 
 @login_required(login_url='user:login')
 def index(request):
-
+    """
+    오늘 스터디 로그를 가져오는 함수
+    """
     user = request.user
 
     if request.method == "GET":
 
+        # 현재 로그인한 유저. 바라보는 스터디 로그. (날짜가 오늘인). 공부 시작시간을 기준으로 정렬!!
         study_log_list = user.studylog_set.filter(date = date.today()).order_by('start_time')
+
+        #------같은 결과---이거 위주----#
+        # 스터디 로그 모델.객체들.(유저는 로그인한 유저, 날짜는 오늘 날짜).공부 시작시간을 기준으로 정렬!
+        study_log_list = StudyLog.objects.all()
+        # study_log_list = StudyLog.objects.filter(user = user, date = date.today()).order_by('start_time')
+                         #붕어빵틀.붕어빵들.
+
+        #-------내가 원하는 타입의 데이터를 얻자!-------#
         study_log_list = log_to_json(study_log_list)
+
+        #------문제--약간 쉬움-----#
+        # 스터디 로그 리스트에 담겨있는 것들의 타입은??? 1.리스트 2. StudyLog의 객체 3. json
+        #----------------------#
         context = {
             'study_log_list' : study_log_list
         }
@@ -102,11 +117,15 @@ def check_study(request):
 
                 log = user.studylog_set.get(date = date.today() ,end_time = None)
 
+                return JsonResponse({'msg':'공부중'})
+
             except StudyLog.DoesNotExist:
 
                 StudyLog.objects.create(user=user)
+
                 study_log_list = user.studylog_set.filter(date = date.today()).order_by('start_time')
                 study_log_list = log_to_json(study_log_list)
+
                 return JsonResponse({'study_log_list':study_log_list})
 
         else: # 공부 중이 아닐 때
@@ -127,7 +146,9 @@ def check_study(request):
 
 
             return JsonResponse({'study_log_list':study_log_list})
-        return JsonResponse({'msg':'공부중'})
+
+    
+    return JsonResponse({'msg' : '잘 못 된 접근이다.'})
 
 
 @login_required(login_url='user:login')

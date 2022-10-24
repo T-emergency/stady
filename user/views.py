@@ -192,12 +192,16 @@ def update(request):
         bio = request.POST.get('bio')
         email = request.POST.get('email')
         username = request.POST.get('username')
+        profile_image = request.FILES.get('image')
+        print(profile_image)
+        print("image= ", request.FILES)
         # nickname = request.POST.get('nickname')
 
         # filter 를 활용해서 가져온 인스턴스와 입력한 인스턴스를 비교하는 변수를 만들어준다.
         exist_email = get_user_model().objects.filter(email=email)
         exist_username = get_user_model().objects.filter(username=username)
         # 닉네임은 중복이 불가한 컬럼이다. 회원정보 수정시 원래 닉네임과 같으면 변경이 안되는 걸 막기위한 코드다.
+
 
         # TODO
         # 입력한 닉네임과 db에 저장되어있는 닉네임이 중복되고 내 닉네임과 다르다면 에러창을 띄운다.
@@ -211,8 +215,9 @@ def update(request):
             user.bio = bio
             user.email = email
             user.username = username
+            user.profile_image = profile_image
             user.save()
-            return redirect('/', user.username)
+            return redirect('/', username)
 
 # 비밀번호 변경
 @login_required

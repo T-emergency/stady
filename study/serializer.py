@@ -3,13 +3,14 @@ import json
 # utils
 from . import utils
 
-def log_to_json(logs):
+def log_to_json(study_log_list:list): # 
     """
     StudyLog의 객체들을 json형식으로 보내기 위한 직렬화 함수
+    인자에는 스터디 로그의 
     """
     log_list = []
 
-    for log in logs:
+    for log in study_log_list:
         log_dict = {
             'id' : log.id,
             'start_time' : utils.get_now_time(log.start_time),
