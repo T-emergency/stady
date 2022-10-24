@@ -88,11 +88,9 @@
           </div>
           <span>카카오톡 로그인</span>
         </button>
-        <form method="post" action="http://127.0.0.1:8000/accounts/google/login/?next=/" style="width: 100%;">
+        <form method="post" action="{% provider_login_url 'google' %}" style="width: 100%;">
           {% csrf_token %}
           <button class="google btn_sns">
-            <!-- <button class="google btn_sns" onclick="location.href=`{% provider_login_url 'google' %}`"> -->
-            <!-- <button class="google btn_sns" onclick="location.href=`{% url 'user:google_social_login' %}`"> -->
             <div class="sns_image_cover">
               <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="48" height="48" viewBox="0 0 48 48"
                 style=" fill:#000000;">
