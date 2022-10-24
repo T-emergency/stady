@@ -30,6 +30,7 @@ urlpatterns = [
     path('user/', include('user.urls')),
     # path('profile/', include('user.urls')),
     path('study/', include('study.urls')),
+    path('studies/', include('study_group.urls')),
     
 
     path('profile/', profile, name='profile'),
