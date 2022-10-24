@@ -27,7 +27,7 @@
                 <div class="row mb-2">
                     <div class="col-4">{{log.start_time}} ~ {{log.end_time}}({{log.sub_time}}분)</div>
                     <div class="col-8 row">
-                        <div class="col-8" id="memo-{{log.id}}"">{{log.memo}}</div>
+                        <div class="col-8" id="memo-{{log.id}}">{{log.memo}}</div>
                         <div class=" col-4 text-end">
                             <button onclick="writeMemo(`{{log.id}}`)" type="button" class="btn btn-success"
                                 style="font-size : 12px;" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
@@ -37,6 +37,7 @@
                         </div>
                     </div>
                 </div>
+
                 {% endfor %}
             </div>
         </div>

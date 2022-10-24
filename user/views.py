@@ -250,12 +250,16 @@ def update(request):
         bio = request.POST.get('bio')
         email = request.POST.get('email')
         username = request.POST.get('username')
+        profile_image = request.FILES.get('image')
+        print(profile_image)
+        print("image= ", request.FILES)
         # nickname = request.POST.get('nickname')
 
         # filter 를 활용해서 가져온 인스턴스와 입력한 인스턴스를 비교하는 변수를 만들어준다.
         exist_email = get_user_model().objects.filter(email=email)
         exist_username = get_user_model().objects.filter(username=username)
         # 닉네임은 중복이 불가한 컬럼이다. 회원정보 수정시 원래 닉네임과 같으면 변경이 안되는 걸 막기위한 코드다.
+
 
         # TODO
         # 입력한 닉네임과 db에 저장되어있는 닉네임이 중복되고 내 닉네임과 다르다면 에러창을 띄운다.
@@ -269,8 +273,9 @@ def update(request):
             user.bio = bio
             user.email = email
             user.username = username
+            user.profile_image = profile_image
             user.save()
-            return redirect('/', user.username)
+            return redirect('/', username)
 
 # 비밀번호 변경
 @login_required
@@ -325,13 +330,5 @@ def delete(request):
     else:
         return render(request, 'user/delete.html')
 
-def google_social_login(request):
-    if request.method =='GET':
-        code = request.GET.get('code')
-        print(code)
-        client_id = my_settings.GOOGLE_CLIENT_ID
-        redirect_uri = 'http://127.0.0.1:8000/accounts/google/login/callback/'
-        return redirect(f'https://accounts.google.com/o/oauth2/auth?client_id={client_id}&redirect_uri={redirect_uri}&scope=profile&response_type=code&state')
-    
     
     

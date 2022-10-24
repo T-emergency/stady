@@ -25,13 +25,12 @@ from .machine import is_study
 
 @login_required(login_url='user:login')
 def index(request):
-
+    
     user = request.user
 
     if request.method == "GET":
 
         study_log_list = user.studylog_set.filter(date = date.today()).order_by('start_time')
-        type(study_log_list)
         study_log_list = log_to_json(study_log_list)
         context = {
             'study_log_list' : study_log_list
@@ -103,11 +102,15 @@ def check_study(request):
 
                 log = user.studylog_set.get(date = date.today() ,end_time = None)
 
+                return JsonResponse({'msg':'공부중'})
+
             except StudyLog.DoesNotExist:
 
                 StudyLog.objects.create(user=user)
+
                 study_log_list = user.studylog_set.filter(date = date.today()).order_by('start_time')
                 study_log_list = log_to_json(study_log_list)
+
                 return JsonResponse({'study_log_list':study_log_list})
 
         else: # 공부 중이 아닐 때
@@ -128,7 +131,9 @@ def check_study(request):
 
 
             return JsonResponse({'study_log_list':study_log_list})
-        return JsonResponse({'msg':'공부중'})
+
+    
+    return JsonResponse({'msg' : '잘 못 된 접근이다.'})
 
 
 @login_required(login_url='user:login')
