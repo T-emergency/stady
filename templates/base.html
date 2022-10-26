@@ -66,7 +66,7 @@
   {% block extra-style %}{% endblock %}
 </head>
 
-<body class="d-flex h-100 text-center" style="background-color: #1AB4AC;">
+<body class="d-flex h-100 text-center" style="background-color: #00b395;">
   <div class="w-100 h-100 p-3 mx-auto">
     <header class="mb-auto" style="background-color: white; max-width: 720px; margin: 0 auto;">
       <div class="contain">
@@ -79,7 +79,7 @@
           <nav class="nav nav-masthead justify-content-center float-md-end">
             <a class="nav-link fw-bold py-1 px-0" aria-current="true" href="/">Home</a>
             <a class="nav-link fw-bold py-1 px-0" aria-current="true" href="">Community</a>
-            <a class="nav-link fw-bold py-1 px-0" aria-current="true" href="{% url 'studies' %}">스터디 모임</a>
+            <a class="nav-link fw-bold py-1 px-0" aria-current="true" href="{% url 'studies:studies' %}">스터디 모임</a>
             <div style="margin-left: 20px; margin-right: 10px">
               <div class="post_header_more_btn_box">
                 <div class="btn-group">
@@ -87,7 +87,7 @@
                     src="/static/images/stady_bear_face.png" data-bs-toggle="dropdown" aria-expanded="false" />
                   <ul class="dropdown-menu">
                     <li>
-                      <a class="dropdown-item" href="{% url 'profile' %}">프로필</a>
+                      <a class="dropdown-item" href="{% url 'profile:profile' %}">프로필</a>
                     </li>
                     <li>
                       <a class="dropdown-item" href="{% url 'user:update' %}">회원정보수정</a>

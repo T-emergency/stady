@@ -332,18 +332,3 @@ def delete(request):
             return render(request, 'user/delete.html', {'error': '비밀번호와 이메일을 다시 확인하세요.'})
     else:
         return render(request, 'user/delete.html')
-
-    
-
-def study_list(request):
-    
-    user = request.user
-    study_list = Study.objects.filter(user = user)
-    bookmark_list = Bookmark.objects.filter(user=user)
-    print(study_list)
-    
-    context ={
-        'study_lists' :study_list,
-        'bookmark_lists': bookmark_list,
-        }
-    return render(request, 'user/study_list.html', context)
