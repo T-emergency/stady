@@ -32,6 +32,9 @@ urlpatterns = [
     path('user/', include('user.urls')),
     # path('profile/', include('user.urls')),
     path('study/', include('study.urls')),
+    # path('community/', include('community.urls')),
+    # 커뮤니티
+
     path('studies/', include('study_group.urls')),
     
 

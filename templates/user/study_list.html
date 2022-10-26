@@ -13,6 +13,26 @@
     flex-direction: row;
     justify-content: space-around;
   }
+
+  .study_img{
+    width:180px;
+    height:150px;
+    border-radius: 10px;
+  }
+
+  .lists{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+  }
+
+  .byone{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+  }
+
+ 
 </style>
 {% endblock %}
 
@@ -60,42 +80,47 @@
     <div>
       <div class="row mb-5 py-2" style="background-color: white; border-radius: 10px;">
           <span>내 공부로그</span>
-          <a href="{% url 'user:study_list' %}">내 스터디</a>   
+          <span>내 스터디</span>   
       </div>
     </div>
 </div>
-  <div class="row" style="max-height: 800px;">
-    <div class="col-4 px-0">
-      <div id="study-day-list" style="background-color: #1d7d78; color: white; min-height: 130px; overflow-y : scroll; border-radius: 10px">
-        <h5>날짜</h4>
-        {% for day in study_day_list%}  
-        <div onclick="getLog(`{{day}}`)">
-          {{day}}
-        </div>
-        {% endfor %}
-      </div>
-    </div>
-    <div class="col-8" style="background-color: white; border-radius: 10px;">
-      <h5 id="today-date">{{date}}</h5>
-      <div id="today-log" style="max-height: 800px; overflow-y : scroll; ">
-      {% for log in study_log_list %}
-      <div class="row mb-2">
-        <div class="col-4">{{log.start_time}} ~ {{log.end_time}}({{log.sub_time}}분)</div>
-        <div class="col-8 row">
-            <div class="col-8" id="memo-{{log.id}}"">{{log.memo}}</div>
-            <div class=" col-4 text-end">
-                <button onclick="writeMemo(`{{log.id}}`)" type="button" class="btn btn-success" style="font-size : 12px;"
-                    data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-                    메모/수정
-                </button>
-            </div>
-        </div>
-    </div>
-      {% endfor %}
-      </div>
-    </div>
-  </div>
 </div>
+<div>
+    <div class="bookmark" style="background-color: white; border-radius: 10px; margin-bottom: 50px;">
+        <div style="padding:20px;">즐겨찾기</div>
+        <div class="lists">
+            {% for bookmark in bookmark_lists %}
+            <div class="byone">
+            <img class="study_img" src= "{{ bookmark.post.thumbnail_img.url}}"/>
+            {{bookmark.post.title}}
+           </div>
+            {% endfor %}    
+        </div>
+    </div>
+    <div class="waiting_accept" style="background-color: white; border-radius: 10px;  margin-bottom: 50px;">  
+        <div style="padding:20px;">승인 대기중</div>
+        <div class="lists">
+            {% for study_list in study_lists %}
+            <div class="byone">
+            <img class="study_img" src= "{{ study_list.thumbnail_img.url}}"/>
+            {{study_list.title}}
+           </div>
+            {% endfor %}    
+        </div>
+    </div>
+    <div class="my_study" style="background-color: white; border-radius: 10px;  margin-bottom: 50px;">
+        <div style="padding:20px;">내 스터디</div>
+        <div class="lists">
+            {% for study_list in study_lists %}
+            <div class="byone">
+            <img class="study_img" src= "{{ study_list.thumbnail_img.url}}"/>
+            {{study_list.title}}
+           </div>
+            {% endfor %}    
+        </div>
+    </div>
+</div>
+
 
 {% block extra-script %}
   {% include 'main_script.html' %}

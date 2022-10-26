@@ -3,7 +3,10 @@ import my_settings
 import requests
 from django.http import JsonResponse
 
+from study_group.models import Bookmark
+
 from .models import User
+from study_group.models import Study
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from django.contrib import auth
@@ -331,4 +334,16 @@ def delete(request):
         return render(request, 'user/delete.html')
 
     
+
+def study_list(request):
     
+    user = request.user
+    study_list = Study.objects.filter(user = user)
+    bookmark_list = Bookmark.objects.filter(user=user)
+    print(study_list)
+    
+    context ={
+        'study_lists' :study_list,
+        'bookmark_lists': bookmark_list,
+        }
+    return render(request, 'user/study_list.html', context)
