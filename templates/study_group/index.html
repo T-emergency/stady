@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+
+{% block extra-styel %}
+<style>
+    /* .card.a {
+        flex-direction: column;
+        align-items: center;
+        width: 800px;
+    } */
+</style>
+{% endblock %}
+
+{% block content %}
+    <h3>좋아할만한 스터디를 골라봤어요!</h3>
+    <div class="row text-center">
+        {% for study in studys %}
+        <div class="mb-3 col-md-4 col-sm-6 p-2">
+            <div class="" style="background-color: white; border-radius : 5px">
+                <a href="{% url 'studies:view_study' study.id %}">
+                    <img src="{{study.thumbnail_img.url}}" type="button" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ study.title }}</h5>
+                        <p class="card-text text-second">
+                            작성자 : {{ study.user }}</br>
+                            모집내용 : {{ study.content }}</br>
+                            모집내용 대신 태그를 달?</br>
+                            모집인원 : {{ study.headcount }}</br>
+                        </p>
+                    </div>
+                </a>
+            </div>
+            
+
+        </div>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block extra-script %}
+
+{% endblock %}

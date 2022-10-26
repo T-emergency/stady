@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'study',
     'community',
     'study_group',
+    'my_profile',
 ]
 
 MIDDLEWARE = [

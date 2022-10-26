@@ -1,11 +1,10 @@
-from tkinter import CASCADE
 from django.db import models
 from user.models import User
 
 # Create your models here.
 
 class Study(models.Model):
-
+        
     user = models.ForeignKey(User, on_delete = models.CASCADE)
     create_dt = models.DateTimeField(auto_now_add = True)
     title = models.CharField(max_length = 100)
@@ -20,6 +19,16 @@ class Study(models.Model):
 
     def __str__(self):
         return f'{self.user} / {self.title}'
+
+
+class Student(models.Model):
+    class Meta:
+        db_table = 'student'
+    user = models.ForeignKey(User, on_delete = models.CASCADE)
+    post = models.ForeignKey(Study, on_delete=models.CASCADE)
+    join_dt = models.DateField(auto_now_add = True)
+    is_accept = models.BooleanField(default=None, null=True)
+
 
 
 class Bookmark(models.Model):

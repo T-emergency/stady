@@ -17,7 +17,6 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import profile
 from study import views
 from study_group import views
 from user import views as user_views
@@ -38,7 +37,7 @@ urlpatterns = [
     path('studies/', include('study_group.urls')),
     
 
-    path('profile/', profile, name='profile'),
+    path('profile/', include('my_profile.urls')),
     # path('accounts/', include('allauth.urls')), 
      # kakao로그인 요청을 보낼 url
     path('account/login/kakao/', user_views.kakao_social_login, name='kakao_login'),
