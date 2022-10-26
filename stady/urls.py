@@ -19,7 +19,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from .views import profile
 from study import views
-
+from study_group import views
 from user import views as user_views
 
 # 이메일 인증
@@ -32,13 +32,10 @@ urlpatterns = [
     path('user/', include('user.urls')),
     # path('profile/', include('user.urls')),
     path('study/', include('study.urls')),
-<<<<<<< HEAD
     path('community/', include('community.urls')),
     # 커뮤니티
 
-=======
     path('studies/', include('study_group.urls')),
->>>>>>> upstream/pr/22
     
 
     path('profile/', profile, name='profile'),

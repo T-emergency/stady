@@ -15,5 +15,5 @@ urlpatterns = [
     path('delete/', views.delete, name='delete'),
     
     #test
-    path('googletest/', views.google_social_login, name='google_social_login')
+    # path('googletest/', views.google_social_login, name='google_social_login')
 ]

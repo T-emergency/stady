@@ -1,0 +1,42 @@
+<h1>{{ study.title }}</h1>
+<div>
+    {{ study.content }}
+</div>
+<div>
+    {{ study.like.count }} 명이 좋아합니다.
+</div>
+
+<div>
+    <form action="{% url 'like' study.id %}" method='POST'>
+      {% csrf_token %}
+      {% if user in study.like.all %}
+        <input type="submit" value='좋아요 취소'>
+      {% else %}
+        <input type="submit" value='좋아요'>
+      {% endif %}
+    </form>
+  </div>
+
+<form action="{% url 'like' study.pk %}" method='POST'>
+  {% csrf_token %}
+  {% if user in study.like.all %}
+    <button class="btn btn-link text-danger">
+    <img src="/static/images/star (1).png">
+    </button>
+  {% else %}
+    <button class="btn btn-link text-danger">
+<img src="/static/images/star (2).png">
+    </button>
+  {% endif %}
+</form>
+
+<div>
+  <form action="{% url 'submit' study.id %}" method='POST'>
+    {% csrf_token %}
+    {% if user in study.submit.all %}
+      <input onclick="return confirm('신청취소 하시겠습니까?');" type="submit" value='신청 취소'>
+    {% else %}
+      <input onclick="return confirm('신청 하시겠습니까?');"type="submit" value='신청'>
+    {% endif %}
+  </form>
+</div>
