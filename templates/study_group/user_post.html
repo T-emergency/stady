@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div>
+    작성자: {{study_post.user}}<br>
+    제목: {{study_post.title}}<br>
+    내용: {{study_post.content}}<br>
+    썸네일: {{study_post.thumbnail_img}}<br>
+</div>
+<div>
+    {{user.id}}
+    {{student_list}}
+    {{student.is_accept}}
+    {% if student == None %}
+    <form method="post">
+        {% csrf_token %}
+        <input type="submit" value="모임 참가신청">
+    </form>
+    {% else %}
+
+    {% if student.is_accept == none %}
+    참가 승인 대기 중
+    <form action="{% url 'delete_student' study_id=study_id user_id=student.user.id %}" method="post">
+        {% csrf_token %}
+        <button>승인 요청 취소</button>
+    </form>
+    {% elif student.is_accept == 1 %}
+    참가 완료
+    <form action="{% url 'delete_student' study_id=study_id user_id=student.user.id %}" method="post">
+        {% csrf_token %}
+        <button>승인 요청 취소</button>
+    </form>
+    {% else %}
+    참가 거절
+    {% endif %}
+    {% endif %}
+</div>
+
+{% endblock %}

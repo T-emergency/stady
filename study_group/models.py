@@ -1,11 +1,13 @@
 from tkinter import CASCADE
 from django.db import models
+import study_group
+
 from user.models import User
 
 # Create your models here.
 
 class Study(models.Model):
-
+        
     user = models.ForeignKey(User, on_delete = models.CASCADE)
     create_dt = models.DateTimeField(auto_now_add = True)
     title = models.CharField(max_length = 100)

@@ -52,8 +52,8 @@
       width: 100px;
       height: 40px;
     }
-    #my-header{
-    }
+
+    #my-header {}
 
     #main_nav {
       padding-top: 1rem;
@@ -68,8 +68,8 @@
 
 <body class="d-flex h-100 text-center" style="background-color: #1AB4AC;">
   <div class="w-100 h-100 p-3 mx-auto">
-    <header  class="mb-auto" style="background-color: white; max-width: 720px; margin: 0 auto;">
-      <div class="contain" >
+    <header class="mb-auto" style="background-color: white; max-width: 720px; margin: 0 auto;">
+      <div class="contain">
         <div class="fixed-top" id="main_nav">
           <h3 class="float-md-start mb-0">
             <a href="/">
@@ -78,8 +78,8 @@
           </h3>
           <nav class="nav nav-masthead justify-content-center float-md-end">
             <a class="nav-link fw-bold py-1 px-0" aria-current="true" href="/">Home</a>
-            <a class="nav-link fw-bold py-1 px-0" aria-current="true"  href="#">Community</a>
-            <a class="nav-link fw-bold py-1 px-0" aria-current="true" href="#">Contact</a>
+            <a class="nav-link fw-bold py-1 px-0" aria-current="true" href="">Community</a>
+            <a class="nav-link fw-bold py-1 px-0" aria-current="true" href="{% url 'studies' %}">스터디 모임</a>
             <div style="margin-left: 20px; margin-right: 10px">
               <div class="post_header_more_btn_box">
                 <div class="btn-group">
@@ -102,7 +102,7 @@
           </nav>
         </div>
       </div>
-      
+
     </header>
 
     <main class="container" style="height: 500px; margin-top : 100px;">
