@@ -32,13 +32,10 @@ urlpatterns = [
     path('user/', include('user.urls')),
     # path('profile/', include('user.urls')),
     path('study/', include('study.urls')),
-<<<<<<< HEAD
     path('community/', include('community.urls')),
     # 커뮤니티
 
-=======
     path('studies/', include('study_group.urls')),
->>>>>>> upstream/pr/22
     
 
     path('profile/', profile, name='profile'),
