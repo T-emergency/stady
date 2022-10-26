@@ -1,69 +1,68 @@
-<h1>{{ study.title }}</h1>
+{% extends 'base.html' %}
+
+{% block content %}
+<img width="100%" src="{{study_post.thumbnail_img.url}}" alt="">
+<h1>{{ study_post.title }}</h1>
 <div>
-    {{ study.content }}
-</div>
-<div>
-    {{ study.like.count }} 명이 좋아합니다.
+    {{ study_post.content }}
 </div>
 
-<div>
-    <form action="{% url 'like' study.id %}" method='POST'>
-      {% csrf_token %}
-      {% if user in study.like.all %}
-        <input type="submit" value='좋아요 취소'>
-      {% else %}
-        <input type="submit" value='좋아요'>
-      {% endif %}
-    </form>
-  </div>
-
-<form action="{% url 'like' study.pk %}" method='POST'>
+<form action="{% url 'studies:like' study_post.pk %}" method='POST'>
   {% csrf_token %}
-  {% if user in study.like.all %}
+  {% if user in study_post.like.all %}
     <button class="btn btn-link text-danger">
-    <img src="/static/images/star (1).png">
+    <img width="30px" height="30px" src="/static/images/star (1).png">
     </button>
   {% else %}
     <button class="btn btn-link text-danger">
-<img src="/static/images/star (2).png">
+        <img width="30px" height="30px" src="/static/images/star (2).png">
     </button>
   {% endif %}
+  {{now_cnt}}/{{limit_cnt}}
 </form>
 
 <div>
-  <form action="{% url 'submit' study.id %}" method='POST'>
+{% if is_author %}
+<button>삭제하기는 아직</button>
+{% else %}
+  <form action="{% url 'studies:submit' study_post.id %}" method='POST'>
     {% csrf_token %}
-    {% if user in study.submit.all %}
+    {% if sended %}
       <input onclick="return confirm('신청취소 하시겠습니까?');" type="submit" value='신청 취소'>
     {% else %}
       <input onclick="return confirm('신청 하시겠습니까?');"type="submit" value='신청'>
     {% endif %}
   </form>
 </div>
+{% endif %}
 
-<!-- ================= 코드 병합전 -->
-
-
-
-
-
-{% extends 'base.html' %}
-
-{% block content %}
 
 
 
 {% if is_author %}
 
-<div>
-    작성자: {{study_post.user}}
-    <form>
-        제목: <input type="text" value="{{study_post.title}}" name="title"><br>
-        내용: <input type="text" value="{{study_post.content}}" name="content"><br>
-        썸네일: <input type="text" value="{{study_post.thumbnail_img}}" name="thumbnail_img"><br>
-        <input type="submit" value="변경하기">
+{% elif is_student %}
+    <form action="{% url 'studies:delete_student' study_id=study_post.id user_id=user.id %}" method="post">
+        {% csrf_token %}
+        <button>탈퇴하기</button>
     </form>
-</div>
+{% elif sended %}
+    <form action="{% url 'studies:delete_student' study_id=study_post.id user_id=user.id %}" method="post">
+        {% csrf_token %}
+        <button>요청 취소</button>
+    </form>
+{% else %}
+    <form method="post">
+        {% csrf_token %}
+        <input type="submit" value="모임 참가신청">
+    </form>
+{% endif %}
+
+
+
+
+{% if is_author %}
+
 멤바들
 {% for member in member_list %}
 {{ member }}
@@ -101,22 +100,7 @@
     </div>
 
 
-    {% if is_student %}
-    <form action="{% url 'studies:delete_student' study_id=study_post.id user_id=user.id %}" method="post">
-        {% csrf_token %}
-        <button>탈퇴하기</button>
-    </form>
-    {% elif sended %}
-    <form action="{% url 'studies:delete_student' study_id=study_post.id user_id=user.id %}" method="post">
-        {% csrf_token %}
-        <button>요청 취소</button>
-    </form>
-    {% else %}
-    <form method="post">
-        {% csrf_token %}
-        <input type="submit" value="모임 참가신청">
-    </form>
-    {% endif %}
+    
 {% endif %}
 
 

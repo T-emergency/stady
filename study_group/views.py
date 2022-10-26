@@ -21,23 +21,27 @@ def like(request, study_id):
     # 변수를 이용해서 존재할경우, study like 에서 유저 제거 해당 객체를 삭제한다고 이해함
     if filtered_like_study.exists():
         study.like.remove(user) #여기서 user는 뭘 의미하는지 모르겠네 아마 유저인듯
-        return redirect('study_detail', study_id=study.id)
+        return redirect('studies:view_study', study_id=study.id)
 
     # 없을 경우, study 객체에서 like에 해당 user를 추가
     else:
         study.like.add(user)
-        return redirect('study_detail', study_id=study.id)
+        return redirect('studies:view_study', study_id=study.id)
 
 def submit(request, study_id):
     user=request.user
     study=get_object_or_404(Study, pk=study_id)
-    filter_submit_study= study.submit.filter(id=user.id)
-    if filter_submit_study.exists():
-        study.submit.remove(user)
-        return redirect('study_detail', study_id=study.id)
-    else:
-        study.submit.add(user)
-        return redirect('study_detail', study_id=study.id)
+
+    try:
+        student = Student.objects.get(user = user, post = study)
+        study.submit.remove(student) # 참여자라고 이해하면 됨 
+        student.delete()
+        return redirect('studies:view_study', study_id=study.id)
+
+    except Student.DoesNotExist:
+        student = Student.objects.create(user = user, post = study)
+        study.submit.add(student)
+        return redirect('studies:view_study', study_id=study.id)
 
 
 def index(request):
@@ -60,6 +64,7 @@ def create_study(request):
         user = request.user
         title = request.POST.get('title')
         thumbnail_img = request.FILES.get('image')
+        #TODO headcount가 int혹은 범위 내에 있는지 판별해야함
         headcount = request.POST.get('headcount')
         content = request.POST.get('content')
 
@@ -88,6 +93,8 @@ def view_study(request, study_id):
             'study_post': study_post,
             'student_list': student_list,
             'member_list': member_list,
+            'limit_cnt' : study_post.headcount,
+            'now_cnt' : study_post.student_set.filter(is_accept = True).count(),
             'is_author' : '',
             'is_student' : '',
             'sended' : '',

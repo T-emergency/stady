@@ -18,7 +18,6 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from study import views
-from study_group import views
 from user import views as user_views
 
 # 이메일 인증
