@@ -3,7 +3,7 @@
     <h3>좋아할만한 스터디를 골라봤어요!</h3>
     <div class="row text-center">
         {% for study in studys %}
-        <div class="mb-3 col-md-4 col-sm-6 p-2">
+        <div class="mb-3 col-md-4 col-sm-6 p-2" style="cursor: pointer;">
             <div id="study" style="background-color: white; border-radius : 5px" onclick="viewStudy(`{{study.id}}`)">
 
                     <img src="{{study.thumbnail_img.url}}" type="button" class="card-img-top" alt="...">
@@ -24,19 +24,29 @@
     </div>
 
 
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
 
 <!-- Modal -->
-<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="1" aria-labelledby="staticBackdropLabel" aria-hidden="true" style="max-width: 500px;">
-<div class="modal-dialog">
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="1" aria-labelledby="staticBackdropLabel" aria-hidden="true" style="">
+<div class="modal-dialog modal-xl" style="border-radius: 10px; overflow: hidden;">
     <div class="modal-content">
-    <div class="modal-body">
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        <img width="100%" id="thumbnail-img" src="" alt="">
+    <div class="modal-body" style="padding: 0;">
+        <div id="modal-head" class="p-3" style="height: 300px; ">
+
+            <div class="align-bottom" style="align-self: end;">
+                <b><h3 id="study-title" class="text-start" style="color: white;"></h3></b>
+                <button id="status" type="button" class="btn btn-primary">Understood</button>
+                <button>star</button>
+                <span id="study-retio" class="p-1" style="color: white; border: 1px solid white; border-radius: 20%;">몇명있는지 보여줄 예정,,,</span>
+                <!-- <span style="color: white;">태그들 있을 예정</span> -->
+            </div>
+            <i class="fas fa-times text-end" data-bs-dismiss="modal" aria-label="Close" style="margin-left: auto; cursor: pointer; color: rgb(255, 255, 255); font-size: 30px;"></i>
+        </div>
     </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Understood</button>
+    <div class="modal-footer" style="display: block; text-align: left;">
+        <h6 id="author" class="text-secondary"></h6>
+
+        <div id="content"></div>
     </div>
     </div>
 </div>
@@ -60,12 +70,30 @@
 
             data: {},
 
-            url: `/api/${study_id}/`,
+            url: `/api/studies/${study_id}/`,
 
             success: function (result) {
                 console.log('성공:', result, result['thumbnail_img']);
-                $('#thumbnail-img').attr('src', result['thumbnail_img']);
+                // $('#thumbnail-img').attr('src', result['thumbnail_img']);
+                $('#modal-head').attr('style', `background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.2)), url(${result['thumbnail_img']});
+                                            background-position: center;
+                                            background-size: cover;
+                                            height : 300px;
+                                            display: flex;
+                `)
+                $('#study-title').text(result['title'])
+                $('#author').text(result['user'])
+                $('#content').text(result['content'])
                 
+                var isStudent = result['is_student']
+                var isAuthor = result['is_author']
+                var sended = result['sended']
+                var onOffLine = result['on_off_line']
+                var isLike = result['is_like']
+                var headCount = result['headcount']
+                var nowCnt = result['now_cnt']
+
+                $('#study-retio').text(`${nowCnt}/${headCount}`)
 
             },
             
