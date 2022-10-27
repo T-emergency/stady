@@ -60,10 +60,11 @@
 
 
 <script>
+
     function viewStudy(study_id){
 
         const modal = document.getElementById('staticBackdrop');
-        var tumbnailImg = document.getElementById('tumbnail-img');
+        let tumbnailImg = document.getElementById('tumbnail-img');
 
         $.ajax({
             type: 'GET',
@@ -85,13 +86,13 @@
                 $('#author').text(result['user'])
                 $('#content').text(result['content'])
                 
-                var isStudent = result['is_student']
-                var isAuthor = result['is_author']
-                var sended = result['sended']
-                var onOffLine = result['on_off_line']
-                var isLike = result['is_like']
-                var headCount = result['headcount']
-                var nowCnt = result['now_cnt']
+                let isStudent = result['is_student']
+                let isAuthor = result['is_author']
+                let sended = result['sended']
+                let onOffLine = result['on_off_line']
+                let isLike = result['is_like']
+                let headCount = result['headcount']
+                let nowCnt = result['now_cnt']
 
                 $('#study-retio').text(`${nowCnt}/${headCount}`)
 
