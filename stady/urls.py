@@ -35,8 +35,9 @@ urlpatterns = [
 
     path('studies/', include('study_group.urls')),
     
-
     path('profile/', include('my_profile.urls')),
+
+    path('api/', include('api.urls')),
     # path('accounts/', include('allauth.urls')), 
      # kakao로그인 요청을 보낼 url
     path('account/login/kakao/', user_views.kakao_social_login, name='kakao_login'),

@@ -21,7 +21,7 @@ class Study(models.Model):
         return f'{self.user} / {self.title}'
 
 
-class Student(models.Model):
+class Student(models.Model): # 참여자 모델
     class Meta:
         db_table = 'student'
     user = models.ForeignKey(User, on_delete = models.CASCADE)

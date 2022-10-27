@@ -1,16 +1,11 @@
-{% extends 'base.html' %}
-
-
-{% block extra-styel %}
-{% endblock %}
-
+{% extends 'base.html'%}
 {% block content %}
     <h3>좋아할만한 스터디를 골라봤어요!</h3>
     <div class="row text-center">
         {% for study in studys %}
         <div class="mb-3 col-md-4 col-sm-6 p-2">
-            <div class="" style="background-color: white; border-radius : 5px">
-                <a href="{% url 'studies:view_study' study.id %}">
+            <div id="study" style="background-color: white; border-radius : 5px" onclick="viewStudy(`{{study.id}}`)">
+
                     <img src="{{study.thumbnail_img.url}}" type="button" class="card-img-top" alt="...">
                     <div class="card-body">
                         <h5 class="card-title">{{ study.title }}</h5>
@@ -21,7 +16,6 @@
                             모집인원 : {{ study.headcount }}</br>
                         </p>
                     </div>
-                </a>
             </div>
             
 
@@ -32,30 +26,54 @@
 
 
 
-    <!-- 모달 섹션 -->
-    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-    aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="staticBackdropLabel">Memo</h1>
-                <button type="button" onclick="closeMemo()" class="btn-close" data-bs-dismiss="modal"
-                    aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <h5 id="study-title"></h5>
-                <input type="text" id="study-content">
-            </div>
-            <div class="modal-footer">
-
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="memo-submin-btn">저장</button>
-            </div>
-        </div>
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="1" aria-labelledby="staticBackdropLabel" aria-hidden="true" style="max-width: 500px;">
+<div class="modal-dialog">
+    <div class="modal-content">
+    <div class="modal-body">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <img width="100%" id="thumbnail-img" src="" alt="">
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Understood</button>
     </div>
     </div>
+</div>
+</div>
 
-{% endblock %}
+
+
+{% endblock%}
 
 {% block extra-script %}
 
+
+<script>
+    function viewStudy(study_id){
+
+        const modal = document.getElementById('staticBackdrop');
+        var tumbnailImg = document.getElementById('tumbnail-img');
+
+        $.ajax({
+            type: 'GET',
+
+            data: {},
+
+            url: `/api/${study_id}/`,
+
+            success: function (result) {
+                console.log('성공:', result, result['thumbnail_img']);
+                $('#thumbnail-img').attr('src', result['thumbnail_img']);
+                
+
+            },
+            
+        });
+        
+        $('#staticBackdrop').modal('show')
+
+    }
+    
+</script>
 {% endblock %}
