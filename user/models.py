@@ -16,3 +16,5 @@ class User(AbstractUser):
     # local = models.CharField(max_length = 150, null = True)
 
 
+# 사용자 개인정보, 핸드폰, 노출되곡 싶지않은 정보 유저랑, 유저 프로필 모델
+# 관리자 권한, 회원등급 별로
