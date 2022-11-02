@@ -1,7 +1,25 @@
-import json
-
 # utils
 from . import utils
+from .models import User
+
+from rest_framework import serializers
+
+
+
+class UserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = '__all__'
+
+    def create(self, validated_data):
+        user  = super().create(validated_data) # 저장하고
+        password = user.password
+        user.set_password(password) # 지정하고
+        user.save() # 다시 저장?
+        return user
+
+
 
 def log_to_json(study_log_list:list): # 
     """
