@@ -19,11 +19,16 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = '__all__'
+        fields = ['email', 'username', 'password']
+        extra_kwargs = {
+            'password': {'write_only': True},
+        }
 
     def create(self, validated_data):
         user  = super().create(validated_data) # 저장하고
+        print(validated_data)
         password = user.password
+        print(password)
         user.set_password(password) # 지정하고
         user.save() # 다시 저장?
         return user

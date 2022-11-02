@@ -20,7 +20,7 @@ urlpatterns = [
     # path('change_password/', views.change_password, name='change_password'),
     # path('delete/', views.delete, name='delete'),
 
-    path('join/', UserView.as_view(), name='user_view'),
+    path('', UserView.as_view(), name='user_view'),
 
     path('api/token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),

@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'django.contrib.sites', #sns login
 
     #provider
+    'corsheaders',
+    'rest_framework',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -60,6 +62,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware', 
+
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -68,6 +72,12 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+CORS_ORIGIN_WHITELIST = ['http://127.0.0.1:5500'
+                         ,'http://localhost:5500']
+CORS_ALLOW_CREDENTIALS = True
+
+
 
 ROOT_URLCONF = 'stady.urls'
 
