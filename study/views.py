@@ -70,7 +70,7 @@ def start_study(request):
 def finish_study(request):
     
     user = request.user
-    
+
     try:
         log = user.studylog_set.get(date = date.today() ,end_time = None)
     except StudyLog.DoesNotExist:

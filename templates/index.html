@@ -70,5 +70,12 @@
 {% endblock %}
 
 {% block extra-script %}
+    <script>
+        $.ajaxSetup({
+        headers: {
+            'X-CSRFToken': '{{csrf_token}}',
+        },
+    });
+    </script>
     {% include 'main_script.html' %}
 {% endblock %}
