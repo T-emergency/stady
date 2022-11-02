@@ -18,6 +18,7 @@ defusedxml==0.7.1
 Django==4.1.2
 django-allauth==0.51.0
 djangorestframework==3.14.0
+djangorestframework-simplejwt==5.2.2
 drf-yasg==1.21.4
 executing==1.1.1
 fonttools==4.37.4

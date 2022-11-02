@@ -51,12 +51,16 @@ INSTALLED_APPS = [
     # select google
     'allauth.socialaccount.providers.google',
 
+    'rest_framework',
+    'drf_yasg',
+
     # service app
     'user',
     'study',
     'community',
     'study_group',
     'my_profile',
+    'api',
 ]
 
 MIDDLEWARE = [
@@ -97,13 +101,13 @@ WSGI_APPLICATION = 'stady.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-DATABASES = my_settings.DATABASES
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+# DATABASES = my_settings.DATABASES
 
 
 
@@ -194,3 +198,10 @@ LOGIN_REDIRECT_URL = '/' #오류 생기면 홈으로 돌아와라.
 
 MEDIA_URL = 'media/'  # 업로드할 경로
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # 로컬 디렉토리 어디에 저정할 것인지
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
