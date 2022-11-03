@@ -66,6 +66,10 @@ class User(AbstractBaseUser):
         max_length = 128,
         unique = True,
     )
+    total_time = models.IntegerField(default = 0)
+    department = models.ForeignKey('study_group.Category', on_delete = models.CASCADE, null = True, blank = True)
+    profile_image = models.ImageField(upload_to='media', height_field=None, width_field=None, default='default.jpeg', blank=True)
+    kakao_id = models.CharField(max_length=100, blank=True)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
 

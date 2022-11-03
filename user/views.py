@@ -32,6 +32,7 @@ class UserView(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response({'msg':'저장완료'}, status=status.HTTP_200_OK)
+        print(serializer.errors)
         return Response({"msg" : f"{serializer.errors}"}, status = status.HTTP_400_BAD_REQUEST)
     
     def delete(self, request):

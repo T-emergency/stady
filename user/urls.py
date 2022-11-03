@@ -1,18 +1,17 @@
 from django.urls import path
 
-
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
 from user.views import CustomTokenObtainPairView, UserView
-
+# from . import fbv_views
 app_name = 'user'
 
 urlpatterns = [
     # User URL
     # path('join/', views.join, name='join'),
-    # path('login/', views.login, name='login'),
+    # path('login/', fbv_views.login, name='login'),
     # path('logout/', views.logout, name='logout'),
     # path('update/', views.update, name='update'),
     # path('change_password/', views.change_password, name='change_password'),

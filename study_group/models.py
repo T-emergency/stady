@@ -14,7 +14,7 @@ class Study(models.Model):
     headcount = models.IntegerField() #IntegerChoices? 선택인원 최소 2~10 지정할 수 있으면 지정하기
     like = models.ManyToManyField(User, related_name='liker')
     submit = models.ManyToManyField("Student", related_name='submiter') # 참여자와 연동되는 이유는 여러 유저를 참조하는 것은 맞으나 is_accept를 사용하기 위해서
-    # category = #TODO 경민 - 조사 후 카테고리, 나눈 뒤 모델 생성
+    tags = models.ManyToManyField("Tag", related_name = 'tag_studies')
 
 
     def __str__(self):
@@ -34,3 +34,14 @@ class Student(models.Model): # 참여자 모델
 class Bookmark(models.Model):
     post = models.ForeignKey(Study, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+
+class Category(models.Model):
+    high_class = models.CharField(max_length = 64)
+    sub_class = models.CharField(max_length = 128)
+
+    def __str__(self):
+        return self.sub_class
+
+class Tag(models.Model):
+    tag_name = models.CharField(max_length = 128)

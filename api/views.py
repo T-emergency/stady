@@ -56,6 +56,42 @@ class StudyDetailAPIView(APIView):
 
 
 #-------프로필 섹션-------#
+from .serializer import UserSerializer
+from study_group.models import Category
+from user.models import User
+
+
+class UserView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
+
+
+
+class CategoryView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        categories = Category.objects.all()
+        high_class = sorted(set([ c.high_class for c in  categories]))[::-1]
+
+        print(high_class)
+        data = [
+            {c : [ s.sub_class for s in categories if s.high_class == c]} for c in high_class
+        ]
+        print(data)
+        return Response(data)
+
+    def post(self, request):
+        user = User.objects.get(pk = request.user.id)
+        sub_class = request.POST.get('subClass', '')
+        category = Category.objects.get(sub_class = sub_class)
+        user.department = category
+        user.save()
+        return Response('success', status=status.HTTP_200_OK)
 
 #-------끝-------#
 
@@ -117,15 +153,6 @@ class StudyLogView(APIView):
             user.total_time += get_sub_time(log.start_time, log.end_time)
             user.save()
 
-            # study_log_list = user.studylog_set.filter(date = date.today()).order_by('start_time')
-
-            # serializer = StudyLogSerializer(study_log_list, many = True)
-            # day_total_time = sum([ item["sub_time"] for item in serializer.data])
-
-            # data = {
-            #     "study_log_list" : serializer.data,
-            #     "day_total_time" : day_total_time
-            # }
             data = self.study_log_with_time(user)
             return Response(data, status = status.HTTP_200_OK)
 
@@ -143,16 +170,7 @@ class StudyLogView(APIView):
 
                 StudyLog.objects.create(user=user)
 
-                # study_log_list = user.studylog_set.filter(date = date.today()).order_by('start_time')
-
-                # serializer = StudyLogSerializer(study_log_list, many = True)
-                # day_total_time = sum([ item["sub_time"] for item in serializer.data])
-
-                # data = {
-                #     "study_log_list" : serializer.data,
-                #     "day_total_time" : day_total_time
-                # }
-                self.study_log_with_time(user)
+                data = self.study_log_with_time(user)
 
             return Response(data, status = status.HTTP_200_OK)
 
@@ -168,16 +186,7 @@ class StudyLogView(APIView):
 
             user.total_time += get_sub_time(log.start_time, log.end_time)
             user.save()
-                
-            # study_log_list = user.studylog_set.filter(date = date.today()).order_by('start_time')
-
-            # serializer = StudyLogSerializer(study_log_list, many = True)
-            # day_total_time = sum([ item["sub_time"] for item in serializer.data])
-
-            # data = {
-            #     "study_log_list" : serializer.data,
-            #     "day_total_time" : day_total_time
-            # }
+            
             data = self.study_log_with_time(user)
 
             return Response(data, status = status.HTTP_200_OK)
@@ -205,15 +214,6 @@ class StudyLogView(APIView):
         for log in log_list:
             log.delete()
 
-        # study_log_list = user.studylog_set.filter(date = date.today()).order_by('start_time')
-
-        # serializer = StudyLogSerializer(study_log_list, many = True)
-        # day_total_time = sum([ item["sub_time"] for item in serializer.data])
-
-        # data = {
-        #     "study_log_list" : serializer.data,
-        #     "day_total_time" : day_total_time
-        # }
         data = self.study_log_with_time(user)
 
         return Response(data, status = status.HTTP_200_OK)
@@ -241,6 +241,7 @@ class GetLogView(APIView):
     # TODO 달력을 만든다면 년도와 월을 인자로 받아서 해야하나 고민
     def get(self, request):
         user = request.user
+        print(user)
         day = request.GET.get('day', '')
         log_list = StudyLog.objects.filter(user = user, date = day)
         serializer = StudyLogSerializer(log_list, many = True)
@@ -251,16 +252,8 @@ class GetLogView(APIView):
             "study_log_list" : serializer.data,
             "day_total_time" : day_total_time
         }
-
         return Response(data)
 
-
-class CheckStudyView(APIView):
-    pass
-
-
-class CallbackLogView(APIView):
-    pass
 
 
 #-------끝-------#
