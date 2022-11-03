@@ -2,10 +2,20 @@ from rest_framework import serializers
 from study_group.models import Study, Student
 
 class StudySerializer(serializers.ModelSerializer):
+    # tags=serializers.SerializerMethodField()
+    # def get_tags(self, obj):
+    #     return obj.tags.tag_name
+    
     class Meta:
         model=Study
-        fields='__all__'
+        fields=("title","content","thumbnail_img","headcount")
 
+
+
+class StudyCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Study
+        fields=("title","content")
 
 # 리스트
 class StudyListSerializer(serializers.ModelSerializer):
@@ -22,7 +32,7 @@ class StudyListSerializer(serializers.ModelSerializer):
     
     class Meta:
         model=Study
-        fields=("student_count", "title","content","thumbnail_img","headcount","user","like_count","create_dt")
+        fields=("student_count", "title","content","thumbnail_img","headcount","user","like_count","create_dt","tags")
 
 
 
