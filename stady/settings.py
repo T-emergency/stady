@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'community',
     'study_group',
     'my_profile',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
