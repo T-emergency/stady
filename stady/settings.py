@@ -42,9 +42,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'django.contrib.sites', #sns login
+    'django.contrib.sites',  # sns login
 
-    #provider
+    # provider
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -72,7 +72,7 @@ ROOT_URLCONF = 'stady.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [ os.path.join(BASE_DIR, 'templates') ],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -88,8 +88,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'stady.wsgi.application'
 
 
-#카카오 로그인을 위한 클라이언트 키
-
+# 카카오 로그인을 위한 클라이언트 키
 
 
 # Database
@@ -102,7 +101,6 @@ DATABASES = {
     }
 }
 # DATABASES = my_settings.DATABASES
-
 
 
 # Password validation
@@ -144,10 +142,10 @@ STATIC_DIR = os.path.join(BASE_DIR, 'static')
 
 STATICFILES_DIRS = [
     STATIC_DIR
-# BASE_DIR / 'static',
+    # BASE_DIR / 'static',
 ]
 
-STATIC_DIR = os.path.join(BASE_DIR,'static')
+STATIC_DIR = os.path.join(BASE_DIR, 'static')
 
 STATICFILES_DIRS = [STATIC_DIR]
 
@@ -175,7 +173,7 @@ EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
-#sns login
+# sns login
 AUTHENTICATION_BACKENDS = (
     # Needed to login by username in Django admin, regardless of `allauth`
     'django.contrib.auth.backends.ModelBackend',
@@ -186,7 +184,7 @@ AUTHENTICATION_BACKENDS = (
 
 SITE_ID = 1
 
-LOGIN_REDIRECT_URL = '/' #오류 생기면 홈으로 돌아와라.
+LOGIN_REDIRECT_URL = '/'  # 오류 생기면 홈으로 돌아와라.
 
 # Media files -업로드를 하는 url과 디렉토리 설정
 
