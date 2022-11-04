@@ -1,3 +1,4 @@
+
 from rest_framework.generics import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -47,18 +48,6 @@ class StudySearchView(generics.ListAPIView):
 class StudyDetailView(APIView):
     def get(self, request, study_id):
         study = get_object_or_404(Study, id=study_id)
-<<<<<<< HEAD
-        # print("Detail 접근 ok")
-        # print("")
-        # if study.user == request.user:
-        #     print("작성자입니다")
-        #     serializer = StudyAuthorSerializer(study, context={"user":request.user})
-        #     return Response(serializer.data)
-        
-        # print("참여예정자입니다")
-        # # serializer = StudySerializer(study)
-        serializer = StudyAuthorSerializer(study, context={"user":study.user})
-=======
         print("Detail 접근 ok")
         if study.user == request.user:
             print("작성자입니다")
@@ -70,7 +59,6 @@ class StudyDetailView(APIView):
         # serializer = StudySerializer(study)
         serializer = StudyAuthorSerializer(
             study, context={"user": request.user})
->>>>>>> 921f7b2b12db40743a2b0157614fab61bb8ff99e
         return Response(serializer.data)
 
     # 게시글 수정
@@ -137,7 +125,7 @@ class StudentView(APIView):
             return Response("삭제 완료")
         else:
             return Response("권한이 없습니다.")
-
+    
 
 # def like(request, study_id):
 #     # 스터디 id에 해당하는 객체를 가져온다
