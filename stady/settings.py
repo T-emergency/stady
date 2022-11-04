@@ -58,11 +58,13 @@ INSTALLED_APPS = [
     'study_group',
     'my_profile',
     'rest_framework',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -195,3 +197,10 @@ LOGIN_REDIRECT_URL = '/' #오류 생기면 홈으로 돌아와라.
 
 MEDIA_URL = 'media/'  # 업로드할 경로
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # 로컬 디렉토리 어디에 저정할 것인지
+
+# live server port 5500
+CORS_ORIGIN_WHITELIST = ['http://127.0.0.1:5500'
+                         ,'http://localhost:5500']
+# 예외 없이 다 수락
+CORS_ALLOW_CREDENTIALS = True
+# CORS_ALLOW_ALL_ORIGINS = True
