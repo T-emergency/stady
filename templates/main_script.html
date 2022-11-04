@@ -52,7 +52,7 @@
                     console.log(result, '콜백 실행돼야해!!!!!!!!!');
 
                     $.ajax({ // 새로운 공부 로그가 만들어지면 안되기 때문에 다시 콜백에 요청을 한다.
-                        type: 'POST',
+                        type: 'POST', // DELETE
 
                         data: {},
 
@@ -113,7 +113,7 @@
 
             data: {},
 
-            url: '/study/start/',
+            url: '/study/start/?type=start', // /study/?type=start
 
             success: function (result) {
                 console.log('성공:', result);
@@ -130,7 +130,7 @@
 
             data: {},
 
-            url: '/study/finish/',
+            url: '/study/finish/', // /study/?type=finish
 
             success: function (result) {
                 console.log('finishStudy()');

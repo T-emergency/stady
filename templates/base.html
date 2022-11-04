@@ -17,6 +17,7 @@
 
   <!-- JS 파일 -->
   <script src="/static/js/bootstrap.bundle.min.js?after"></script>
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-modal/2.2.6/js/bootstrap-modalmanager.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
 
   <style>
     .stady_btn {
@@ -66,7 +67,7 @@
   {% block extra-style %}{% endblock %}
 </head>
 
-<body class="d-flex h-100 text-center" style="background-color: #00b395;">
+<body id="body" class="d-flex h-100 text-center" style="background-color: #00b395;">
   <div class="w-100 h-100 p-3 mx-auto">
     <header class="mb-auto" style="background-color: white; max-width: 720px; margin: 0 auto;">
       <div class="contain">
@@ -111,6 +112,8 @@
   </div>
   {% block extra-script %}
   {% endblock %}
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
 </body>
 
 </html>
