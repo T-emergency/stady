@@ -30,15 +30,16 @@ class StudyView(APIView):
 class StudyDetailView(APIView):
     def get(self, request, study_id):
         study = get_object_or_404(Study, id=study_id)
-        print("Detail 접근 ok")
-        if study.user == request.user:
-            print("작성자입니다")
-            serializer = StudyAuthorSerializer(study, context={"user":request.user})
-            return Response(serializer.data)
+        # print("Detail 접근 ok")
+        # print("")
+        # if study.user == request.user:
+        #     print("작성자입니다")
+        #     serializer = StudyAuthorSerializer(study, context={"user":request.user})
+        #     return Response(serializer.data)
         
-        print("참여예정자입니다")
-        # serializer = StudySerializer(study)
-        serializer = StudyAuthorSerializer(study, context={"user":request.user})
+        # print("참여예정자입니다")
+        # # serializer = StudySerializer(study)
+        serializer = StudyAuthorSerializer(study, context={"user":study.user})
         return Response(serializer.data)
         
     # 게시글 수정
