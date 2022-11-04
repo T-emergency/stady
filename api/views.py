@@ -20,7 +20,9 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
 
 #-------스터디 그룹 섹션-------#
+from study_group.models import Tag
 class StudyListAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
 
@@ -30,12 +32,29 @@ class StudyListAPIView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
+        print(request.data ,'aaa')
+        print(request.FILES.get('image'))
 
-        study = StudySerializer(data = request.data)
+        tags = request.data.get('tags')
+        tag_list = []
+
+        #TODO 유효성 검사 구체화 필요
+        for i in tags.split():
+            if i == '' or len(i) >= 13:
+                continue
+            #request.data의 요소는 바꾸지 못한다.
+            tag, _ = Tag.objects.get_or_create(name = i.strip())
+
+            tag_list.append(tag.id)
+
+        study = StudySerializer(data = request.data, context = {'tags' : tag_list})
+
+
         if study.is_valid():
-            study.save(user = request.user)
-            return Response(study.data,  status=status.HTTP_201_CREATED)
-        return Response(study.errors, status=status.HTTP_400_BAD_REQUEST)
+            study.save(user = request.user) # 여기서 tags = tag_lsit 넣어줘도 똑같은 로직?
+            return Response(status=status.HTTP_201_CREATED)
+        print(study.errors)
+        return Response( status=status.HTTP_400_BAD_REQUEST)
 
 
 class StudyDetailAPIView(APIView):
@@ -44,8 +63,6 @@ class StudyDetailAPIView(APIView):
     def get(self, request, study_id):
         user = request.user
         study = get_object_or_404(Study, pk = study_id)
-
-        study.like.filter(id = user.id).exists()
 
         serializer = StudyDetailSerializer(study, context = {'request' : request})
         return Response(serializer.data)
@@ -86,9 +103,9 @@ class CategoryView(APIView):
         return Response(data)
 
     def post(self, request):
-        user = User.objects.get(pk = request.user.id)
+        user = get_object_or_404(User, pk = request.user.id)
         sub_class = request.POST.get('subClass', '')
-        category = Category.objects.get(sub_class = sub_class)
+        category = get_object_or_404(Category, sub_class = sub_class)
         user.department = category
         user.save()
         return Response('success', status=status.HTTP_200_OK)
