@@ -22,18 +22,11 @@ from rest_framework import generics
 
 class StudyView(APIView):
     def post(self, request):
-        content = request.POST.get('tags')
-        print(content)
-        tag_list = content.split(' ')
-        for i in tag_list:
-            if '#' in i:
-                Tag.tag_name = i
-                Tag.save()
-            else:
-                pass
-        serializer = StudyCreateSerializer(data=request.data)
+        serializer = StudyCreateSerializer(
+            data=request.data, context={"request": request})
+        print(request.user)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(user=request.user)
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

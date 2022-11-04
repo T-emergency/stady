@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from study_group.models import Study, Student
+from study_group.models import Study, Student, Tag
 
 
 class StudySerializer(serializers.ModelSerializer):
@@ -13,20 +13,47 @@ class StudySerializer(serializers.ModelSerializer):
 
 
 class StudyCreateSerializer(serializers.ModelSerializer):
+    tags = serializers.SerializerMethodField()
+
+    def get_tags(self, obj):
+        content = self.context.get("request").data.get('tags')
+        return content
+
+    def create(self, validated_data):
+        content = self.context.get("request").data.get('tags')
+        tags_list = []
+        if content != None:
+            tag_list = content.split(' ')
+            for i in tag_list:
+                if '#' in i:
+                    tag, _ = Tag.objects.get_or_create(tag_name=i)
+                    tags_list.append(tag.id)
+                else:
+                    pass
+        validated_data['tags'] = tags_list
+        print(validated_data)
+
+        instance = super().create(validated_data)
+        return instance
+
     class Meta:
         model = Study
-        fields = ('title', 'content', 'on_off_line', 'headcount')
+        fields = ('title', 'content', 'on_off_line', 'headcount', 'tags')
 
 # 리스트
 
 
 class StudyListSerializer(serializers.ModelSerializer):
-    user = serializers.SerializerMethodField()
+    # user = serializers.SerializerMethodField()
     like_count = serializers.SerializerMethodField()
     student_count = serializers.SerializerMethodField()
+    tags = serializers.SerializerMethodField()
 
-    def get_user(self, obj):
-        return obj.user.username
+    # def get_user(self, obj):
+    #     print(obj.user)
+    #     user = obj.user.username
+    #     print("user:", user)
+    #     return user
 
     def get_like_count(self, obj):
         return obj.like.count()
@@ -34,6 +61,9 @@ class StudyListSerializer(serializers.ModelSerializer):
     def get_student_count(self, obj):  # 여기서 obj로 스터디 객체 가져온거다 obj.id사용해도 된다
         # 스터디를 바라보는 걸 다 가져왔다 여기서 필터를 건다 가능
         return obj.student_set.filter(id=obj.id, is_accept=True).count()
+
+    def get_tags(self, obj):
+        return [tag.tag_name for tag in obj.tags.all()]
 
     class Meta:
         model = Study
