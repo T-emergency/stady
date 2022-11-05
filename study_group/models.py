@@ -45,3 +45,12 @@ class Category(models.Model):
 
 class Tag(models.Model):
     name = models.CharField(max_length = 128)
+
+
+class UserTagLog(models.Model):
+    user = models.ForeignKey(User, on_delete = models.CASCADE)
+    tag = models.ForeignKey(Tag, on_delete = models.CASCADE)
+    count = models.IntegerField(default = 0)
+
+
+

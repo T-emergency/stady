@@ -24,7 +24,11 @@ class UserView(APIView):
             serializer.save()
             return Response({'msg':'가입완료'}, status=status.HTTP_201_CREATED)
         else:
-            return Response({"msg" : f"{serializer.errors}"}, status = status.HTTP_400_BAD_REQUEST)
+            data = dict()
+            for key in serializer.errors.keys():
+                data[key] = f"이미 존재하는 {key} 또는 형식에 맞지 않습니다."
+            return Response(data = data, status = status.HTTP_400_BAD_REQUEST)
+            # return Response({"msg" : f"{serializer.errors}"}, status = status.HTTP_400_BAD_REQUEST)
 
     def put(self, request): # 회원 정보 저장 ( 관심 분야, 닉네임, 이메일 변경?)
         user = User.objects.get(pk = request.user.id)
@@ -32,8 +36,11 @@ class UserView(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response({'msg':'저장완료'}, status=status.HTTP_200_OK)
-        print(serializer.errors)
-        return Response({"msg" : f"{serializer.errors}"}, status = status.HTTP_400_BAD_REQUEST)
+        else:
+            data = dict()
+            for key in serializer.errors.keys():
+                data[key] = f"이미 존재하는 {key} 또는 형식에 맞지 않습니다."
+        return Response(data = data, status = status.HTTP_400_BAD_REQUEST)
     
     def delete(self, request):
         try:
