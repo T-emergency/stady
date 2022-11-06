@@ -2,11 +2,17 @@ from rest_framework import serializers
 from study_group.models import Study
 from study.models import StudyLog
 from study import utils
+from user.models import User
 
 class StudyListSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Study
+        model = StudyLog
         fields = "__all__"
+
+class StudyMemoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StudyLog
+        fields = ("memo",)
 
 
 
@@ -25,3 +31,8 @@ class StudyLogSerializer(serializers.ModelSerializer):
         model = StudyLog
         fields = "__all__"
 
+
+class UserLogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields="__all__"
