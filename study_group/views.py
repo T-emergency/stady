@@ -22,16 +22,6 @@ from rest_framework.pagination import PageNumberPagination
 from django.db.models import Q
 
 
-class StudyView(APIView, PageNumberPagination):
-    page_size = 6
-
-    def get(self, request, format=None):
-        studies = Study.objects.all()
-        results = self.paginate_queryset(studies, request, view=self)
-        serializer = StudyListSerializer(results, many=True)
-        return self.get_paginated_response(serializer.data)
-
-
 class Search(APIView):
     def get(self, request, format=None):
         search = request.GET.get('search', '')  # 파라미터 가져오기
@@ -45,7 +35,15 @@ class Search(APIView):
         return Response(serializer.data)
 
 
-class StudyView(APIView):
+class StudyView(APIView, PageNumberPagination):
+    page_size = 6
+
+    def get(self, request, format=None):
+        studies = Study.objects.all()
+        results = self.paginate_queryset(studies, request, view=self)
+        serializer = StudyListSerializer(results, many=True)
+        return self.get_paginated_response(serializer.data)
+
     def post(self, request):
         serializer = StudySerializer(
             data=request.data, context={"request": request})
@@ -57,10 +55,10 @@ class StudyView(APIView):
             print("errors: ", serializer.errors)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def get(self, request):
-        studies = Study.objects.all()
-        serializer = StudySerializer(studies, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    # def get(self, request):
+    #     studies = Study.objects.all()
+    #     serializer = StudySerializer(studies, many=True)
+    #     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class StudySearchView(generics.ListAPIView):

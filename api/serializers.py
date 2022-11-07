@@ -1,3 +1,4 @@
+from study import utils
 from rest_framework import serializers
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -7,11 +8,12 @@ from study_group.models import Study, Student, Tag
 from user.models import User
 
 #-------유저 섹션-----------#
+
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['email', 'username']
-
 
 
 #-------스터디 그룹 섹션 -----------#
@@ -19,54 +21,38 @@ class UserSerializer(serializers.ModelSerializer):
 class StudySerializer(serializers.ModelSerializer):
     class Meta:
         model = Study
-<<<<<<< HEAD:api/serializers.py
-        fields = ["id", "user","title", "content", "is_online", "headcount", "thumbnail_img", "tags"]
+        fields = ["id", "user", "title", "content", "is_online",
+                  "now_cnt", "headcount", "thumbnail_img", "tags"]
 
     user = serializers.SerializerMethodField()
-    tags = serializers.SerializerMethodField() # readonly fields
-=======
-        fields = ["id", "user","title","content", "is_online", "now_cnt","headcount", "thumbnail_img", "tags"]
-
-    user = serializers.SerializerMethodField()
-    tags = serializers.SerializerMethodField() # readonly fields
+    tags = serializers.SerializerMethodField()  # readonly fields
     now_cnt = serializers.SerializerMethodField()
->>>>>>> feature/user:api/serializer.py
 
     def get_user(self, obj):
         return obj.user.username
 
     def get_tags(self, obj):
-<<<<<<< HEAD:api/serializers.py
-        return [tag.tag_name for tag in obj.tags.all()]
-        
-
-    def create(self, validated_data):
-        validated_data['tags'] = self.context['tags']
-        print(validated_data)
-=======
         return [tag.name for tag in obj.tags.all()]
-        
+
     def get_now_cnt(self, obj):
-        return obj.student_set.filter(is_accept = True).count() + 1
+        return obj.student_set.filter(is_accept=True).count() + 1
 
     def create(self, validated_data):
         validated_data['tags'] = self.context['tags']
->>>>>>> feature/user:api/serializer.py
 
         instance = super().create(validated_data)
         return instance
+
 
 class TagSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Tag
-<<<<<<< HEAD:api/serializers.py
-        fileds = ['tag_name',]
-=======
-        fileds = ['name',]
->>>>>>> feature/user:api/serializer.py
+        fileds = ['name', ]
 
 # 다른 방법은 없는지 찾아보고 & 여쭤보기 # 이방법은 데이터 베이스를 많이 참조하지 않나라는 생각?
+
+
 class StudyDetailSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField()
     is_like = serializers.SerializerMethodField()
@@ -78,11 +64,11 @@ class StudyDetailSerializer(serializers.ModelSerializer):
     # tags = TagSerializer(read_only = True, many = True)
     tags = serializers.SerializerMethodField()
 
-
     def get_user(self, obj):
         return obj.user.username
+
     def get_is_like(self, obj):
-        flag = obj.like.filter(id = self.context.get('request').user.id).exists()
+        flag = obj.like.filter(id=self.context.get('request').user.id).exists()
         return flag
 
     def get_is_author(self, obj):
@@ -92,29 +78,28 @@ class StudyDetailSerializer(serializers.ModelSerializer):
         return flag
 
     def get_is_student(self, obj):
-        flag = obj.student_set.filter(user = self.context.get('request').user, post = obj, is_accept = True).exists()
+        flag = obj.student_set.filter(user=self.context.get(
+            'request').user, post=obj, is_accept=True).exists()
         return flag
 
     def get_sended(self, obj):
-        flag = obj.student_set.filter(user = self.context.get('request').user, post = obj, is_accept = None).exists()
+        flag = obj.student_set.filter(user=self.context.get(
+            'request').user, post=obj, is_accept=None).exists()
         return flag
 
     def get_thumbnail_img(self, obj):
         return obj.thumbnail_img.url
 
     def get_now_cnt(self, obj):
-        return obj.student_set.filter(is_accept = True).count() + 1
-    
+        return obj.student_set.filter(is_accept=True).count() + 1
+
     def get_tags(self, obj):
-<<<<<<< HEAD:api/serializers.py
         return [tag.tag_name for tag in obj.tags.all()]
-=======
-        return [tag.name for tag in obj.tags.all()]
->>>>>>> feature/user:api/serializer.py
 
     class Meta:
         model = Study
-        fields = ['id', 'user','headcount','title', 'content','is_online', 'is_like', 'thumbnail_img','is_author', 'is_student', 'sended', 'now_cnt', 'tags']
+        fields = ['id', 'user', 'headcount', 'title', 'content', 'is_online', 'is_like',
+                  'thumbnail_img', 'is_author', 'is_student', 'sended', 'now_cnt', 'tags']
         read_only_fields = ['tags', ]
 
 
@@ -135,25 +120,26 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 #-------스터디 로그 섹션--------#
 
-from study import utils
+
 class StudyLogSerializer(serializers.ModelSerializer):
     start_time = serializers.SerializerMethodField()
     end_time = serializers.SerializerMethodField()
     sub_time = serializers.SerializerMethodField()
-
 
     def get_start_time(self, obj):
         return utils.get_now_time(obj.start_time)
 
     def get_end_time(self, obj):
         return utils.get_now_time(obj.end_time)
-    
+
     def get_sub_time(self, obj):
         return utils.get_sub_time(obj.start_time, obj.end_time)
+
     class Meta:
         model = StudyLog
         fields = '__all__'
         # read_only_fields = ['user',] # 이것이 있으면 partial= True 필요 x
+
 
 class StudyMonthSerializer(serializers.ModelSerializer):
 
@@ -165,6 +151,7 @@ class StudyMonthSerializer(serializers.ModelSerializer):
 
     def get_time(self, obj):
         return
+
     class Meta:
         model = User
         fields = ['date', 'time']
