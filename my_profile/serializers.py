@@ -6,14 +6,13 @@ from user.models import User
 
 class StudyListSerializer(serializers.ModelSerializer):
     class Meta:
-        model = StudyLog
+        model = Study
         fields = "__all__"
 
 class StudyMemoSerializer(serializers.ModelSerializer):
     class Meta:
         model = StudyLog
         fields = ("memo",)
-
 
 
 class StudyLogSerializer(serializers.ModelSerializer):

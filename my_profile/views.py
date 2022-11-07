@@ -48,12 +48,12 @@ class ProfileViews(APIView):
 class StudyLogViews(APIView):
     def get(self, request):
         user = request.user
-        study_log_list = user.studylog_set.filter(date=date.today()).order_by('start_time')  
+        # study_log_list = user.studylog_set.filter(date=date.today()).order_by('start_time')  
         study_log_all_list = user.studylog_set.all().order_by('start_time') 
         
         # study_date = list(set([s.date for s in study_log_list]))
 
-        serialize_log = StudyLogSerializer(study_log_list,  many=True)
+        serialize_log = StudyLogSerializer(study_log_all_list,  many=True)
 
         context = {
             'log':serialize_log.data,
@@ -74,6 +74,7 @@ class StudyListView(APIView):
         study_like= Study.objects.filter(like = user_id)#모든 스터디 가져와
         studies = Study.objects.filter(user = user_id)
         study_apply = Study.objects.filter(submit= user_id)
+        print(study_like)
     
         serialize_like = StudyListSerializer(study_like, many=True)
         serialize_study = StudyListSerializer(studies, many=True)
