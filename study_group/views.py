@@ -1,12 +1,126 @@
 from django.shortcuts import get_object_or_404, redirect, render
-from .models import Study,User,Student
+from rest_framework.generics import get_object_or_404
+from .models import Study,User,Student,Tag
+from rest_framework.views import APIView
+from study_group.serializer import StudyListSerializer, StudyDetailSerializer, StudySerializer, StudyCreateSerializer
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.filters import SearchFilter
+# search
+from rest_framework import filters
+# search 제네릭이용
+from rest_framework import generics
 
-def study_detail(request, study_id):
-    study = Study.objects.get(id=study_id)
-    context={
-        'study':study,
-    }
-    return render(request,'study_group/study_detail.html', context)        
+from rest_framework.views import APIView
+from rest_framework import viewsets
+from study_group.models import Study
+from study_group.serializer import StudyListSerializer
+
+from rest_framework.pagination import PageNumberPagination
+from django.db.models import Q
+
+
+
+from django.core.paginator import Paginator
+
+# class StudyView(APIView):
+
+#     def get(self, request, pk, format=None):
+#         studies=Study.objects.all()
+
+#         page_number = self.request.query_params.get('page_number ', 1)
+#         page_size = self.request.query_params.get('page_size ', 1)
+
+#         paginator = Paginator(studies , page_size)
+#         serializer = StudyListSerializer(paginator.page(page_number) , many=True)
+
+#         response = Response(serializer.data, status=status.HTTP_200_OK)
+#         return response
+
+
+from rest_framework.pagination import PageNumberPagination
+
+class StudyView(APIView, PageNumberPagination):
+    page_size = 6
+    def get(self, request, format=None):
+        studies=Study.objects.all()
+        results = self.paginate_queryset(studies, request, view=self)
+        serializer = StudyListSerializer(results, many=True)
+        return self.get_paginated_response(serializer.data)
+
+
+
+class Search(APIView):
+    def get(self, request, format=None):
+        search = request.GET.get('search','') #파라미터 가져오기
+        list = Study.objects.all()
+        if search:
+            list = list.filter(
+                Q(title__icontains=search) |
+                Q(content__icontains=search)
+                ).distinct()
+            serializer=StudyListSerializer(list,many=True)
+        return Response(serializer.data)
+
+
+class StudyView(APIView):
+
+    def post(self, request):
+        content=request.POST.get('tags')
+        print(content)
+        tag_list=content.split(' ')
+        for i in tag_list:
+            if '#' in i:
+                Tag.tag_name=i
+                Tag.save()
+            else:
+                pass
+        serializer = StudySerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def get(self, request):
+        studies = Study.objects.all()
+        print(list)
+        serializer = StudyListSerializer(studies, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class StudySearchView(generics.ListAPIView):
+        queryset=Study.objects.all()
+        serializer_class = StudyListSerializer
+        filter_backends=[filters.SearchFilter]
+        search_fields=('title',)
+
+class CreateView(APIView):
+    def post(self, request):
+        pass
+
+class StudyDetailView(APIView):
+    def get(self, request, study_id):
+        study=get_object_or_404(Study, id=study_id)
+        serializer = StudyDetailSerializer(study)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def put(self, request, study_id):
+        pass
+
+
+
+
+
+
+############################
+
+# def study_detail(request, study_id):
+#     study = Study.objects.get(id=study_id)
+#     context={
+#         'study':study,
+#     }
+#     return render(request,'study_group/study_detail.html', context)        
 
 def like(request, study_id):
     # 스터디 id에 해당하는 객체를 가져온다
@@ -20,7 +134,7 @@ def like(request, study_id):
 
     # 변수를 이용해서 존재할경우, study like 에서 유저 제거 해당 객체를 삭제한다고 이해함
     if filtered_like_study.exists():
-        study.like.remove(user) #여기서 user는 뭘 의미하는지 모르겠네 아마 유저인듯
+        study.like.remove(user) #여기서 user는 뭘 의미하는지 모르겠네 아마 유저인듯 조건에 request.user를 넣는거임
         return redirect('studies:view_study', study_id=study.id)
 
     # 없을 경우, study 객체에서 like에 해당 user를 추가
@@ -55,30 +169,30 @@ def index(request):
     return render(request, 'study_group/index.html',content)
 
 
-def create_study(request):
+# def create_study(request):
 
-    if request.method == 'GET':
-        return render(request, 'study_group/create.html')
+#     if request.method == 'GET':
+#         return render(request, 'study_group/create.html')
 
-    if request.method == 'POST':
-        user = request.user
-        title = request.POST.get('title')
-        thumbnail_img = request.FILES.get('image')
-        #TODO headcount가 int혹은 범위 내에 있는지 판별해야함
-        headcount = request.POST.get('headcount')
-        content = request.POST.get('content')
+#     if request.method == 'POST':
+#         user = request.user
+#         title = request.POST.get('title')
+#         thumbnail_img = request.FILES.get('image')
+#         #TODO headcount가 int혹은 범위 내에 있는지 판별해야함
+#         headcount = request.POST.get('headcount')
+#         content = request.POST.get('content')
 
-        Study.objects.create(user = user, title=title,thumbnail_img=thumbnail_img,headcount=headcount,content=content)
+#         Study.objects.create(user = user, title=title,thumbnail_img=thumbnail_img,headcount=headcount,content=content)
 
-        # study = Study()
-        # study.user = user
-        # study.title = title
-        # study.thumbnail_img = thumbnail_img
-        # study.headcount = headcount
-        # study.content = content
-        # study.save()
-        # return HttpResponse('등록완료')
-        return redirect('studies:studies')
+#         # study = Study()
+#         # study.user = user
+#         # study.title = title
+#         # study.thumbnail_img = thumbnail_img
+#         # study.headcount = headcount
+#         # study.content = content
+#         # study.save()
+#         # return HttpResponse('등록완료')
+#         return redirect('studies:studies')
     
 
 def view_study(request, study_id):
