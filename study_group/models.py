@@ -5,10 +5,12 @@ from user.models import User
 class Tag(models.Model):
     tag_name = models.CharField(max_length=50)
 
+    def __str__(self):
+        return f'{self.tag_name}'
     
 class Study(models.Model):
         
-    user = models.ForeignKey(User, on_delete = models.CASCADE)
+    user = models.ForeignKey(User, on_delete = models.CASCADE, null=True)
     create_dt = models.DateTimeField(auto_now_add = True)
     title = models.CharField(max_length = 100)
     content = models.TextField()
@@ -18,6 +20,9 @@ class Study(models.Model):
     like = models.ManyToManyField(User, related_name='liker')
     submit = models.ManyToManyField("Student", related_name='submiter', blank=True) # 참여자와 연동되는 이유는 여러 유저를 참조하는 것은 맞으나 is_accept를 사용하기 위해서
     tags = models.ManyToManyField("Tag", related_name = 'tag_studies', blank=True)
+    tags = models.ManyToManyField(Tag, related_name='tags', null=True, blank=True)
+    # submit = models.ManyToManyField("Student", related_name='submiter') # 참여자와 연동되는 이유는 여러 유저를 참조하는 것은 맞으나 is_accept를 사용하기 위해서
+    # category = #TODO 경민 - 조사 후 카테고리, 나눈 뒤 모델 생성
 
 
     def __str__(self):

@@ -1,15 +1,14 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from rest_framework.generics import get_object_or_404
-from .models import Study,User,Student
+from .models import Study,User,Student,Tag
 from rest_framework.views import APIView
-from study_group.serializer import StudyListSerializer, StudyDetailSerializer
+from study_group.serializer import StudyListSerializer, StudyDetailSerializer, StudySerializer, StudyCreateSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.filters import SearchFilter
 # search
-from rest_framework import viewsets
 from rest_framework import filters
-# search 제너릭이용
+# search 제네릭이용
 from rest_framework import generics
 
 from rest_framework.views import APIView
@@ -64,6 +63,41 @@ class Search(APIView):
         return Response(serializer.data)
 
 
+class StudyView(APIView):
+
+    def post(self, request):
+        content=request.POST.get('tags')
+        print(content)
+        tag_list=content.split(' ')
+        for i in tag_list:
+            if '#' in i:
+                Tag.tag_name=i
+                Tag.save()
+            else:
+                pass
+        serializer = StudySerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def get(self, request):
+        studies = Study.objects.all()
+        print(list)
+        serializer = StudyListSerializer(studies, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class StudySearchView(generics.ListAPIView):
+        queryset=Study.objects.all()
+        serializer_class = StudyListSerializer
+        filter_backends=[filters.SearchFilter]
+        search_fields=('title',)
+
+class CreateView(APIView):
+    def post(self, request):
+        pass
 
 class StudyDetailView(APIView):
     def get(self, request, study_id):
@@ -135,30 +169,30 @@ def index(request):
     return render(request, 'study_group/index.html',content)
 
 
-def create_study(request):
+# def create_study(request):
 
-    if request.method == 'GET':
-        return render(request, 'study_group/create.html')
+#     if request.method == 'GET':
+#         return render(request, 'study_group/create.html')
 
-    if request.method == 'POST':
-        user = request.user
-        title = request.POST.get('title')
-        thumbnail_img = request.FILES.get('image')
-        #TODO headcount가 int혹은 범위 내에 있는지 판별해야함
-        headcount = request.POST.get('headcount')
-        content = request.POST.get('content')
+#     if request.method == 'POST':
+#         user = request.user
+#         title = request.POST.get('title')
+#         thumbnail_img = request.FILES.get('image')
+#         #TODO headcount가 int혹은 범위 내에 있는지 판별해야함
+#         headcount = request.POST.get('headcount')
+#         content = request.POST.get('content')
 
-        Study.objects.create(user = user, title=title,thumbnail_img=thumbnail_img,headcount=headcount,content=content)
+#         Study.objects.create(user = user, title=title,thumbnail_img=thumbnail_img,headcount=headcount,content=content)
 
-        # study = Study()
-        # study.user = user
-        # study.title = title
-        # study.thumbnail_img = thumbnail_img
-        # study.headcount = headcount
-        # study.content = content
-        # study.save()
-        # return HttpResponse('등록완료')
-        return redirect('studies:studies')
+#         # study = Study()
+#         # study.user = user
+#         # study.title = title
+#         # study.thumbnail_img = thumbnail_img
+#         # study.headcount = headcount
+#         # study.content = content
+#         # study.save()
+#         # return HttpResponse('등록완료')
+#         return redirect('studies:studies')
     
 
 def view_study(request, study_id):
