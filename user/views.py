@@ -28,12 +28,29 @@ class UserView(APIView):
 
     def put(self, request): # 회원 정보 저장 ( 관심 분야, 닉네임, 이메일 변경?)
         user = User.objects.get(pk = request.user.id)
+
+
         serializer = UserSerializer(user, data = request.data, partial = True)
         if serializer.is_valid():
             serializer.save()
-            return Response({'msg':'저장완료'}, status=status.HTTP_200_OK)
-        print(serializer.errors)
-        return Response({"msg" : f"{serializer.errors}"}, status = status.HTTP_400_BAD_REQUEST)
+            return Response({'msg':'가입완료'}, status=status.HTTP_201_CREATED)
+        else:
+            print(serializer.errors)
+            data = dict()
+            for key in serializer.errors.keys():
+                data[key] = f"이미 존재하는 {key} 또는 형식에 맞지 않습니다."
+            return Response(data = data, status = status.HTTP_400_BAD_REQUEST)
+
+        # if serializer.is_valid():
+        #     serializer.save()
+        #     return Response({'msg':'저장완료'}, status=status.HTTP_200_OK)
+        # print(serializer.errors)
+        # print(serializer.errors)
+        # return Response({"msg" : f"{serializer.errors}"}, status = status.HTTP_400_BAD_REQUEST)
+    # 아 시리얼 에러가 떠서 보내주는데 프론트에서 받아서 기능으로 보여주는거구나
+    # 프론트에서는 어떻게 받아서 어떻게 나타내야하는가
+    # 유니크 username임 valid안되면 return으로 주는 원리 아닐까
+
     
     def delete(self, request):
         try:
@@ -54,8 +71,3 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
 
 
-# class MockView(APIView):
-#     permission_classes = [permissions.IsAuthenticated]
-#     def get(self, request):
-#         print(request.user)
-#         return Response('get rq')

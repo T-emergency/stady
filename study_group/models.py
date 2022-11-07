@@ -1,8 +1,11 @@
 from django.db import models
 from user.models import User
 
-# Create your models here.
 
+class Tag(models.Model):
+    tag_name = models.CharField(max_length=50)
+
+    
 class Study(models.Model):
         
     user = models.ForeignKey(User, on_delete = models.CASCADE)
@@ -13,12 +16,16 @@ class Study(models.Model):
     on_off_line = models.BooleanField(default = False) # None 0 1 로 구분이 안된다면 CharField로 구분
     headcount = models.IntegerField() #IntegerChoices? 선택인원 최소 2~10 지정할 수 있으면 지정하기
     like = models.ManyToManyField(User, related_name='liker')
-    submit = models.ManyToManyField("Student", related_name='submiter') # 참여자와 연동되는 이유는 여러 유저를 참조하는 것은 맞으나 is_accept를 사용하기 위해서
-    tags = models.ManyToManyField("Tag", related_name = 'tag_studies')
+    submit = models.ManyToManyField("Student", related_name='submiter', blank=True) # 참여자와 연동되는 이유는 여러 유저를 참조하는 것은 맞으나 is_accept를 사용하기 위해서
+    tags = models.ManyToManyField("Tag", related_name = 'tag_studies', blank=True)
 
 
     def __str__(self):
         return f'{self.user} / {self.title}'
+
+
+# Create your models here.
+
 
 
 class Student(models.Model): # 참여자 모델
@@ -42,6 +49,3 @@ class Category(models.Model):
 
     def __str__(self):
         return self.sub_class
-
-class Tag(models.Model):
-    tag_name = models.CharField(max_length = 128)

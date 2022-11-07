@@ -1,12 +1,92 @@
 from django.shortcuts import get_object_or_404, redirect, render
+from rest_framework.generics import get_object_or_404
 from .models import Study,User,Student
+from rest_framework.views import APIView
+from study_group.serializer import StudyListSerializer, StudyDetailSerializer
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.filters import SearchFilter
+# search
+from rest_framework import viewsets
+from rest_framework import filters
+# search 제너릭이용
+from rest_framework import generics
 
-def study_detail(request, study_id):
-    study = Study.objects.get(id=study_id)
-    context={
-        'study':study,
-    }
-    return render(request,'study_group/study_detail.html', context)        
+from rest_framework.views import APIView
+from rest_framework import viewsets
+from study_group.models import Study
+from study_group.serializer import StudyListSerializer
+
+from rest_framework.pagination import PageNumberPagination
+from django.db.models import Q
+
+
+
+from django.core.paginator import Paginator
+
+# class StudyView(APIView):
+
+#     def get(self, request, pk, format=None):
+#         studies=Study.objects.all()
+
+#         page_number = self.request.query_params.get('page_number ', 1)
+#         page_size = self.request.query_params.get('page_size ', 1)
+
+#         paginator = Paginator(studies , page_size)
+#         serializer = StudyListSerializer(paginator.page(page_number) , many=True)
+
+#         response = Response(serializer.data, status=status.HTTP_200_OK)
+#         return response
+
+
+from rest_framework.pagination import PageNumberPagination
+
+class StudyView(APIView, PageNumberPagination):
+    page_size = 6
+    def get(self, request, format=None):
+        studies=Study.objects.all()
+        results = self.paginate_queryset(studies, request, view=self)
+        serializer = StudyListSerializer(results, many=True)
+        return self.get_paginated_response(serializer.data)
+
+
+
+class Search(APIView):
+    def get(self, request, format=None):
+        search = request.GET.get('search','') #파라미터 가져오기
+        list = Study.objects.all()
+        if search:
+            list = list.filter(
+                Q(title__icontains=search) |
+                Q(content__icontains=search)
+                ).distinct()
+            serializer=StudyListSerializer(list,many=True)
+        return Response(serializer.data)
+
+
+
+class StudyDetailView(APIView):
+    def get(self, request, study_id):
+        study=get_object_or_404(Study, id=study_id)
+        serializer = StudyDetailSerializer(study)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def put(self, request, study_id):
+        pass
+
+
+
+
+
+
+############################
+
+# def study_detail(request, study_id):
+#     study = Study.objects.get(id=study_id)
+#     context={
+#         'study':study,
+#     }
+#     return render(request,'study_group/study_detail.html', context)        
 
 def like(request, study_id):
     # 스터디 id에 해당하는 객체를 가져온다
@@ -20,7 +100,7 @@ def like(request, study_id):
 
     # 변수를 이용해서 존재할경우, study like 에서 유저 제거 해당 객체를 삭제한다고 이해함
     if filtered_like_study.exists():
-        study.like.remove(user) #여기서 user는 뭘 의미하는지 모르겠네 아마 유저인듯
+        study.like.remove(user) #여기서 user는 뭘 의미하는지 모르겠네 아마 유저인듯 조건에 request.user를 넣는거임
         return redirect('studies:view_study', study_id=study.id)
 
     # 없을 경우, study 객체에서 like에 해당 user를 추가
