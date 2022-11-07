@@ -17,24 +17,24 @@ from datetime import datetime, date
 from study.serializer import get_day_log, log_to_json
 
 
-# def profile(request):
-#     if request.method =='GET':
-#         user = request.user
-#         study_log_list = user.studylog_set.filter(date = date.today()).order_by('start_time')
-#         study_log_list= log_to_json(study_log_list)
-#         study_day_list = get_day_log(user)
+def profile(request):
+    if request.method =='GET':
+        user = request.user
+        study_log_list = user.studylog_set.filter(date = date.today()).order_by('start_time')
+        study_log_list= log_to_json(study_log_list)
+        study_day_list = get_day_log(user)
 
-#         context ={
-#             'username': user.username,
-#             'date' : date.today(),
-#             'bio': user.bio,
-#             'profile_image': user.profile_image,
-#             'study_log_list': study_log_list,
-#             'study_day_list' : study_day_list,
-#             'total_time' : user.total_time,
-#         }
+        context ={
+            'username': user.username,
+            'date' : date.today(),
+            'bio': user.bio,
+            'profile_image': user.profile_image,
+            'study_log_list': study_log_list,
+            'study_day_list' : study_day_list,
+            'total_time' : user.total_time,
+        }
 
-#         return render(request, 'user/profile.html', context)
+        return render(request, 'user/profile.html', context)
 
 
 class ProfileViews(APIView):
@@ -50,7 +50,7 @@ class StudyLogViews(APIView):
         user = request.user
         # study_log_list = user.studylog_set.filter(date=date.today()).order_by('start_time')  
         study_log_all_list = user.studylog_set.all().order_by('start_time') 
-        
+        print(study_log_all_list)
         # study_date = list(set([s.date for s in study_log_list]))
 
         serialize_log = StudyLogSerializer(study_log_all_list,  many=True)
@@ -67,7 +67,14 @@ class StudyDayLogViews(APIView):
         user = request.user
         day_log = user.studylog_set.filter(date = day).order_by('start_time')
         serialize_log = StudyLogSerializer(day_log,  many=True)
-        return Response(serialize_log.data)
+
+        day_study_time = sum([ item["sub_time"] for item in serialize_log.data])
+        context={
+            "day_study_time": day_study_time,
+            "serialize_log":serialize_log.data
+        }
+
+        return Response(context)
 
 class StudyListView(APIView):
     def get(self, request, user_id):
