@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib import auth
 from django.contrib.auth import views as auth_views
 
-from .serializer import CustomTokenObtainPairSerializer, UserSerializer
+from .serializers import CustomTokenObtainPairSerializer, UserSerializer
 from .models import User
 
 # Create your views here.

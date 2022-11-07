@@ -9,9 +9,8 @@ from .models import Study, Student, Tag
 from .serializers import (
     StudySerializer,
     StudentSerializer,
-    StudyCreateSerializer,
+    # StudyCreateSerializer,
     StudyAuthorSerializer,
-    StudyCreateSerializer,
     StudyListSerializer,
 )
 
@@ -23,24 +22,25 @@ from rest_framework import generics
 
 class StudyView(APIView):
     def post(self, request):
-        serializer = StudyCreateSerializer(
+        serializer = StudySerializer(
             data=request.data, context={"request": request})
         print(request.user)
         if serializer.is_valid():
             serializer.save(user=request.user)
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
+            print("errors: ",serializer.errors)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request):
         studies = Study.objects.all()
-        serializer = StudyListSerializer(studies, many=True)
+        serializer = StudySerializer(studies, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class StudySearchView(generics.ListAPIView):
     queryset = Study.objects.all()
-    serializer_class = StudyListSerializer
+    serializer_class = StudySerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ('title',)
 
@@ -66,7 +66,7 @@ class StudyDetailView(APIView):
         study = get_object_or_404(Study, id=study_id)
         if request.user == study.user:
             # student_list = [student.user for student in Student.objects.filter(post=study, is_accept= None)]
-            serializer = StudyCreateSerializer(study, data=request.data)
+            serializer = StudySerializer(study, data=request.data)
             if serializer.is_valid():
                 serializer.save(user=request.user)
                 return Response(serializer.data)

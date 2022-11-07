@@ -19,7 +19,7 @@ class SetUpTest(APITestCase):
         cls.study_data = {
             "title" : "축구할 사람?",
             "content" : "일단 난 못해",
-            "on_off_line": False,
+            "is_online": False,
             "headcount" : 22
         }
         cls.log_data = {}
@@ -37,7 +37,7 @@ class SetUpTest(APITestCase):
             user = cls.user,
             title = cls.study_data["title"],
             content = cls.study_data["content"],
-            on_off_line = cls.study_data["on_off_line"]
+            is_online = cls.study_data["is_online"]
         )
     
     def setUp(self):

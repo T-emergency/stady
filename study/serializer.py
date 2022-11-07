@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 import json
-=======
->>>>>>> feature/user
 # utils
 from . import utils
 from .models import User

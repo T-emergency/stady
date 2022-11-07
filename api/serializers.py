@@ -3,7 +3,7 @@ from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from study.models import StudyLog
-from study_group.models import Study, Student
+from study_group.models import Study, Student, Tag
 from user.models import User
 
 class UserSerializer(serializers.ModelSerializer):
@@ -14,20 +14,30 @@ class UserSerializer(serializers.ModelSerializer):
 class StudySerializer(serializers.ModelSerializer):
     class Meta:
         model = Study
-        fields = ["id", "user","title", "content", "on_off_line", "headcount", "thumbnail_img"]
+        fields = ["id", "user","title", "content", "is_online", "headcount", "thumbnail_img", "tags"]
 
     user = serializers.SerializerMethodField()
-     # study를 생성할 때 유저도 같이 생성하게 됨
+    tags = serializers.SerializerMethodField() # readonly fields
 
     def get_user(self, obj):
         return obj.user.username
 
+    def get_tags(self, obj):
+        return [tag.tag_name for tag in obj.tags.all()]
         
-    # def create(self, validated_data):
-    #     validated_data['user_id'] = self.context['request'].user.id
-        
-    #     instance = super().create(validated_data)
-    #     return instance
+
+    def create(self, validated_data):
+        validated_data['tags'] = self.context['tags']
+        print(validated_data)
+
+        instance = super().create(validated_data)
+        return instance
+
+class TagSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Tag
+        fileds = ['tag_name',]
 
 # 다른 방법은 없는지 찾아보고 & 여쭤보기 # 이방법은 데이터 베이스를 많이 참조하지 않나라는 생각?
 class StudyDetailSerializer(serializers.ModelSerializer):
@@ -38,6 +48,8 @@ class StudyDetailSerializer(serializers.ModelSerializer):
     sended = serializers.SerializerMethodField()
     thumbnail_img = serializers.SerializerMethodField()
     now_cnt = serializers.SerializerMethodField()
+    # tags = TagSerializer(read_only = True, many = True)
+    tags = serializers.SerializerMethodField()
 
     def get_is_like(self, obj):
         flag = obj.like.filter(id = self.context.get('request').user.id).exists()
@@ -62,12 +74,21 @@ class StudyDetailSerializer(serializers.ModelSerializer):
 
     def get_now_cnt(self, obj):
         return obj.student_set.filter(is_accept = True).count() + 1
+    
+    def get_tags(self, obj):
+        return [tag.tag_name for tag in obj.tags.all()]
+
     class Meta:
         model = Study
-        fields = ['id', 'user','headcount','title', 'content','on_off_line', 'is_like', 'thumbnail_img','is_author', 'is_student', 'sended', 'now_cnt']
+        fields = ['id', 'user','headcount','title', 'content','is_online', 'is_like', 'thumbnail_img','is_author', 'is_student', 'sended', 'now_cnt', 'tags']
+        read_only_fields = ['tags', ]
 
 
+# class StudyCreateSerializer(serializers.Serializer):
+#     study = StudySerializer()
+#     tags = TagSerializer(many= True)
 
+#---------유저 관련-----------#
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
@@ -76,6 +97,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['username'] = user.username
 
         return token
+#---------끝-----------#
 
 #-------스터디 로그 섹션--------#
 

@@ -3,21 +3,56 @@ from rest_framework import serializers
 from study_group.models import Study, Student, Tag
 
 
+# class StudySerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Study
+#         fields = '__all__'
+#         # fields = ('user','create_dt','title','content','thumbnail_img','is_online','headcount')
+
+# # 게시글 작성
+
+
+# class StudyCreateSerializer(serializers.ModelSerializer):
+#     tags = serializers.SerializerMethodField()
+
+#     def get_tags(self, obj):
+#         content = self.context.get("request").data.get('tags')
+#         return content
+
+#     def create(self, validated_data):
+#         content = self.context.get("request").data.get('tags')
+#         tags_list = []
+#         if content != None:
+#             tag_list = content.split(' ')
+#             for i in tag_list:
+#                 if '#' in i:
+#                     tag, _ = Tag.objects.get_or_create(tag_name=i)
+#                     tags_list.append(tag.id)
+#                 else:
+#                     pass
+#         validated_data['tags'] = tags_list
+#         print(validated_data)
+
+#         instance = super().create(validated_data)
+#         return instance
+
+#     class Meta:
+#         model = Study
+#         fields = ('title', 'content', 'is_online', 'headcount', 'tags')
 class StudySerializer(serializers.ModelSerializer):
     class Meta:
         model = Study
-        fields = '__all__'
-        # fields = ('user','create_dt','title','content','thumbnail_img','on_off_line','headcount')
+        fields = ["id", "user","title", "content", "is_online", "headcount", "thumbnail_img", "tags"]
 
-# 게시글 작성
+    user = serializers.SerializerMethodField()
+    tags = serializers.SerializerMethodField() # readonly fields
 
-
-class StudyCreateSerializer(serializers.ModelSerializer):
-    tags = serializers.SerializerMethodField()
+    def get_user(self, obj):
+        return obj.user.username
 
     def get_tags(self, obj):
-        content = self.context.get("request").data.get('tags')
-        return content
+        return [tag.tag_name for tag in obj.tags.all()]
+        
 
     def create(self, validated_data):
         content = self.context.get("request").data.get('tags')
@@ -35,11 +70,6 @@ class StudyCreateSerializer(serializers.ModelSerializer):
 
         instance = super().create(validated_data)
         return instance
-
-    class Meta:
-        model = Study
-        fields = ('title', 'content', 'on_off_line', 'headcount', 'tags')
-
 # 리스트
 
 
