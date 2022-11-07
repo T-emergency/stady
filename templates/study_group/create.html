@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block extra-style %}
+<style>
+    .subject {
+        text-align: center;
+        color: white;
+    }
+    .container {
+        flex-direction: column;
+        align-items: center;
+        padding-top: 30px;
+        width: 800px;
+    }
+    .btn {
+        margin: 0 5px;  float : right;
+    }
+    .form-control.haedcount{
+        width: 25%;
+    }
+</style>
+{% endblock %}
+{% block content %}
+    <div class="">
+        <h1 class ='subject'>스터디 등록 페이지</h1>
+        <form action="{% url 'studies:create_study' %}" method='POST'  enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="exampleFormControlInput1" class="form-label"></label>
+                <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="스터디 제목" name = 'title'>
+            </div>
+            <div class="mb-3">
+                <label for="formFile" class="form-label"></label>
+                <input class="form-control" type="file" id="formFile" name="image">
+            </div>
+
+            <div class="mb-3">
+                <label for="exampleFormControlInput1" class="form-label1"></label>
+                <input type="text" class="form-control haedcount" id="exampleFormControlInput1" placeholder="인원수 숫자로 입력해주세요 ex : 1명:1 2명: 2" name = 'headcount'>
+            </div>
+
+            <div class="mb-3">
+                <label for="exampleFormControlTextarea1" class="form-labe2"></label>
+                <textarea class="form-control" id="exampleFormControlTextarea1" placeholder='내용을 입력해주세요.' name = 'content' rows="15"></textarea>
+            </div>
+            <div>
+                <button type="submit" class="btn btn-primary btn-lg">등록하기</button>
+            </div>
+        </form>
+    </div>
+{% endblock %}

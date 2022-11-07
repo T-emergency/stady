@@ -17,6 +17,7 @@
 
   <!-- JS 파일 -->
   <script src="/static/js/bootstrap.bundle.min.js?after"></script>
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-modal/2.2.6/js/bootstrap-modalmanager.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
 
   <style>
     .stady_btn {
@@ -52,8 +53,8 @@
       width: 100px;
       height: 40px;
     }
-    #my-header{
-    }
+
+    #my-header {}
 
     #main_nav {
       padding-top: 1rem;
@@ -66,10 +67,10 @@
   {% block extra-style %}{% endblock %}
 </head>
 
-<body class="d-flex h-100 text-center" style="background-color: #1AB4AC;">
+<body id="body" class="d-flex h-100 text-center" style="background-color: #00b395;">
   <div class="w-100 h-100 p-3 mx-auto">
-    <header  class="mb-auto" style="background-color: white; max-width: 720px; margin: 0 auto;">
-      <div class="contain" >
+    <header class="mb-auto" style="background-color: white; max-width: 720px; margin: 0 auto;">
+      <div class="contain">
         <div class="fixed-top" id="main_nav">
           <h3 class="float-md-start mb-0">
             <a href="/">
@@ -78,8 +79,8 @@
           </h3>
           <nav class="nav nav-masthead justify-content-center float-md-end">
             <a class="nav-link fw-bold py-1 px-0" aria-current="true" href="/">Home</a>
-            <a class="nav-link fw-bold py-1 px-0" aria-current="true" href="{% url 'post_index'%}">Community</a>
-            <a class="nav-link fw-bold py-1 px-0" aria-current="true" href="#">Contact</a>
+            <a class="nav-link fw-bold py-1 px-0" aria-current="true" href="">Community</a>
+            <a class="nav-link fw-bold py-1 px-0" aria-current="true" href="{% url 'studies:list' %}">스터디 모임</a>
             <div style="margin-left: 20px; margin-right: 10px">
               <div class="post_header_more_btn_box">
                 <div class="btn-group">
@@ -87,7 +88,7 @@
                     src="/static/images/stady_bear_face.png" data-bs-toggle="dropdown" aria-expanded="false" />
                   <ul class="dropdown-menu">
                     <li>
-                      <a class="dropdown-item" href="{% url 'profile' %}">프로필</a>
+                      <a class="dropdown-item" href="{% url 'profile:profile' %}">프로필</a>
                     </li>
                     <li>
                       <a class="dropdown-item" href="{% url 'user:update' %}">회원정보수정</a>
@@ -102,7 +103,7 @@
           </nav>
         </div>
       </div>
-      
+
     </header>
 
     <main class="container" style="height: 500px; margin-top : 100px;">
@@ -111,6 +112,8 @@
   </div>
   {% block extra-script %}
   {% endblock %}
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
 </body>
 
 </html>

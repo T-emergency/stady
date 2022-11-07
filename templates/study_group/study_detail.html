@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<img width="100%" src="{{study_post.thumbnail_img.url}}" alt="">
+<h1>{{ study_post.title }}</h1>
+<div>
+    {{ study_post.content }}
+</div>
+
+<form action="{% url 'studies:like' study_post.pk %}" method='POST'>
+  {% csrf_token %}
+  {% if user in study_post.like.all %}
+    <button class="btn btn-link text-danger">
+    <img width="30px" height="30px" src="/static/images/star (1).png">
+    </button>
+  {% else %}
+    <button class="btn btn-link text-danger">
+        <img width="30px" height="30px" src="/static/images/star (2).png">
+    </button>
+  {% endif %}
+  {{now_cnt}}/{{limit_cnt}}
+</form>
+
+<div>
+{% if is_author %}
+<button>삭제하기는 아직</button>
+{% else %}
+  <form action="{% url 'studies:submit' study_post.id %}" method='POST'>
+    {% csrf_token %}
+    {% if sended %}
+      <input onclick="return confirm('신청취소 하시겠습니까?');" type="submit" value='신청 취소'>
+    {% else %}
+      <input onclick="return confirm('신청 하시겠습니까?');"type="submit" value='신청'>
+    {% endif %}
+  </form>
+</div>
+{% endif %}
+
+
+
+
+{% if is_author %}
+
+{% elif is_student %}
+    <form action="{% url 'studies:delete_student' study_id=study_post.id user_id=user.id %}" method="post">
+        {% csrf_token %}
+        <button>탈퇴하기</button>
+    </form>
+{% elif sended %}
+    <form action="{% url 'studies:delete_student' study_id=study_post.id user_id=user.id %}" method="post">
+        {% csrf_token %}
+        <button>요청 취소</button>
+    </form>
+{% else %}
+    <form method="post">
+        {% csrf_token %}
+        <input type="submit" value="모임 참가신청">
+    </form>
+{% endif %}
+
+
+
+
+{% if is_author %}
+
+멤바들
+{% for member in member_list %}
+{{ member }}
+{% endfor %}
+
+<div>
+    {% for student in student_list %}
+    이름: {{student.username}}
+    유저_id: {{student.id}}
+    승인여부:
+    {% if student.is_accept == 1 %}
+    승인된 유저
+    {% elif student.is_accept == None %}
+
+    <form action="{% url 'studies:choice' study_id=study_post.id user_id=student.id %}" method="post">
+        {% csrf_token %}
+        <input type="text" name="is_choice" value='1' style="display: none">
+        <button>승낙</button>
+    </form>
+    <form action="{% url 'studies:delete_student' study_id=study_post.id user_id=student.id %}" method="post">
+        {% csrf_token %}
+        <button>거절</button>
+    </form>
+    {% endif %}
+    <br>
+    {% endfor %}
+</div>
+{% else %}
+
+    <div>
+        작성자: {{study_post.user}}<br>
+        제목: {{study_post.title}}<br>
+        내용: {{study_post.content}}<br>
+        썸네일: {{study_post.thumbnail_img}}<br>
+    </div>
+
+
+    
+{% endif %}
+
+
+{% endblock %}
