@@ -147,13 +147,11 @@
         let submitButton = document.getElementById('memo-submin-btn');
         let memo = document.getElementById(`memo-${logId}`);
         let memoTitle = document.getElementById('memo-title');
-
-
-        modal.setAttribute('class', 'modal fade show');
-        modal.setAttribute('style', 'display: block;');
+        
         submitButton.setAttribute('onclick', `submitMemo(${logId})`)
         memoTitle.value = memo.innerText;
 
+        $('#staticBackdrop').modal('show')
         // modal.setAttribute('class', 'modal fade show');
         // modal.removeAttribute('style');
     }
@@ -173,7 +171,7 @@
             success: function (result) {
                 console.log('성공:', result);
                 memo.innerText = ''; // 텍스트 지우기
-                memo.append(memoTitle);
+                memo.append(memoTitle); // 모달 인풋 값
 
             }
         });

@@ -19,10 +19,12 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['email', 'username', 'password']
+        fields = ['email', 'username', 'password','profile_image']
         extra_kwargs = {
             'password': {'write_only': True},
+            "username": {"error_messages": {"required": "Give yourself a username"}}
         }
+
 
     def create(self, validated_data):
         user  = super().create(validated_data) # 저장하고

@@ -81,9 +81,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ORIGIN_WHITELIST = ['http://127.0.0.1:5500', 'http://localhost:5500']
-CORS_ALLOW_CREDENTIALS = True
-
 
 ROOT_URLCONF = 'stady.urls'
 
@@ -107,13 +104,6 @@ WSGI_APPLICATION = 'stady.wsgi.application'
 
 
 # 카카오 로그인을 위한 클라이언트 키
-
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
-}
-
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
@@ -124,6 +114,11 @@ DATABASES = {
     }
 }
 # DATABASES = my_settings.DATABASES
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': ['rest_framework_simplejwt.authentication.JWTAuthentication', ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    # 'PAGE_SIZE' : 6
+}
 
 
 # Password validation
@@ -167,16 +162,20 @@ STATICFILES_DIRS = [
     STATIC_DIR
     # BASE_DIR / 'static',
 ]
-
-STATIC_DIR = os.path.join(BASE_DIR, 'static')
-
 STATICFILES_DIRS = [STATIC_DIR]
 
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+STATIC_ROOT = BASE_DIR / "static"
+STATIC_URL = "/static/"
+
+MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_URL = "/media/"
+
+# STATIC_URL = '/static/'
+# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# MEDIA_URL = '/media/'
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
@@ -214,11 +213,8 @@ LOGIN_REDIRECT_URL = '/'  # 오류 생기면 홈으로 돌아와라.
 MEDIA_URL = 'media/'  # 업로드할 경로
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # 로컬 디렉토리 어디에 저정할 것인지
 
-# live server port 5500
 CORS_ORIGIN_WHITELIST = ['http://127.0.0.1:5500', 'http://localhost:5500']
-# 예외 없이 다 수락
 CORS_ALLOW_CREDENTIALS = True
-# CORS_ALLOW_ALL_ORIGINS = True
 
 
 SIMPLE_JWT = {
@@ -249,6 +245,6 @@ SIMPLE_JWT = {
     'JTI_CLAIM': 'jti',
 
     'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
-    'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
+    'SLIDING_TOKEN_LIFETIME': timedelta(minutes=10000),
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }

@@ -18,6 +18,31 @@ from .serializers import (
 from rest_framework import filters
 # search 제네릭이용
 from rest_framework import generics
+from rest_framework.pagination import PageNumberPagination
+from django.db.models import Q
+
+
+class StudyView(APIView, PageNumberPagination):
+    page_size = 6
+
+    def get(self, request, format=None):
+        studies = Study.objects.all()
+        results = self.paginate_queryset(studies, request, view=self)
+        serializer = StudyListSerializer(results, many=True)
+        return self.get_paginated_response(serializer.data)
+
+
+class Search(APIView):
+    def get(self, request, format=None):
+        search = request.GET.get('search', '')  # 파라미터 가져오기
+        list = Study.objects.all()
+        if search:
+            list = list.filter(
+                Q(title__icontains=search) |
+                Q(content__icontains=search)
+            ).distinct()
+            serializer = StudyListSerializer(list, many=True)
+        return Response(serializer.data)
 
 
 class StudyView(APIView):
@@ -29,7 +54,7 @@ class StudyView(APIView):
             serializer.save(user=request.user)
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
-            print("errors: ",serializer.errors)
+            print("errors: ", serializer.errors)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request):
@@ -125,7 +150,7 @@ class StudentView(APIView):
             return Response("삭제 완료")
         else:
             return Response("권한이 없습니다.")
-    
+
 
 # def like(request, study_id):
 #     # 스터디 id에 해당하는 객체를 가져온다

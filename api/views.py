@@ -8,8 +8,13 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
 )
 
+<<<<<<< HEAD
 from .serializers import StudyDetailSerializer, StudyLogSerializer, StudySerializer, CustomTokenObtainPairSerializer
 from study_group.models import Study
+=======
+from .serializer import StudyDetailSerializer, StudyLogSerializer, StudySerializer, CustomTokenObtainPairSerializer
+from study_group.models import Study, UserTagLog
+>>>>>>> feature/user
 
 
 #-------로그인&회원가입 섹션-------#
@@ -21,29 +26,67 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
 #-------스터디 그룹 섹션-------#
 from study_group.models import Tag
+<<<<<<< HEAD
+=======
+from .recommend import get_recommend_tags
+from study_group.models import Student
+>>>>>>> feature/user
 class StudyListAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
 
-        studies = Study.objects.all()
-        serializer = StudySerializer(studies, many = True)
+        studies = Study.objects.order_by('-create_dt')
+        recommend_tags = get_recommend_tags(request)
+        recommend_study = []
 
-        return Response(serializer.data)
+        if recommend_tags == None:
+            pass
+        else:
+            for tag in recommend_tags:
+                tag = Tag.objects.get(name = tag)
+                recommend_studies = tag.tag_studies.order_by("?")[:3]
+                print(recommend_studies)
+                for s in recommend_studies:
+                    recommend_study.append(s)
+                # recommend_study.append(*recommend_studies)
+
+        serializer = StudySerializer(studies, many = True)
+        serializer2 = StudySerializer(recommend_study[:9], many = True)
+
+        data = {
+            "studies" : serializer.data,
+            "recommend_studies" : serializer2.data
+        }
+        return Response(data)
+        
 
     def post(self, request):
+<<<<<<< HEAD
         print(request.data ,'aaa')
         print(request.FILES.get('image'))
 
+=======
+        print(request.data)
+        
+>>>>>>> feature/user
         tags = request.data.get('tags')
         tag_list = []
 
         #TODO 유효성 검사 구체화 필요
+<<<<<<< HEAD
         for i in tags.split():
             if i == '' or len(i) >= 13:
                 continue
             #request.data의 요소는 바꾸지 못한다.
             tag, _ = Tag.objects.get_or_create(tag_name = i.strip())
+=======
+        for i in tags.split(','):
+            if i == '' or len(i) >= 13:
+                continue
+            #request.data의 요소는 바꾸지 못한다.
+            tag, _ = Tag.objects.get_or_create(name = i.strip())
+>>>>>>> feature/user
 
             tag_list.append(tag.id)
 
@@ -63,17 +106,80 @@ class StudyDetailAPIView(APIView):
     def get(self, request, study_id):
         user = request.user
         study = get_object_or_404(Study, pk = study_id)
+<<<<<<< HEAD
         # tag_list = study.tags.all() # 제한을 두던, 효율적으로 저장할 수 있는 방법 알아보기
 
         # for tag in tag_list:
         #     tag_log, _ = UserTagLog.objects.get_or_create(tag = tag, user = user)
         #     tag_log.count += 1
         #     tag_log.save() # 정크를 사용하면 한꺼번에 저장가능한가?
+=======
+        tag_list = study.tags.all() # 제한을 두던, 효율적으로 저장할 수 있는 방법 알아보기
+
+        for tag in tag_list:
+            tag_log, _ = UserTagLog.objects.get_or_create(tag = tag, user = user)
+            tag_log.count += 1
+            tag_log.save() # 정크를 사용하면 한꺼번에 저장가능한가?
+
+        recommend_tags = get_recommend_tags(request)
+
+        if recommend_tags == None:
+            pass
+        else:
+            recommend_study = []
+            for tag in recommend_tags:
+                tag = Tag.objects.get(name = tag)
+                studies = tag.tag_studies.order_by("?")[:3]
+                for s in studies:
+                    recommend_study.append(s)
+
+>>>>>>> feature/user
 
         serializer = StudyDetailSerializer(study, context = {'request' : request})
-        return Response(serializer.data)
+        serializer2 = StudySerializer(recommend_study[:9], many = True)
+
+        data = {
+            "study_detail" :serializer.data,
+            "recommend_studies" : serializer2.data
+        }
+        return Response(data)
 
         # 뷰셋을 사용하면 자동으로 request를 넘겨줌
+
+
+class StudyProposeView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, study_id):
+        type = request.GET.get('type', '')
+        print(type)
+        user = request.user
+        study = get_object_or_404(Study, pk = study_id)
+
+        student, _ = Student.objects.get_or_create(post = study, user = user)
+        if type == 'propose':
+            study.submit.add(student)
+        elif type == 'cancle' or type =='drop':
+            study.submit.remove(student)
+            student.delete()
+
+        return Response(status=status.HTTP_200_OK)
+
+class StudyLikeView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, study_id):
+        user = request.user
+        study = get_object_or_404(Study, pk = study_id)
+
+        if study.like.filter(pk = user.id).exists():
+            print('unlike')
+            study.like.remove(user)
+        else:
+            print('like')
+            study.like.add(user)
+
+        return Response(status=status.HTTP_200_OK)
 
 #-------끝-------#
 
@@ -91,6 +197,14 @@ class UserView(APIView):
         user = request.user
         serializer = UserSerializer(user)
         return Response(serializer.data)
+
+
+class UserProfileView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        pass
+
 
 
 
@@ -281,7 +395,14 @@ class GetLogView(APIView):
 
 #-------끝-------#
 
+<<<<<<< HEAD
 from django.http import JsonResponse
 
 def create_recommand_csv(request):
     return JsonResponse('dd', safe=False)
+=======
+
+
+# 이미지 크게
+# 길어지면 자르기
+>>>>>>> feature/user
