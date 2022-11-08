@@ -67,22 +67,22 @@ stay와 study의 합성어로 자리에 머물러 공부를 한다는 의미로,
 - 로그 혹은 좋아요를 이용한 스터디 추천 서비스 추가
 
 ## 와이어 프레임
+![Untitled](https://user-images.githubusercontent.com/113074274/200484765-d17c107f-3a71-46c9-84fa-37ff00b26352.png)
 
-![Untitled](Stady%20Project%20(2)%20c31c6cda3dda419bb395f1846b689b05/Untitled.png)
+![Untitled 1](https://user-images.githubusercontent.com/113074274/200484784-5f1183bf-774a-41e7-b887-0f4dedee563d.png)
 
-![Untitled](Stady%20Project%20(2)%20c31c6cda3dda419bb395f1846b689b05/Untitled%201.png)
+![Untitled 2](https://user-images.githubusercontent.com/113074274/200484789-db77a8c4-746e-4e3b-8de0-fdff05743588.png)
 
-![Untitled](Stady%20Project%20(2)%20c31c6cda3dda419bb395f1846b689b05/Untitled%202.png)
+![Untitled 3](https://user-images.githubusercontent.com/113074274/200484791-cbdaa50b-e45c-41ad-bf44-4e5b1f464399.png)
 
-![Untitled](Stady%20Project%20(2)%20c31c6cda3dda419bb395f1846b689b05/Untitled%203.png)
+![Untitled 4](https://user-images.githubusercontent.com/113074274/200484794-94377e22-8bcb-4ce3-a844-66bbfef75769.png)
 
-![Untitled](Stady%20Project%20(2)%20c31c6cda3dda419bb395f1846b689b05/Untitled%204.png)
+![Untitled 5](https://user-images.githubusercontent.com/113074274/200484795-96eadaf2-6c30-40d8-a2ad-97359bd217ac.png)
 
-![Untitled](Stady%20Project%20(2)%20c31c6cda3dda419bb395f1846b689b05/Untitled%205.png)
 
 ## ERD
 
-![Untitled](Stady%20Project%20(2)%20c31c6cda3dda419bb395f1846b689b05/Untitled%206.png)
+![Untitled 6](https://user-images.githubusercontent.com/113074274/200484827-29ec0bf6-cc2c-4fea-bdb2-d90489b2199d.png)
 
 ## User API
 
