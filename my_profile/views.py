@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from study.models import StudyLog
 from user.models import User
-from study_group.models import Study
+from study_group.models import Study, Student
 from rest_framework.generics import get_object_or_404
 
 
@@ -11,6 +11,8 @@ from rest_framework import permissions
 from rest_framework.views import APIView
 
 from .serializers import StudyListSerializer, StudyLogSerializer, StudyMemoSerializer, UserLogSerializer
+
+from study_group.serializers import StudySerializer
 
 
 from datetime import datetime, date
@@ -56,6 +58,7 @@ class StudyLogViews(APIView):
 
         # study_log_list = user.studylog_set.filter(date=date.today()).order_by('start_time')
         study_log_all_list = user.studylog_set.all().order_by('start_time')
+        profile_image = user.profile_image.url
         print(study_log_all_list)
         # study_date = list(set([s.date for s in study_log_list]))
 
@@ -63,6 +66,8 @@ class StudyLogViews(APIView):
 
         context = {
             'log': serialize_log.data,
+            'profile_img': profile_image,
+
         }
         return Response(context)
 
@@ -88,18 +93,23 @@ class StudyListView(APIView):
 
         study_like = Study.objects.filter(like=user_id)  # 모든 스터디 가져와
         studies = Study.objects.filter(user=user_id)
-        study_apply = Study.objects.filter(submit=user_id)
+        # study_apply = Study.objects.filter(submit=user_id)
 
-        serialize_like = StudyListSerializer(study_like, many=True)
-        serialize_study = StudyListSerializer(studies, many=True)
-        serialize_apply = StudyListSerializer(study_apply, many=True)
+        study_apply = []
+        study = Student.objects.filter(user_id=user_id)
+        for i in study:
+            study_apply.append(Study.objects.get(id=i.post.id))
+
+        serialize_like = StudySerializer(study_like, many=True)
+        serialize_study = StudySerializer(studies, many=True)
+        serialize_apply = StudySerializer(study_apply, many=True)
 
         serializers = {
             'serialize_like': serialize_like.data,
             'serialize_study': serialize_study.data,
             'serialize_apply': serialize_apply.data,
         }
-
+        print("serialize_apply: ", serialize_apply.data)
         return Response(serializers)
 
 # 메모 생성

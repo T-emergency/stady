@@ -17,8 +17,8 @@ urlpatterns = [
     path('<int:study_id>/propose', views.StudyProposeView.as_view()),
     path('<int:study_id>/like', views.StudyLikeView.as_view()),
 
-    #     path('<int:study_id>/accept/<int:user_id>/',
-    #     views.StudentView.as_view(), name='accept'),
+    path('<int:study_id>/accept/<int:user_id>/',
+         views.StudentView.as_view(), name='accept'),
     path('search/', views.Search.as_view(), name='search'),
 
     path('recommand/', recommend.create_recommand_csv),

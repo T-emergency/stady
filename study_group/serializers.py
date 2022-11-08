@@ -146,21 +146,26 @@ from study_group.models import Study, Student, Tag
 #         read_only_fields = ['tags', ]
 
 
-# class StudentSerializer(serializers.ModelSerializer):
-#     user = serializers.SerializerMethodField()
-#     post = serializers.SerializerMethodField()
+class StudentSerializer(serializers.ModelSerializer):
+    user = serializers.SerializerMethodField()
+    post = serializers.SerializerMethodField()
+    user_id = serializers.SerializerMethodField()
 
-#     def get_user(self, obj):
-#         user = obj.user.username
-#         return user
+    def get_user(self, obj):
+        user = obj.user.username
+        return user
 
-#     def get_post(self, obj):
-#         post = obj.post.id
-#         return post
+    def get_post(self, obj):
+        post = obj.post.id
+        return post
 
-#     class Meta:
-#         model = Student
-#         fields = '__all__'
+    def get_user_id(self, obj):
+        user_id = obj.user.id
+        return user_id
+
+    class Meta:
+        model = Student
+        fields = '__all__'
 
 
 # class TagSerializer(serializers.ModelSerializer):

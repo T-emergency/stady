@@ -52,7 +52,7 @@ urlpatterns = [
 
     path('studies/', include('study_group.urls')),
 
-    path('profile/', include('my_profile.urls')),
+    path('my_profile/', include('my_profile.urls')),
 
     path('api/', include('api.urls')),
     # path('accounts/', include('allauth.urls')),
