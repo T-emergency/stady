@@ -50,16 +50,16 @@ class StudyListAPIView(APIView, PageNumberPagination):
         recommend_tags = get_recommend_tags(request)
         recommend_study = []
 
-        print("rec:", recommend_tags)
+        # print("rec:", recommend_tags)
 
         if recommend_tags == None:
             pass
         else:
             for tag in recommend_tags:
-                print("tag:", Tag.objects.get(tag_name=tag))
+                # print("tag:", Tag.objects.get(tag_name=tag))
                 tag = Tag.objects.get(tag_name=tag)
                 recommend_studies = tag.tag_studies.order_by("?")[:3]
-                print("recommend_studie: ", recommend_studies)
+                # print("recommend_studie: ", recommend_studies)
                 for s in recommend_studies:
                     recommend_study.append(s)
                 # recommend_study.append(*recommend_studies)
@@ -76,8 +76,8 @@ class StudyListAPIView(APIView, PageNumberPagination):
         return self.get_paginated_response(data)
 
     def post(self, request):
-        print(request.data, 'aaa')
-        print(request.FILES.get('image'))
+        # print(request.data, 'aaa')
+        # print(request.FILES.get('image'))
 
         tags = request.data.get('tags')
         tag_list = []
@@ -98,32 +98,6 @@ class StudyListAPIView(APIView, PageNumberPagination):
             return Response(status=status.HTTP_201_CREATED)
         print(study.errors)
         return Response(status=status.HTTP_400_BAD_REQUEST)
-
-
-# class StudyView(APIView, PageNumberPagination):
-#     page_size = 6
-
-#     def get(self, request, format=None):
-#         studies = Study.objects.all()
-#         results = self.paginate_queryset(studies, request, view=self)
-#         serializer = StudyListSerializer(results, many=True)
-#         return self.get_paginated_response(serializer.data)
-
-#     def post(self, request):
-#         serializer = StudySerializer(
-#             data=request.data, context={"request": request})
-#         print(request.user)
-#         if serializer.is_valid():
-#             serializer.save(user=request.user)
-#             return Response(serializer.data, status=status.HTTP_200_OK)
-#         else:
-#             print("errors: ", serializer.errors)
-#             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-#     # def get(self, request):
-#     #     studies = Study.objects.all()
-#     #     serializer = StudySerializer(studies, many=True)
-#     #     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class StudySearchView(generics.ListAPIView):
@@ -171,7 +145,7 @@ class StudyDetailAPIView(APIView):
                 "student": serilaizer3.data,
             }
             print("recommend_tags 있음")
-            print(serializer2.data)
+            # print(serializer2.data)
         else:
             data = {
                 "study_detail": serializer.data,
@@ -194,79 +168,30 @@ class StudyDetailAPIView(APIView):
                 return Response(serializer.errors)
         return Response("권한이 없습니다")
 
-# class StudyDetailView(APIView):
-#     permission_classes = [permissions.IsAuthenticated]
+    def delete(self, request, study_id):
+        study = get_object_or_404(Study, id=study_id)
+        if study.user == request.user:
+            study.delete()
+            return Response('삭제 완료')
+        return Response('권한이 없습니다')
 
-#     def get(self, request, study_id):
-#         user = request.user
-#         study = get_object_or_404(Study, pk=study_id)
-#         tag_list = study.tags.all()  # 제한을 두던, 효율적으로 저장할 수 있는 방법 알아보기
+    # # 기존 study_post의 post요청
+    # def post(self, request, study_id):
+    #     study = get_object_or_404(Study, id=study_id)
+    #     if study.user != request.user:
+    #         try:
+    #             student = Student.objects.get(user=request.user, post=study)
+    #             study.submit.remove(student)  # 참여자라고 이해하면 됨
+    #             student.delete()
+    #             serializer = StudentSerializer(student)
 
-#         for tag in tag_list:
-#             tag_log, _ = UserTagLog.objects.get_or_create(tag=tag, user=user)
-#             tag_log.count += 1
-#             tag_log.save()  # 정크를 사용하면 한꺼번에 저장가능한가?
+    #         except Student.DoesNotExist:
+    #             student = Student.objects.create(user=request.user, post=study)
+    #             study.submit.add(student)
+    #             serializer = StudentSerializer(student)
 
-#         recommend_tags = get_recommend_tags(request)
-
-#         if recommend_tags == None:
-#             pass
-#         else:
-#             recommend_study = []
-#             for tag in recommend_tags:
-#                 tag = Tag.objects.get(name=tag)
-#                 studies = tag.tag_studies.order_by("?")[:3]
-#                 for s in studies:
-#                     recommend_study.append(s)
-
-#         serializer = StudyAuthorSerializer(study, context={'request': request})
-#         serializer2 = StudySerializer(recommend_study[:9], many=True)
-
-#         data = {
-#             "study_detail": serializer.data,
-#             "recommend_studies": serializer2.data
-#         }
-#         return Response(data)
-
-#         # 뷰셋을 사용하면 자동으로 request를 넘겨줌
-
-#     # 게시글 수정
-#     def put(self, request, study_id):
-#         study = get_object_or_404(Study, id=study_id)
-#         if request.user == study.user:
-#             # student_list = [student.user for student in Student.objects.filter(post=study, is_accept= None)]
-#             serializer = StudySerializer(study, data=request.data)
-#             if serializer.is_valid():
-#                 serializer.save(user=request.user)
-#                 return Response(serializer.data)
-#             else:
-#                 return Response(serializer.errors)
-#         return Response("권한이 없습니다")
-
-#     def delete(self, request, study_id):
-#         study = get_object_or_404(Study, id=study_id)
-#         if study.user == request.user:
-#             study.delete()
-#             return Response('삭제 완료')
-#         return Response('권한이 없습니다')
-
-#     # 기존 study_post의 post요청
-#     def post(self, request, study_id):
-#         study = get_object_or_404(Study, id=study_id)
-#         if study.user != request.user:
-#             try:
-#                 student = Student.objects.get(user=request.user, post=study)
-#                 study.submit.remove(student)  # 참여자라고 이해하면 됨
-#                 student.delete()
-#                 serializer = StudentSerializer(student)
-
-#             except Student.DoesNotExist:
-#                 student = Student.objects.create(user=request.user, post=study)
-#                 study.submit.add(student)
-#                 serializer = StudentSerializer(student)
-
-#             return Response(serializer.data)
-#         return Response("잘못된 접근입니다.")
+    #         return Response(serializer.data)
+    #     return Response("잘못된 접근입니다.")
 
 
 class StudentView(APIView):
@@ -299,33 +224,13 @@ class StudentView(APIView):
 def create_recommand_csv(request):
     return JsonResponse('dd', safe=False)
 
-# def like(request, study_id):
-#     # 스터디 id에 해당하는 객체를 가져온다
-#     study = get_object_or_404(Study, pk=study_id)
-#     # 요청한 사용자
-#     user = request.user
-
-#     # 가져온 스터디의 객체에서 like에 가면 좋아요한 user있을건데(테이블이 있을거임)
-#     # 요청한 유저가 있는걸 filter함 그럼 필터말고 겟도 가능하지않나?
-#     filtered_like_study = study.like.filter(id=user.id)
-
-#     # 변수를 이용해서 존재할경우, study like 에서 유저 제거 해당 객체를 삭제한다고 이해함
-#     if filtered_like_study.exists():
-#         study.like.remove(user) #여기서 user는 뭘 의미하는지 모르겠네 아마 유저인듯
-#         return redirect('studies:view_study', study_id=study.id)
-
-#     # 없을 경우, study 객체에서 like에 해당 user를 추가
-#     else:
-#         study.like.add(user)
-#         return redirect('studies:view_study', study_id=study.id)
-
 
 class StudyProposeView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, study_id):
         type = request.GET.get('type', '')
-        print(type)
+        # print(type)
         user = request.user
         study = get_object_or_404(Study, pk=study_id)
 
