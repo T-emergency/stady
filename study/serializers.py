@@ -1,25 +1,35 @@
-import json
 # utils
 from . import utils
-from .models import User
 
+#drf
 from rest_framework import serializers
 
+# models
+from study.models import StudyLog
 
-class UserSerializer(serializers.ModelSerializer):
+class StudyLogSerializer(serializers.ModelSerializer):
+    start_time = serializers.SerializerMethodField()
+    end_time = serializers.SerializerMethodField()
+    sub_time = serializers.SerializerMethodField()
+
+    def get_start_time(self, obj):
+        return utils.get_now_time(obj.start_time)
+
+    def get_end_time(self, obj):
+        return utils.get_now_time(obj.end_time)
+
+    def get_sub_time(self, obj):
+        return utils.get_sub_time(obj.start_time, obj.end_time)
 
     class Meta:
-        model = User
+        model = StudyLog
         fields = '__all__'
-
-    def create(self, validated_data):
-        user = super().create(validated_data)  # 저장하고
-        password = user.password
-        user.set_password(password)  # 지정하고
-        user.save()  # 다시 저장?
-        return user
+        # read_only_fields = ['user',] # 이것이 있으면 partial= True 필요 x
 
 
+
+
+# FBV에서 필요한 직렬화 함수
 def log_to_json(study_log_list: list):
     """
     StudyLog의 객체들을 json형식으로 보내기 위한 직렬화 함수

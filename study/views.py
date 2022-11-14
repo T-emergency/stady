@@ -1,127 +1,66 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
-
-# utils
-from datetime import datetime, date
-from django.utils import timezone
-from study.serializers import log_to_json
+from study.machine import is_study
+from study.models import StudyLog
 from study.utils import get_sub_time
-
-# models part
+from django.utils import timezone
+from datetime import datetime, date
 from user.models import User
-from .models import StudyLog
+from django.shortcuts import render, get_object_or_404
+
+# drf
+from rest_framework import status, permissions
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+# serializers
+from api.serializers import StudyLogSerializer
 
 # machine-learning part
 from .machine import is_study
 
 
 # TODO 하루가 끝나면 공부로그에서 백 마지막 시간을 지정해 준다(11시55분경?)
-# import schedule #pip install schedule
-# schedule.every().day.at("23:55").do('함수')
+    # import schedule #pip install schedule
+    #schedule.every().day.at("23:55").do('함수')
 
 # TODO 하루 지나고 계속 공부 중일때(check함수에 새로운 공부로그 생성)
 
 
-@login_required(login_url='user:login')
-def index(request):
+class StudyLogView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
 
-    user = request.user
-
-    if request.method == "GET":
-
-        study_log_list = user.studylog_set.filter(
-            date=date.today()).order_by('start_time')
-        study_log_list = log_to_json(study_log_list)
-        context = {
-            'study_log_list': study_log_list
-        }
-        return render(request, 'index.html', context)
-
-    return render(request, 'index.html')
-
-
-@login_required(login_url='user:login')
-def start_study(request):
-
-    if request.method == 'GET':
-
+    def get(self, request):
+        type = request.GET.get('type', '')
         user = request.user
+        if type == '':
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
-        try:  # 이미 공부 중일 경우
-            log = user.studylog_set.get(date=date.today(), end_time=None)
+        if type == 'start':
+            try:  # 이미 공부 중일 경우
 
-            return JsonResponse({'msg': '이미 공부 중'})
-
-        except StudyLog.DoesNotExist:
-
-            StudyLog.objects.create(user=user)
-            # user.study_set.create()
-
-            study_log_list = user.studylog_set.filter(
-                date=date.today()).order_by('start_time')
-            study_log_list = log_to_json(study_log_list)
-
-            return JsonResponse({'study_log_list': study_log_list})
-
-    return JsonResponse({'msg': '올바른 접근 아님'})
-
-
-@login_required(login_url='user:login')
-def finish_study(request):
-
-    user = request.user
-
-    try:
-        log = user.studylog_set.get(date=date.today(), end_time=None)
-    except StudyLog.DoesNotExist:
-        return JsonResponse({'msg': '성공'})
-
-    log.end_time = timezone.now()
-    log.save()
-
-    user.total_time += get_sub_time(log.start_time, log.end_time)
-    user.save()
-
-    study_log_list = user.studylog_set.filter(
-        date=date.today()).order_by('start_time')
-    study_log_list = log_to_json(study_log_list)
-
-    return JsonResponse({'study_log_list': study_log_list})
-
-
-@login_required(login_url='user:login')
-def check_study(request):
-
-    user = request.user
-
-    if request.method == 'POST':
-
-        if is_study(request):  # 사람이 있다
-
-            try:
-
-                log = user.studylog_set.get(date=date.today(), end_time=None)
-
-                return JsonResponse({'msg': '공부중'})
+                user.studylog_set.get(date=date.today(), end_time=None)
+                return Response({'msg': '이미 공부 중'}, status=status.HTTP_200_OK)
 
             except StudyLog.DoesNotExist:
-
                 StudyLog.objects.create(user=user)
 
-                study_log_list = user.studylog_set.filter(
-                    date=date.today()).order_by('start_time')
-                study_log_list = log_to_json(study_log_list)
+            # study_log_list = user.studylog_set.filter(date = date.today()).order_by('start_time')
 
-                return JsonResponse({'study_log_list': study_log_list})
+            # serializer = StudyLogSerializer(study_log_list, many = True)
+            # day_total_time = sum([ item["sub_time"] for item in serializer.data])
 
-        else:  # 공부 중이 아닐 때
+            # data = {
+            #     "study_log_list" : serializer.data,
+            #     "day_total_time" : day_total_time
+            # }
+            data = self.study_log_with_time(user)
 
+            return Response(data, status=status.HTTP_200_OK)
+
+        elif type == 'finish':
             try:
                 log = user.studylog_set.get(date=date.today(), end_time=None)
             except StudyLog.DoesNotExist:
-                # 날짜가 바뀐 상태에서도 요청이 오고, 사람이 없다면 아무 일을 할 필요가 없다
-                return JsonResponse({'msg': 'None'})
+                return Response({'msg': '공부 종료'})
 
             log.end_time = timezone.now()
             log.save()
@@ -129,64 +68,114 @@ def check_study(request):
             user.total_time += get_sub_time(log.start_time, log.end_time)
             user.save()
 
-            study_log_list = user.studylog_set.filter(
-                date=date.today()).order_by('start_time')
-            study_log_list = log_to_json(study_log_list)
+            data = self.study_log_with_time(user)
+            return Response(data, status=status.HTTP_200_OK)
 
-            return JsonResponse({'study_log_list': study_log_list})
+    # check start end >> 마지막에 공부 로그를 뿌려주는 행위는 비슷
+    def post(self, request):
+        """
+        사람인식 part
+        """
+        user = request.user
 
-    return JsonResponse({'msg': '잘 못 된 접근이다.'})
+        if is_study(request):  # 사람이 있다
+            try:
+                log = user.studylog_set.get(date=date.today(), end_time=None)
 
+                return Response({'msg': '공부중'})
 
-@login_required(login_url='user:login')
-def create_memo(request):
-    user = request.user
-    # TODO form을 이용한 유효성 검사
-    if request.method == "POST":
-        log_id = request.POST.get('logId', '')
-        memo_title = request.POST.get('memoTitle', '')
+            except StudyLog.DoesNotExist:
 
-        study_log = StudyLog.objects.get(pk=int(log_id))
+                StudyLog.objects.create(user=user)
 
-        if user != study_log.user:
-            return JsonResponse({'msg': '작성권한 없음'})
+                data = self.study_log_with_time(user)
 
-        study_log.memo = memo_title
-        study_log.save()
+            return Response(data, status=status.HTTP_200_OK)
 
-        return JsonResponse({'msg': '저장 완료'})
+        else:  # 공부 중이 아닐 때(check를 하지만 사람이 없다)
 
-    return JsonResponse({'msg': '바르지 않은 접근'})
+            try:
+                log = user.studylog_set.get(date=date.today(), end_time=None)
+            except StudyLog.DoesNotExist:
+                # 날짜가 바뀐 상태에서도 요청이 오고, 사람이 없다면 아무 일을 할 필요가 없다
+                return Response({'msg': 'None'})
 
+            log.end_time = timezone.now()
+            log.save()
 
-def get_log(request):
-    user = request.user
+            user.total_time += get_sub_time(log.start_time, log.end_time)
+            user.save()
 
-    if request.method == "GET":
-        day = request.GET.get('day', '')
+            data = self.study_log_with_time(user)
 
-        log_list = [log for log in StudyLog.objects.filter(
-            user=user) if log.date.strftime('%Y-%m-%d') == day]
-        study_log_list = log_to_json(log_list)
+            return Response(data, status=status.HTTP_200_OK)
 
-        return JsonResponse({'study_log_list': study_log_list})
+    def put(self, request):
+        """
+        메모 처리 put 요청
+        """
+        log_id = request.data.get('logId', '')
+        memo = request.data.get('memoTitle', '')
 
+        if log_id == '':
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
-def callback_log(request):
-    if request.method == 'POST':
+        study_log = get_object_or_404(StudyLog, pk=int(log_id))
+        serializer = StudyLogSerializer(
+            study_log, data={"memo": memo}, partial=True)
 
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_406_NOT_ACCEPTABLE)
+
+    def delete(self, request):
+        """
+        사람인식 처리 과정 중 공부 finish 처리가 되면
+        새로 생기는 공부로그를 지우는 delete 요청
+        """
         user = request.user
 
         log_list = StudyLog.objects.filter(
             user=user, date=date.today(), end_time=None)
         for log in log_list:
-            print(log)
             log.delete()
+
+        data = self.study_log_with_time(user)
+
+        return Response(data, status=status.HTTP_200_OK)
+
+    def study_log_with_time(self, user):
 
         study_log_list = user.studylog_set.filter(
             date=date.today()).order_by('start_time')
-        study_log_list = log_to_json(study_log_list)
 
-        return JsonResponse({'study_log_list': study_log_list})
+        serializer = StudyLogSerializer(study_log_list, many=True)
+        day_total_time = sum([item["sub_time"] for item in serializer.data])
 
-    return JsonResponse({'msg': '올바르지 않은 접근'})
+        data = {
+            "study_log_list": serializer.data,
+            "day_total_time": day_total_time
+        }
+
+        return data
+
+
+class GetLogView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    # TODO 달력을 만든다면 년도와 월을 인자로 받아서 해야하나 고민
+    def get(self, request):
+        user = request.user
+        print(user)
+        day = request.GET.get('day', '')
+        log_list = StudyLog.objects.filter(user=user, date=day)
+        serializer = StudyLogSerializer(log_list, many=True)
+
+        day_total_time = sum([item["sub_time"] for item in serializer.data])
+
+        data = {
+            "study_log_list": serializer.data,
+            "day_total_time": day_total_time
+        }
+        return Response(data)
