@@ -8,9 +8,6 @@ from django.http import HttpResponseNotAllowed
 
 
 
-# Create your views here.
-
-
 def post_index(request): #인자는request
     page= request.GET.get('page','1') #페이지를  나누어주는 과정 호출했을때 기준페이지 1 설정
     post_list=Post.objects.order_by('-create_date')
