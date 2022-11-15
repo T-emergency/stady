@@ -10,7 +10,10 @@ class Tag(models.Model):
 
 
 class Study(models.Model):
-
+    STUDY_TYPE = (
+        ('TT', '총 공부 시간'), # total time
+        ('CT', '출석 체크 시간'), # check time
+    )
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     create_dt = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=100)
@@ -26,7 +29,14 @@ class Study(models.Model):
         "Student", related_name='submiter', blank=True)
     tags = models.ManyToManyField(
         "Tag", related_name='tag_studies', blank=True)
-    # category = #TODO 경민 - 조사 후 카테고리, 나눈 뒤 모델 생성
+    # 벌금 스터디
+    total_money = models.IntegerField()
+    week_money = models.IntegerField() # 주가 끝나는 날 초기화
+
+    is_penalty = models.BooleanField(default = False)
+    days = models.CharField(max_length = 7, blank = True)
+    limit_type = models.CharField(max_legnth = 5, choices=STUDY_TYPE, blank = True)
+    limit_time = models.SmallIntegerField(blank = True)
 
     def __str__(self):
         return f'{self.user} / {self.title}'
@@ -39,6 +49,8 @@ class Student(models.Model):  # 참여자 모델
     post = models.ForeignKey(Study, on_delete=models.CASCADE)
     join_dt = models.DateField(auto_now_add=True)
     is_accept = models.BooleanField(default=None, null=True)
+    total_penalty = models.IntegerField()
+    week_penalty = models.IntegerField() # 주가 끝나는 날 초기화
 
 
 class Bookmark(models.Model):
