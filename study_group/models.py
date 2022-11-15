@@ -30,8 +30,8 @@ class Study(models.Model):
     tags = models.ManyToManyField(
         "Tag", related_name='tag_studies', blank=True)
     # 벌금 스터디
-    total_money = models.IntegerField()
-    week_money = models.IntegerField() # 주가 끝나는 날 초기화
+    total_money = models.IntegerField(default = 0)
+    week_money = models.IntegerField(default = 0) # 주가 끝나는 날 초기화
 
     is_penalty = models.BooleanField(default = False)
     days = models.CharField(max_length = 7, blank = True)
@@ -49,8 +49,8 @@ class Student(models.Model):  # 참여자 모델
     post = models.ForeignKey(Study, on_delete=models.CASCADE)
     join_dt = models.DateField(auto_now_add=True)
     is_accept = models.BooleanField(default=None, null=True)
-    total_penalty = models.IntegerField()
-    week_penalty = models.IntegerField() # 주가 끝나는 날 초기화
+    total_penalty = models.IntegerField(default = 0)
+    week_penalty = models.IntegerField(default = 0) # 주가 끝나는 날 초기화
 
 
 class Bookmark(models.Model):
