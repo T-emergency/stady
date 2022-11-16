@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from study_group.models import Study, Student, Tag
+from study_group.models import StudentPost, Study, Student, Tag
 
 
 class StudentSerializer(serializers.ModelSerializer):
@@ -108,3 +108,10 @@ class StudyDetailSerializer(serializers.ModelSerializer):
         fields = ['id', 'user', 'headcount', 'title', 'content', 'is_online', 'is_like',
                   'thumbnail_img', 'is_author', 'is_student', 'sended', 'now_cnt', 'tags']
         read_only_fields = ['tags', ]
+
+
+class StudentPostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StudentPost
+        fields = '__all__'
+        read_only_fields = ['study', 'author']

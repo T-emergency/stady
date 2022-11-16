@@ -35,8 +35,8 @@ class Study(models.Model):
 
     is_penalty = models.BooleanField(default = False)
     days = models.CharField(max_length = 7, blank = True)
-    limit_type = models.CharField(max_legnth = 5, choices=STUDY_TYPE, blank = True)
-    limit_time = models.SmallIntegerField(blank = True)
+    limit_type = models.CharField(max_length = 5, choices=STUDY_TYPE, blank = True)
+    limit_time = models.SmallIntegerField(null = True,blank = True)
 
     def __str__(self):
         return f'{self.user} / {self.title}'
@@ -51,6 +51,18 @@ class Student(models.Model):  # 참여자 모델
     is_accept = models.BooleanField(default=None, null=True)
     total_penalty = models.IntegerField(default = 0)
     week_penalty = models.IntegerField(default = 0) # 주가 끝나는 날 초기화
+
+
+class StudentPost(models.Model):
+    class Meta:
+        db_table = "student_post"
+    study = models.ForeignKey(Study, on_delete= models.CASCADE)
+    author = models.ForeignKey(Student, on_delete= models.CASCADE)
+    title = models.CharField(max_length=30)
+    content = models.TextField()
+    create_dt = models.DateTimeField(auto_now_add=True)
+    update_dt = models.DateTimeField(auto_now_add=True)
+
 
 
 class Bookmark(models.Model):
