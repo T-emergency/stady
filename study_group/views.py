@@ -10,6 +10,7 @@ from .recommend import get_recommend_tags
 
 from .models import Study, Student, Tag, UserTagLog
 from .serializers import (
+    StudentPostSerializer,
     StudySerializer,
     StudentSerializer,
     # StudyCreateSerializer,
@@ -94,7 +95,9 @@ class StudyListAPIView(APIView, PageNumberPagination):
         study = StudySerializer(data=request.data, context={'tags': tag_list})
 
         if study.is_valid():
-            study.save(user=request.user)  # 여기서 tags = tag_lsit 넣어줘도 똑같은 로직?
+            study = study.save(user=request.user)  # 여기서 tags = tag_lsit 넣어줘도 똑같은 로직?
+            print(study.id)
+            Student.objects.create(user = request.user, post = study)
             return Response(status=status.HTTP_201_CREATED)
         print(study.errors)
         return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -259,3 +262,46 @@ class StudyLikeView(APIView):
             study.like.add(user)
 
         return Response(status=status.HTTP_200_OK)
+
+#-----------------스터디원 전용 페이지 -------------------#
+from rest_framework.generics import RetrieveAPIView, CreateAPIView
+
+class IsStudent(permissions.BasePermission): # permissions.IsAuthenticated 이것을 상속
+    def has_object_permission(self, request, view, obj):
+        return obj.student_set.filter(user = request.user ,is_accept = True).exists()
+
+
+class PrivateStudyDetailView(RetrieveAPIView, CreateAPIView):
+
+    permission_classes = [IsStudent, permissions.IsAuthenticated] # permissions.IsAuthenticated
+
+    def get_serializer_class(self):
+        method = self.request.method
+        if method == 'GET':
+            return StudyDetailSerializer # 스터디 전용시리얼 라이저 생성 필요
+        elif method == 'POST':
+            return StudentPostSerializer
+        return
+
+    def get_object(self):
+        obj = Study.objects.get(pk = self.kwargs["study_id"])
+        self.check_object_permissions(self.request, obj)
+        return obj
+
+    def create(self, request, *args, **kwargs): # 스터디원 게시판    
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+    
+    def perform_create(self, serializer):
+        study = self.get_object()
+        try: # 생성 중 강퇴 당할 경우
+            student = Student.objects.get(user = self.request.user, post = study)
+        except Student.DoesNotExist:
+            return Response(status=status.HTTP_400_BAD_REQUEST)# raise문법 찾아보고 쓰기
+
+        study = self.get_object()
+        serializer.save(study_id = study, author = student)
+#---------------------------------------------------#

@@ -14,4 +14,7 @@ urlpatterns = [
          views.StudentView.as_view(), name='accept'),
     path('search/', views.Search.as_view(), name='search'),
     path('recommand/', recommend.create_recommand_csv),
+
+    #Only Student generic view section
+    path('<int:study_id>/post/', views.PrivateStudyDetailView.as_view(), name='only_student_detail'),
 ]
