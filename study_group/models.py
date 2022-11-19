@@ -57,11 +57,20 @@ class StudentPost(models.Model):
     class Meta:
         db_table = "student_post"
     study = models.ForeignKey(Study, on_delete= models.CASCADE)
-    author = models.ForeignKey(Student, on_delete= models.CASCADE)
+    author = models.ForeignKey(User, on_delete= models.CASCADE)
     title = models.CharField(max_length=30)
     content = models.TextField()
     create_dt = models.DateTimeField(auto_now_add=True)
-    update_dt = models.DateTimeField(auto_now_add=True)
+    update_dt = models.DateTimeField(auto_now=True)
+
+
+class StudentPostComment(models.Model):
+    class Meta:
+        db_table = "student_post_comment"
+    
+    post = models.ForeignKey(StudentPost, on_delete= models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.CharField(max_length=128)
 
 
 
