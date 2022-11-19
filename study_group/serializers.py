@@ -132,13 +132,3 @@ class PrivateStudyDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Study
         fields = "__all__"
-
-
-# 예를 들어 포스트와 댓글 어떻게 특정 짓나 궁금
-
-
-# 시리얼 라이저는 단순한 요청
-
-# 주문 목록
-
-# 
