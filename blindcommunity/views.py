@@ -21,12 +21,13 @@ class TopPostAPIView(APIView):
         posts=Post.objects.all()
         b=[]
         for i in posts:
-            if i.likes.count() > 40:
+            if i.likes.count() > 0:
                 b.append(i)
+                print(i)
             else:
-                print(b)
+                
                 pass
-
+        
         serializer=PostListSerializer(b, many=True)
         return Response(serializer.data,status=status.HTTP_200_OK)
 
@@ -49,13 +50,16 @@ class SearchAPIView(APIView):
 
 class PostAPIView(APIView):
     def post(self, request, category_name): 
-        category = request.data.get('category')
+        # category = request.data.get('category_name')
+        print(category_name)
         serializer=PostCreateSerializer(data=request.data)
+        print('여기')
         if serializer.is_valid():
+            print('valid')
             post=serializer.save(user=request.user)
             print(post)
             print(post.id)
-            if category=='blind':
+            if category_name=='blind':
                 a = ['착잡한', '피곤한', '자상한', '포근한','귀여운','슬픈']
                 b = ['할미꽃', '개망초','큰금계국', '백합', '수레국화']
                 random_name=random.choice(a)+" "+random.choice(b)
@@ -88,7 +92,7 @@ class PostAPIView(APIView):
                 return Response(status=status.HTTP_201_CREATED)
 
         else:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors)
         
 
     def get(self, request, category_name):

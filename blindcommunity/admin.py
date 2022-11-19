@@ -1,5 +1,5 @@
 from django.contrib import admin
-from community.models import PostComment, Post, Bookmark, RandomName
+from .models import PostComment, Post, Bookmark, RandomName
 
 
 
