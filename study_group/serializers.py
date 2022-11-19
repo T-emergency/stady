@@ -110,8 +110,35 @@ class StudyDetailSerializer(serializers.ModelSerializer):
         read_only_fields = ['tags', ]
 
 
-class StudentPostSerializer(serializers.ModelSerializer):
+class PrivateStudentPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = StudentPost
         fields = '__all__'
         read_only_fields = ['study', 'author']
+
+
+class PrivateStudyDetailSerializer(serializers.ModelSerializer):
+    students = serializers.SerializerMethodField()
+    tags = serializers.SerializerMethodField()
+
+    def get_students(self, obj):
+        # 외래키를 사용하지 않았을 경우 생각하여
+        obj_list = Student.objects.filter(post_id = obj.id, is_accept = True)
+        return StudentSerializer(obj_list, many= True).data
+
+    def get_tags(self, obj):
+        return [tag.tag_name for tag in obj.tags.all()] # values() 출력 포맷? 이 원하는 형태 아님
+    # penalty_students = StudentSerializer(many= True)
+    class Meta:
+        model = Study
+        fields = "__all__"
+
+
+# 예를 들어 포스트와 댓글 어떻게 특정 짓나 궁금
+
+
+# 시리얼 라이저는 단순한 요청
+
+# 주문 목록
+
+# 
