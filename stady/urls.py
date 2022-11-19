@@ -50,6 +50,9 @@ urlpatterns = [
     path('community/', include('community.urls')),
     path('blind/', include('blindcommunity.urls')),
     # 커뮤니티
+    path('community/', include('community.urls')),
+    # 블라인드 커뮤니티
+    path('post/', include('blind_community.urls')),
 
     path('studies/', include('study_group.urls')),
 
@@ -61,7 +64,9 @@ urlpatterns = [
     # path('account/login/kakao/', user_views.kakao_social_login, name='kakao_login'),
     # 받은 인가 코드로 접근 토큰을 받아 유저의 정보를 가져올 url
     # path('account/login/kakao/callback/', user_views.kakao_social_login_callback, name='kakao_login_callback'),
+    
     path('accounts/', include('allauth.urls')),
+
 
 
     # 이메일 비밀번호 리셋
