@@ -13,8 +13,6 @@ import random
 
 
 
-
-
 # 인기글
 class TopPostAPIView(APIView):
     def get(self, request):
@@ -53,36 +51,26 @@ class PostAPIView(APIView):
         serializer=PostCreateSerializer(data=request.data)
         if serializer.is_valid():
             post=serializer.save(user=request.user)
-            print(post)
-            print(post.id)
             if category=='blind':
-                a = ['착잡한', '피곤한', '자상한', '포근한','귀여운','슬픈']
-                b = ['할미꽃', '개망초','큰금계국', '백합', '수레국화']
+                a = ['착잡한', '피곤한', '자상한', '포근한','귀여운','슬픈','케케묵은', '질긴', '짖궂은', '엄청난', '옳은', '외로운', '나쁜', '그리운', '날카로운', '네모난','열받은','잠오는']
+                b = ['할미꽃', '개망초','큰금계국', '백합', '수레국화','우유','연필','컵','커피','사과','고양이','강아지','물망초','냉장고','가방','서랍','책상']
                 random_name=random.choice(a)+" "+random.choice(b)
-                print("이름 만들기 시작")
-                print(random_name)
                 d=RandomName.objects.filter(name=random_name).exists() 
-                print("존재하니?",d)
                 if d==False:
                     RandomName.objects.create(name=random_name, post_id=post.id, user_id=request.user.id)
-                    print("없어서 만들고 끝냈어요", random_name)   
                     return Response(status=status.HTTP_201_CREATED)         
                 if d==True:
                     while True: 
-                        print("-------while--------")
                         random_name=random.choice(a)+" "+random.choice(b)
                         exist=RandomName.objects.filter(name=random_name).exists() #get or create
-                        print(random_name)
-                        print("같은 아이디가 존재하나요??", exist)
+
 
                         if exist==False:
                             RandomName.objects.create(name=random_name, post_id=post.id, user_id=request.user.id)
-                            print("만들어졌어",random_name)
                             return Response(status=status.HTTP_201_CREATED)
                             
 
                         elif exist==True:
-                            print("다시 돌아가서 만들어")
                             continue
             else:
                 return Response(status=status.HTTP_201_CREATED)
@@ -94,19 +82,13 @@ class PostAPIView(APIView):
     def get(self, request, category_name):
         if category_name=='blind':
             posts=Post.objects.all()
-            # print(posts)
             category_list=posts.filter(category=category_name)
-            # print(category_list)
             serializer=BlindPostListSerializer(category_list, many=True)
-            # print(serializer.data)
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             posts=Post.objects.all()
-            # print(posts)
             category_list=posts.filter(category=category_name)
-            # print(category_list)
             serializer=PostListSerializer(category_list, many=True)
-            # print(serializer.data)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -114,16 +96,12 @@ class PostAPIView(APIView):
 class CommentAPIView(APIView):
     def post(self, request, post_id, comment_id):
         post=Post.objects.get(id=post_id)
-        print(post)
-        print(RandomName.objects.filter(post_id=post_id, user_id=request.user.id).exists())
-        print(request.user.id)
-        print(post_id)
         serializer=CommentSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(user=request.user, post_id=post_id) 
             if post.category == "blind":
-                a = ['착잡한', '피곤한', '자상한', '포근한','귀여운','슬픈']
-                b = ['할미꽃', '개망초','큰금계국', '백합', '수레국화']
+                a = ['착잡한', '피곤한', '자상한', '포근한','귀여운','슬픈','케케묵은', '질긴', '짖궂은', '엄청난', '옳은', '외로운', '나쁜', '그리운', '날카로운', '네모난','열받은','잠오는']
+                b = ['할미꽃', '개망초','큰금계국', '백합', '수레국화','우유','연필','컵','커피','사과','고양이','강아지','물망초','냉장고','가방','서랍','책상']
                 random_name=random.choice(a)+" "+random.choice(b)
                 c=RandomName.objects.filter(name=random_name).exists() 
 
@@ -136,10 +114,8 @@ class CommentAPIView(APIView):
                     c=RandomName.objects.filter(name=random_name).exists()
                     if c==True:
                         RandomName.objects.create(name=random_name, post_id=post.id, user_id=request.user.id)
-
                     else:
                         continue
-
 
             else:
                 return Response(status=status.HTTP_201_CREATED)
@@ -228,7 +204,7 @@ class CommentDetailAPIView(APIView):
 class PostLikeAPIView(APIView):
     def post(self, request, post_id):
         post=get_object_or_404(Post, id=post_id)
-        if request.user in post.likes.all(): 
+        if request.user in post.likes.all():
             post.likes.remove(request.user)
             return Response("좋아요 취소",status=status.HTTP_200_OK)
 

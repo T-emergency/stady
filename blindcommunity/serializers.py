@@ -35,20 +35,15 @@ class BlindPostListSerializer(serializers.ModelSerializer):
         a=obj.id
         b=obj.user_id
         c=RandomName.objects.get(user_id=b, post_id=a)
-        print("시리얼 프린트 입니다")
-        print("post_id",a)
-        print("user_id",b)
-        print(c)
-        print(c.name)
         return c.name
     def get_comments_count(self,obj):
         return obj.postcomment_set.count()
     def get_likes_count(self, obj):
         return obj.likes.count()
-
     class Meta:
         model = Post
         fields=('title','content','user','likes_count','comments_count','hits','category')
+
 
 
 class BlindCommentSerializer(serializers.ModelSerializer):
