@@ -47,6 +47,8 @@ urlpatterns = [
     path('user/', include('user.urls')),
     # path('profile/', include('user.urls')),
     path('study/', include('study.urls')),
+    path('community/', include('community.urls')),
+    path('blind/', include('blindcommunity.urls')),
     # 커뮤니티
     path('community/', include('community.urls')),
     # 블라인드 커뮤니티
