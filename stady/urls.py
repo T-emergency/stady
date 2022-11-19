@@ -48,6 +48,7 @@ urlpatterns = [
     # path('profile/', include('user.urls')),
     path('study/', include('study.urls')),
     path('community/', include('community.urls')),
+    path('blind/', include('blindcommunity.urls')),
     # 커뮤니티
 
     path('studies/', include('study_group.urls')),
