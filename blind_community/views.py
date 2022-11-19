@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework import permissions
 from rest_framework.views import APIView
 from .serializer import BlindPostSerialize,BlindPostListView,BlindPostDetailSerialize,BlindCommentPostSerialize
-from .models import RandomName, Post,PostComment
+from .models import RandomName, Post,PostComment,Like
 import random
 
 first = ['케케묵은', '질긴', '짖궂은', '엄청난', '옳은', '외로운', '나쁜', '그리운', '날카로운', '네모난','열받은','잠오는'] 
@@ -13,14 +13,6 @@ second = ['우유','연필','컵','커피','사과','고양이','강아지','물
 class BlindPostView(APIView):
     def post(self, request, category):
         if category == 'blind':
-           # 카테고리 저장을 위해 따로 create사용
-            # post = Post.objects.create(
-            #             user = request.user, 
-            #             title = request.data['title'], 
-            #             content =request.data['content'], 
-            #             category = category
-            #             )
-            
             #시리얼 라이즈에 보내니 위해 딕셔너리로 형식 바꿈
             post_serializer={
                 "title" :request.data['title'],
@@ -32,24 +24,13 @@ class BlindPostView(APIView):
             random_name_crated = random.choice(first) + random.choice(second)
             random_name = RandomName.objects.filter(random_name = random_name_crated).exists()
 
-            # if random_name :
-            #      while not random_name:
-            #         random_name_crated = random.choice(first) + random.choice(second)
-                
-            # else:
-            #     RandomName.objects.create(
-            #     random_name = random_name_crated,
-            #     post_id = post.id,
-            #     user = request.user
-            #     )
-
-            
             if serializer.is_valid():
                 serializer.save(user = request.user)
                 print(serializer.data['id'])
                 if random_name :
-                 while not random_name:
-                    random_name_crated = random.choice(first) + random.choice(second)
+                    print('---while---')
+                    while not random_name:
+                        random_name_crated = random.choice(first) + random.choice(second)
                 
                 else:
                     RandomName.objects.create(
@@ -124,14 +105,12 @@ class BlindComment(APIView):
         random_name = RandomName.objects.filter(random_name = random_name_crated).exists()
 
         if serialize.is_valid():
-            print("--valid--")
             serialize.save(user=request.user)
             if random_name:
                 while not random_name:
                     print('--while---')
                     random_name_crated = random.choice(first) + random.choice(second)
             else:
-                print('--valueerror')
                 print(post.id)
                 RandomName.objects.create(
                     user = request.user,
@@ -139,7 +118,6 @@ class BlindComment(APIView):
                     # post_id, post.id를 하면 ValueError: Cannot assign "61": "RandomName.post" must be a "Post" instance. 가 된다.
                     random_name = random_name_crated
                 )
-                print('----randomname---')
             return Response(serialize.data)
         else:
             return Response(serialize.errors)
@@ -163,6 +141,24 @@ class BlindCommentChange(APIView):
 
 
 
-#좋아요.
-class BlindLikes(APIView):
-    pass
+#댓글 좋아요.
+class CommentLikes(APIView):
+    def post(self, request, comment_id):
+        user = request.user
+        like = Like.objects.filter(comment = comment_id, user = user).exists()
+        if like:
+            like.delete()
+        else:
+            like.create(comment = comment_id, user =user)
+        
+        
+
+#게시글 좋아요
+class PostLike(APIView):
+    def post(self, request, post_id):
+        user = request.user
+        like = Like.objects.filter(post = post_id, user = user).exists()
+        if like:
+            like.delete()
+        else:
+            like.create(post = post_id, user =user)
