@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'drf_yasg',
+    'django_crontab',
 
     # service app
     'user',
@@ -277,3 +278,13 @@ LOGGING = {
         },
     }
 }
+
+
+CRONJOBS = [
+    # 45분 마다
+    ('45 * * * *', 'study.cron.crontab_recent_check', '>> '+os.path.join(BASE_DIR, 'stady/log/cron.log')),
+    # 매일 3시마다
+    # ('0 3 * * *', 'study_group.recommend.create_recommand_csv', '>> '+os.path.join(BASE_DIR, 'stady/log/cron.log')),
+
+    # ('* * * * *', 'study_group.cron.crontab_penalty_student', '>> '+os.path.join(BASE_DIR, 'stady/log/cron.log')),
+]

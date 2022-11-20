@@ -35,14 +35,19 @@ class StudyLogView(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
         if type == 'start':
+            # TODO 프론트에서 is_running플래그를 통해 막음, 또한 페이지 이탈 시 공부 종료 기능 구현 시 필요없을 확률 높아짐
             try:  # 이미 공부 중일 경우
 
                 user.studylog_set.get(date=date.today(), end_time=None)
+                user.recent_check = timezone.localtime()
+                user.save()
                 return Response({'msg': '이미 공부 중'}, status=status.HTTP_200_OK)
 
             except StudyLog.DoesNotExist:
                 StudyLog.objects.create(user=user)
 
+            user.recent_check = timezone.localtime()
+            user.save()
             # study_log_list = user.studylog_set.filter(date = date.today()).order_by('start_time')
 
             # serializer = StudyLogSerializer(study_log_list, many = True)
@@ -81,7 +86,8 @@ class StudyLogView(APIView):
         if is_study(request):  # 사람이 있다
             try:
                 log = user.studylog_set.get(date=date.today(), end_time=None)
-
+                user.recent_check = timezone.localtime()
+                user.save()
                 return Response({'msg': '공부중'})
 
             except StudyLog.DoesNotExist:
