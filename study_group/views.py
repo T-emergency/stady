@@ -8,10 +8,11 @@ from rest_framework.filters import SearchFilter
 from study.utils import get_sub_time
 from .recommend import get_recommend_tags
 
-from .models import StudentPost, Study, Student, Tag, UserTagLog
+from .models import StudentPost, StudentPostComment, Study, Student, Tag, UserTagLog
 from .serializers import (
     PrivateStudentPostSerializer,
     PrivateStudyDetailSerializer,
+    PrivateStudyPostCommentSerializer,
     StudySerializer,
     StudentSerializer,
     # StudyCreateSerializer,
@@ -263,7 +264,7 @@ class StudyLikeView(APIView):
         return Response(status=status.HTTP_200_OK)
 
 #-----------------스터디원 전용 페이지 -------------------#
-from rest_framework.generics import RetrieveAPIView, CreateAPIView, ListAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView, UpdateAPIView, DestroyAPIView
+from rest_framework.generics import RetrieveAPIView, CreateAPIView, ListAPIView, RetrieveUpdateDestroyAPIView, UpdateAPIView, DestroyAPIView
 from rest_framework.pagination import PageNumberPagination
 from collections import OrderedDict
 from rest_framework.viewsets import ModelViewSet
@@ -308,7 +309,7 @@ class PostPageNumberPagination(PageNumberPagination):
 
 
 
-class PrivateStudyView(RetrieveAPIView, ListAPIView, CreateAPIView):
+class PrivateStudyView(RetrieveAPIView, ListAPIView, CreateAPIView): # 메인 정보(스터디 내용&사람들), 게시판(게시글 리스트), 글 생성
     # get 요청에 유형을 달리하여 시리얼 라이저와 쿼리를 변경하여 요청
     permission_classes = [IsStudent, permissions.IsAuthenticated]
     serializer_class = PrivateStudentPostSerializer
@@ -360,7 +361,7 @@ class PrivateStudyView(RetrieveAPIView, ListAPIView, CreateAPIView):
         return True
 
 
-class PrivateStudyDetailView(RetrieveUpdateDestroyAPIView):
+class PrivateStudyDetailView(RetrieveUpdateDestroyAPIView): # 상세, 수정, 삭제
 
     serializer_class = PrivateStudentPostSerializer
     permission_classes = [IsPrivatePostAuthorOrReadOnly, permissions.IsAuthenticated]
@@ -371,5 +372,20 @@ class PrivateStudyDetailView(RetrieveUpdateDestroyAPIView):
         return obj
 
 
-class PrivateStudyCommentView(ModelViewSet):
-    pass
+class PrivateStudyCommentView(ModelViewSet): # 댓글 생성 수정 삭제
+    queryset = StudentPostComment.objects.all()
+    serializer_class = PrivateStudyPostCommentSerializer
+    # permission_classes = [IsPrivatePostAuthorOrReadOnly]
+
+    def get_object(self):
+        self.permission_classes = [IsPrivatePostAuthorOrReadOnly]
+        obj = get_object_or_404(StudentPostComment, id = self.kwargs["comment_id"])
+        self.check_object_permissions(self.request, obj.post)
+        return obj
+
+    def perform_create(self, serializer):
+        self.permission_classes = [IsStudent]
+        post = get_object_or_404(StudentPost, id = self.kwargs["post_id"])
+        self.check_object_permissions(self.request, post)
+        serializer.save(post_id = post.id , author = self.request.user)
+        return
