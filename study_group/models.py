@@ -71,6 +71,8 @@ class StudentPostComment(models.Model):
     post = models.ForeignKey(StudentPost, on_delete= models.CASCADE)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.CharField(max_length=128)
+    create_dt = models.DateTimeField(auto_now_add = True)
+    update_dt = models.DateTimeField(auto_now = True)
 
 
 
