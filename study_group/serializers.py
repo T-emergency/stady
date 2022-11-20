@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from study_group.models import StudentPost, Study, Student, Tag
+from study_group.models import StudentPost, StudentPostComment, Study, Student, Tag
 
 
 class StudentSerializer(serializers.ModelSerializer):
@@ -111,6 +111,12 @@ class StudyDetailSerializer(serializers.ModelSerializer):
 
 
 class PrivateStudentPostSerializer(serializers.ModelSerializer):
+    comments = serializers.SerializerMethodField()
+
+    def get_comments(self, obj):
+        comments = obj.studentpostcomment_set.all()
+        serializer = PrivateStudyPostCommentSerializer(comments, many = True)
+        return serializer.data
     class Meta:
         model = StudentPost
         fields = '__all__'
@@ -132,3 +138,13 @@ class PrivateStudyDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Study
         fields = "__all__"
+
+class PrivateStudyPostCommentSerializer(serializers.ModelSerializer):
+    author = serializers.SerializerMethodField()
+
+    def get_author(self, obj):
+        return obj.author.username
+    class Meta:
+        model  = StudentPostComment
+        fields = "__all__"
+        read_only_fields = ['post',]
