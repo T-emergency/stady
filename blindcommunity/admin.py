@@ -1,5 +1,6 @@
 from django.contrib import admin
-from blindcommunity.models import PostComment, Post, RandomName
+from .models import PostComment, Post, Bookmark, RandomName
+
 
 
 

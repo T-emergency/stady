@@ -20,8 +20,9 @@ class TopPostAPIView(APIView):
         for i in posts:
             if i.likes.count() >= 0:
                 b.append(i)
+                print(i)
             else:
-                print(b)
+                
                 pass
 
         serializer=TopPostListSerializer(b, many=True)
@@ -49,8 +50,11 @@ class PostAPIView(APIView):
         category = request.data.get('category')
         print(category)
         serializer=PostCreateSerializer(data=request.data)
+        print('여기')
         if serializer.is_valid():
+            print('valid')
             post=serializer.save(user=request.user)
+
             if category=='blind':
                 a = ['착잡한', '피곤한', '자상한', '포근한','귀여운','슬픈','케케묵은', '질긴', '짖궂은', '엄청난', '옳은', '외로운', '나쁜', '그리운', '날카로운', '네모난','열받은','잠오는']
                 b = ['할미꽃', '개망초','큰금계국', '백합', '수레국화','우유','연필','컵','커피','사과','고양이','강아지','물망초','냉장고','가방','서랍','책상']
@@ -76,7 +80,7 @@ class PostAPIView(APIView):
                 return Response(status=status.HTTP_201_CREATED)
 
         else:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors)
         
 
     def get(self, request):
@@ -99,14 +103,6 @@ class PostAPIView(APIView):
 class CommentAPIView(APIView):
     def post(self, request, post_id):
         post=Post.objects.get(id=post_id)
-        # post에 자기 id와 post를 가진 랜덤이름이 있다면 랜덤이름 안만들고 포스트를 저장
-        # if RandomName.objects.get(user_id=request.user.id, post_id=post_id).exists() == True:
-        #     serializer=CommentSerializer(data=request.data)
-        #     if serializer.is_valid():
-        #         serializer.save(user=request.user, post_id=post_id)
-        #     else:
-        #         return Response(status=status.HTTP_400_BAD_REQUEST)                
-        # else:
         serializer=CommentSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(user=request.user, post_id=post_id)
@@ -132,7 +128,9 @@ class CommentAPIView(APIView):
                 return Response(status=status.HTTP_201_CREATED)
 
         else:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            # return Response(status=status.HTTP_400_BAD_REQUEST)
+            print('is not valid')
+            return Response(serializer.errors)
 
     def get(self, request, post_id):
         posts=Post.objects.get(id=post_id)
