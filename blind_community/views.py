@@ -9,7 +9,7 @@ import random
 
 first = ['케케묵은', '질긴', '짖궂은', '엄청난', '옳은', '외로운', '나쁜', '그리운', '날카로운', '네모난','열받은','잠오는'] 
 second = ['우유','연필','컵','커피','사과','고양이','강아지','물망초','냉장고','가방','서랍','책상']
-
+            
 class BlindPostView(APIView):
     def post(self, request, category):
         if category == 'blind':
@@ -46,7 +46,7 @@ class BlindPostView(APIView):
             else:
                 return Response(serializer.errors)
             
-    
+
     def get(self, request, category):
 
         #해결해야 할 부분(랜덤 닉네임을 어떻게 같이 보내줄 것인가.)

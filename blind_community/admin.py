@@ -1,4 +1,4 @@
 from django.contrib import admin
-from .models import RandomName
+# from .models import RandomName
 
-admin.site.register(RandomName)
+# admin.site.register(RandomName)

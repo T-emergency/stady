@@ -14,7 +14,7 @@ class Post(models.Model):
     updated_date = models.DateTimeField(auto_now = True)
     image = models.ImageField(upload_to='post' , blank = True)
     category = models.CharField(max_length = 15, null = True)
-    
+
 
 
 class PostComment(models.Model):
@@ -31,7 +31,7 @@ class PostComment(models.Model):
 
 class RandomName(models.Model):
     class Meta:
-        db_table = 'random_name'
+        db_table = 'random_name2'
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_random')
     post = models.ForeignKey(Post, on_delete=models.CASCADE, null = True, related_name='random_post')
     random_name = models.CharField(max_length=100, null = False)
