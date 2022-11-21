@@ -70,15 +70,19 @@ class BlindCommentSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField()
 
     def get_user(self, obj):
-        a=obj.user_id
-        b=obj.post_id
-        c=RandomName.objects.get(post_id=b, user_id=a) # 하나밖에 없음
-        return c.name
+        comment_author=obj.user_id
+        author=obj.post.user_id
+
+        randomname=RandomName.objects.get(post_id=obj.post_id, user_id=comment_author) # 하나밖에 없음
+        if comment_author == author:
+            return '글쓴이'
+        return randomname.name
     
 
     class Meta:
         model = PostComment
         fields='__all__'
+        read_only_fields=('user','post',) 
 
 #게시글 댓글
 class CommentSerializer(serializers.ModelSerializer):
@@ -92,8 +96,8 @@ class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PostComment
-        fields=("content",)
-        read_only_fields=('user') 
+        fields=("content",'user','likes_count',)
+        # read_only_fields=('user',) 
 
 
 

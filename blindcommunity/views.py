@@ -116,40 +116,46 @@ class PostAPIView(APIView):
 
 # 댓글 작성, 리스트
 class CommentAPIView(APIView):
-    def post(self, request, post_id, comment_id):
+    def post(self, request, post_id):
         post=Post.objects.get(id=post_id)
-        print(post)
-        print(RandomName.objects.filter(post_id=post_id, user_id=request.user.id).exists())
-        print(request.user.id)
-        print(post_id)
-        serializer=CommentSerializer(data=request.data)
+        print(post.category)
+        print('post_user',post.user)
+        print('user_id',request.user)
+        serializer=BlindCommentSerializer(data=request.data)
+        print('is_valid직전')
         if serializer.is_valid():
+            print('is_valid')
             serializer.save(user=request.user, post_id=post_id) 
             if post.category == "blind":
-                a = ['착잡한', '피곤한', '자상한', '포근한','귀여운','슬픈']
-                b = ['할미꽃', '개망초','큰금계국', '백합', '수레국화']
-                random_name=random.choice(a)+" "+random.choice(b)
-                c=RandomName.objects.filter(name=random_name).exists() 
-
-                if c==False:
-                    RandomName.objects.create(name=random_name, post_id=post.id, user_id=request.user.id)
-                    return Response(status=status.HTTP_201_CREATED)
-
-                while True:
+                if request.user != post.user:
+                    print('randomename생성')
+                    a = ['착잡한', '피곤한', '자상한', '포근한','귀여운','슬픈']
+                    b = ['할미꽃', '개망초','큰금계국', '백합', '수레국화']
                     random_name=random.choice(a)+" "+random.choice(b)
-                    c=RandomName.objects.filter(name=random_name).exists()
-                    if c==True:
+                    c=RandomName.objects.filter(name=random_name).exists() 
+
+                    if c==False:
                         RandomName.objects.create(name=random_name, post_id=post.id, user_id=request.user.id)
+                        return Response(status=status.HTTP_201_CREATED)
 
-                    else:
-                        continue
-
-
+                    while True:
+                        random_name=random.choice(a)+" "+random.choice(b)
+                        c=RandomName.objects.filter(name=random_name).exists()
+                        if c==False:
+                            RandomName.objects.create(name=random_name, post_id=post.id, user_id=request.user.id)
+                            break
+                        else:
+                            continue
+                else:
+                    print('유저가 글쓴이')
+                    return Response(serializer.data)
             else:
                 return Response(status=status.HTTP_201_CREATED)
 
         else:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            # return Response(status=status.HTTP_400_BAD_REQUEST)
+            print('is not valid')
+            return Response(serializer.errors)
 
     def get(self, request, post_id):
         posts=Post.objects.get(id=post_id)
