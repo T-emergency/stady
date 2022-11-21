@@ -5,7 +5,7 @@ app_name = 'community'
 
 urlpatterns = [
     path('', views.TopPostAPIView.as_view(), name='index'),
-    path('category/<str:category_name>/', views.PostAPIView.as_view(), name='post'), # 입력한걸 키로 보내주면 되잖아.
+    path('category/', views.PostAPIView.as_view(), name='post'), # 입력한걸 키로 보내주면 되잖아.
     path('<int:post_id>/', views.PostDetailAPIView.as_view(), name='post_detail'), 
 
     path('<int:post_id>/comment/', views.CommentAPIView.as_view(), name='comment'),
