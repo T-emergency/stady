@@ -47,8 +47,3 @@ class RandomName(models.Model):
         return f'{str(self.name)} / {str(self.user)} / {str(self.post)} '
 
 
-class Bookmark(models.Model):
-    class Meta:
-        db_table='bookmark'
-    user=models.ForeignKey(User, on_delete=models.CASCADE, related_name='book_user')
-    post=models.ForeignKey(Post, on_delete=models.CASCADE, related_name='book_post')

@@ -67,6 +67,7 @@ INSTALLED_APPS = [
     'my_profile',
     'api',
     'blind_community',
+    'blindcommunity'
 ]
 
 MIDDLEWARE = [
