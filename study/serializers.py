@@ -1,7 +1,7 @@
 import json
 # utils
 from . import utils
-from .models import User
+from .models import User,Todo
 
 from rest_framework import serializers
 
@@ -18,6 +18,20 @@ class UserSerializer(serializers.ModelSerializer):
         user.set_password(password)  # 지정하고
         user.save()  # 다시 저장?
         return user
+
+
+class TodoSerializer(serializers.ModelSerializer):
+    create_at = serializers.SerializerMethodField()
+
+    def get_create_at(self, obj):
+        return str(obj.create_at)[:10]
+
+    class Meta:
+        model = Todo
+        fields = ('content', 'is_checked', 'create_at','id')
+        read_only_fields=('user',) 
+
+
 
 
 def log_to_json(study_log_list: list):

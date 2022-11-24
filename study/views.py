@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
+from rest_framework.response import Response
 
 # utils
 from datetime import datetime, date
@@ -10,10 +11,15 @@ from study.utils import get_sub_time
 
 # models part
 from user.models import User
-from .models import StudyLog
+from .models import StudyLog, Todo
 
 # machine-learning part
 from .machine import is_study
+
+from rest_framework.views import APIView
+
+from .serializers import TodoSerializer
+
 
 
 # TODO 하루가 끝나면 공부로그에서 백 마지막 시간을 지정해 준다(11시55분경?)
@@ -190,3 +196,59 @@ def callback_log(request):
         return JsonResponse({'study_log_list': study_log_list})
 
     return JsonResponse({'msg': '올바르지 않은 접근'})
+
+
+
+#todo가 들어왓을때
+#플러스 버튼을 누르면 추가할 수 있는 input과 버튼이 나타난다
+#content에 input값을 받아서 저장 날짜 저장
+#profile 페이지에서 get으로 받아올 때 todo.objects.filter(id = user_id).order_by(some)
+#근데 오늘 날짜만 나와야 한다 todo.objects.filter(id=user_id ,date = today() )
+#아마 데이터가 없으면 에러가 날테니 try/except도 필요할수 있다.
+
+
+class ToDoVIew(APIView):
+    def post(self, request):
+        print('todo post 함수 실행')
+        
+        serializer = TodoSerializer(data = request.data)
+        if serializer.is_valid():
+            print('is valid')
+            serializer.save(user = request.user)
+            return Response(serializer.data)
+        else:
+            print('is not valid')
+            return Response(serializer.errors)
+
+    def get(self,request):
+        print('todo get함수 실행')
+        # print(date.today())
+        today = date.today()
+
+        start_date = datetime.strptime(str(today.year)+" "+str(today.month)+" "+str(today.day) ,'%Y %m %d')
+        end_date = datetime.strptime(str(today.year)+" "+str(today.month)+" "+str(today.day)+" 23:59", '%Y %m %d %H:%M')
+        user = request.user
+        todo = Todo.objects.filter(user_id = user,  create_at__range=[start_date, end_date])
+        serializer = TodoSerializer(todo, many=True)
+        return Response(serializer.data)
+
+
+class TodoChangeView(APIView):
+    def put(self, request, todo_id):
+        print('put함수 실행')
+        print(request.data)
+        todo = Todo.objects.get(id = todo_id)
+        serializer = TodoSerializer(todo, data = request.data)
+        if serializer.is_valid():
+            print('is valid')
+            serializer.save()
+            return Response(serializer.data)
+        print('is not valid')
+        return Response(serializer.errors)
+    
+    def delete(self, request, todo_id):
+        print('delete함수 실행')
+        todo = Todo.objects.get(id = todo_id)
+        todo.delete()
+        return Response('삭제 성공')
+

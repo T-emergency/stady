@@ -8,4 +8,6 @@ urlpatterns = [
     path('memo/', views.create_memo, name = 'create_memo'),
     path('log/', views.get_log, name = 'get_log'),
     path('callback/', views.callback_log, name = 'callback_log'),
+    path('todo/', views.ToDoVIew.as_view(), name='todo_views'),
+    path('todo/<int:todo_id>/', views.TodoChangeView.as_view(),name='todo_change_view')
 ]
