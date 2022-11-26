@@ -49,41 +49,7 @@ class SearchAPIView(APIView):
             serializer=PostSearchSerializer(list, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-#페이지네이션 참고자료
-# class StudyListAPIView(APIView, PageNumberPagination):
-#     permission_classes = [permissions.IsAuthenticated]
-#     page_size = 6
 
-#     def get(self, request):
-
-#         studies = Study.objects.order_by('-create_dt')
-#         recommend_tags = get_recommend_tags(request)
-#         recommend_study = []
-
-#         # print("rec:", recommend_tags)
-
-#         if recommend_tags == None:
-#             pass
-#         else:
-#             for tag in recommend_tags:
-#                 # print("tag:", Tag.objects.get(tag_name=tag))
-#                 tag = Tag.objects.get(tag_name=tag)
-#                 recommend_studies = tag.tag_studies.order_by("?")[:3]
-#                 # print("recommend_studie: ", recommend_studies)
-#                 for s in recommend_studies:
-#                     recommend_study.append(s)
-#                 # recommend_study.append(*recommend_studies)
-
-#         results = self.paginate_queryset(studies, request, view=self)
-
-#         serializer = StudySerializer(results, many=True)
-#         serializer2 = StudySerializer(recommend_study[:3], many=True)
-
-#         data = {
-#             "studies": serializer.data,
-#             "recommend_studies": serializer2.data
-#         }
-#         return self.get_paginated_response(data)
 
 class PostAPIView(APIView, PageNumberPagination):
     # permission_classes = [permissions.IsAuthenticated]
@@ -152,8 +118,8 @@ class PostAPIView(APIView, PageNumberPagination):
 
 # 댓글 작성, 리스트
 # 글쓴이가 댓글달면 그냥 글쓴이로 표시해주거나 글쓴이가 댓글적었을때 랜덤이름이 안생기게 해줘야한다 
-class CommentAPIView(APIView):
-
+class CommentAPIView(APIView, PageNumberPagination):
+    page_size=4
     def post(self, request, post_id):
         post=Post.objects.get(id=post_id)
         # post에 자기 id와 post를 가진 랜덤이름이 있다면 랜덤이름 안만들고 포스트를 저장
@@ -161,7 +127,7 @@ class CommentAPIView(APIView):
         serializer=CommentSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(user=request.user, post_id=post_id)
-            if post.category == "blind" and RandomName.objects.filter(user_id=request.user.id, post_id=post_id).exists() == False:
+            if post.category == "익명게시판" and RandomName.objects.filter(user_id=request.user.id, post_id=post_id).exists() == False:
                 a = randomname_list
                 b = randomname_list_2
                 random_name=random.choice(a)+" "+random.choice(b)
@@ -190,13 +156,19 @@ class CommentAPIView(APIView):
         posts=Post.objects.get(id=post_id)
         comments=posts.postcomment_set.all()
         category_name=posts.category
+        results = self.paginate_queryset(comments, request, view=self)
+
         print(category_name)
-        if category_name=='blind':
-            serializer=BlindCommentSerializer(comments, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+        if category_name=='익명게시판':
+            serializer=BlindCommentSerializer(results, many=True)
+            return self.get_paginated_response(serializer.data)
+
+            # return Response(serializer.data, status=status.HTTP_200_OK)
         else:
-            serializer=CommentSerializer(comments, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            serializer=CommentSerializer(results, many=True)
+            return self.get_paginated_response(serializer.data)
+
+            # return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 
@@ -211,7 +183,7 @@ class PostDetailAPIView(APIView): # 게시글 상세 / 수정 / 삭제
         except:
             pass
 
-        if category_name=='blind':
+        if category_name=='익명게시판':
             serializer=BlindPostListSerializer(post)
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:

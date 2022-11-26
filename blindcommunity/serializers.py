@@ -29,7 +29,7 @@ class TopPostListSerializer(serializers.ModelSerializer):
     def get_likes_count(self, obj):
         return obj.likes.count()
     def get_created_date(self,obj):
-        return str(obj.created_date)[:16]
+        return str(obj.created_date)[:19]
     class Meta:
         model = Post
         fields=('title','content','user','likes_count','comments_count','hits','category','id','created_date')
@@ -50,7 +50,7 @@ class PostListSerializer(serializers.ModelSerializer): # get 게시글 리스트
     def get_likes_count(self, obj):
         return obj.likes.count()
     def get_created_date(self,obj):
-        return str(obj.created_date)[:16]
+        return str(obj.created_date)[:19]
     def get_user_id(self, obj):
         return obj.user.id
 
@@ -78,11 +78,13 @@ class BlindPostListSerializer(serializers.ModelSerializer):
     def get_likes_count(self, obj):
         return obj.likes.count()
     def get_created_date(self,obj):
-        return str(obj.created_date)[:16]
+        return str(obj.created_date)[:19]
+    def get_user_id(self, obj):
+        return obj.user.id
         
     class Meta:
         model = Post
-        fields=('title','content','user','likes_count','comments_count','hits','category','id','created_date','likes')
+        fields=('title','content','user','likes_count','comments_count','hits','category','id','created_date','likes','user_id')
 
 
 class BlindCommentSerializer(serializers.ModelSerializer):
@@ -103,12 +105,12 @@ class BlindCommentSerializer(serializers.ModelSerializer):
     def get_likes_count(self, obj):
         return obj.likes.count()
     def get_created_date(self,obj):
-        return str(obj.created_date)[:16]
+        return str(obj.created_date)[:19]
     
 
     class Meta:
         model = PostComment
-        fields=("content","likes_count","user","id","user_id","likes")
+        fields=("content","likes_count","user","id","user_id","likes","created_date")
 
 #게시글 댓글
 class CommentSerializer(serializers.ModelSerializer):
@@ -126,7 +128,7 @@ class CommentSerializer(serializers.ModelSerializer):
     def get_likes_count(self, obj):
         return obj.likes.count()
     def get_created_date(self,obj):
-        return str(obj.created_date)[:16]
+        return str(obj.created_date)[:19]
     
     class Meta:
         model = PostComment
@@ -134,7 +136,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
 # 게시글 생성
 class PostCreateSerializer(serializers.ModelSerializer): # 게시글 생성
-    title=serializers.CharField(min_length=1, max_length=100)
+    title=serializers.CharField(min_length=1, max_length=40)
     content=serializers.CharField(min_length=1, max_length=200)
     category=serializers.CharField(min_length=1, required=False)
     # img = serializers.ImageField(use_url=True, required=False)
