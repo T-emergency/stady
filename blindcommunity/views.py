@@ -4,31 +4,32 @@ from .models import Post, PostComment, RandomName
 from django.core.paginator import Paginator
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, permissions
 from .serializers import (CommentSerializer, 
 CommentDetailSerializer, PostCreateSerializer, 
 PostDetailSerializer, PostSearchSerializer, BlindCommentSerializer, BlindPostListSerializer, PostListSerializer, CommentDetailSerializer, TopPostListSerializer)
 from django.db.models import Q # 검색
 import random
-
+from randomname import randomname_list, randomname_list_2
 
 # 인기글
 class TopPostAPIView(APIView):
     def get(self, request):
         posts=Post.objects.all()
+        list = posts.order_by('-created_date')
+
         b=[]
-        for i in posts:
+        for i in list:
             if i.likes.count() >= 0:
                 b.append(i)
             else:
                 print(b)
                 pass
-
         serializer=TopPostListSerializer(b, many=True)
         return Response(serializer.data,status=status.HTTP_200_OK)
 
 # 검색
-class SearchAPIView(APIView): 
+class SearchAPIView(APIView):
     def get(self, request, format=None):
         search=request.GET.get('search','')
         print(search)
@@ -45,22 +46,25 @@ class SearchAPIView(APIView):
 
 
 class PostAPIView(APIView):
+    # permission_classes = [permissions.IsAuthenticated]
     def post(self, request):
         category = request.data.get('category')
         print(category)
-        serializer=PostCreateSerializer(data=request.data)
+        serializer=PostCreateSerializer(data=request.data, partial=True)
+        # print(request.data['img'])
         if serializer.is_valid():
+
             post=serializer.save(user=request.user)
             if category=='blind':
-                a = ['착잡한', '피곤한', '자상한', '포근한','귀여운','슬픈','케케묵은', '질긴', '짖궂은', '엄청난', '옳은', '외로운', '나쁜', '그리운', '날카로운', '네모난','열받은','잠오는']
-                b = ['할미꽃', '개망초','큰금계국', '백합', '수레국화','우유','연필','컵','커피','사과','고양이','강아지','물망초','냉장고','가방','서랍','책상']
+                a = randomname_list
+                b = randomname_list_2
                 random_name=random.choice(a)+" "+random.choice(b)
                 d=RandomName.objects.filter(name=random_name).exists() 
                 if d==False:
                     RandomName.objects.create(name=random_name, post_id=post.id, user_id=request.user.id)
                     return Response(status=status.HTTP_201_CREATED)         
                 if d==True:
-                    while True: 
+                    while True:
                         random_name=random.choice(a)+" "+random.choice(b)
                         exist=RandomName.objects.filter(name=random_name).exists() #get or create
 
@@ -73,23 +77,26 @@ class PostAPIView(APIView):
                         elif exist==True:
                             continue
             else:
-                return Response(status=status.HTTP_201_CREATED)
-
+                return Response({"message":"게시글이 생성됨"},status=status.HTTP_201_CREATED)
         else:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            print(serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
 
     def get(self, request):
         category_name=request.GET.get('category','')
+
         print(category_name)
         if category_name=='blind':
             posts=Post.objects.all()
             category_list=posts.filter(category=category_name)
-            serializer=BlindPostListSerializer(category_list, many=True)
+            list = category_list.order_by('-created_date')
+            serializer=BlindPostListSerializer(list, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             posts=Post.objects.all()
             category_list=posts.filter(category=category_name)
+            list = category_list.order_by('-created_date')
             serializer=PostListSerializer(category_list, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -97,22 +104,17 @@ class PostAPIView(APIView):
 # 댓글 작성, 리스트
 # 글쓴이가 댓글달면 그냥 글쓴이로 표시해주거나 글쓴이가 댓글적었을때 랜덤이름이 안생기게 해줘야한다 
 class CommentAPIView(APIView):
+
     def post(self, request, post_id):
         post=Post.objects.get(id=post_id)
         # post에 자기 id와 post를 가진 랜덤이름이 있다면 랜덤이름 안만들고 포스트를 저장
-        # if RandomName.objects.get(user_id=request.user.id, post_id=post_id).exists() == True:
-        #     serializer=CommentSerializer(data=request.data)
-        #     if serializer.is_valid():
-        #         serializer.save(user=request.user, post_id=post_id)
-        #     else:
-        #         return Response(status=status.HTTP_400_BAD_REQUEST)                
-        # else:
+
         serializer=CommentSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(user=request.user, post_id=post_id)
             if post.category == "blind" and RandomName.objects.filter(user_id=request.user.id, post_id=post_id).exists() == False:
-                a = ['착잡한', '피곤한', '자상한', '포근한','귀여운','슬픈','케케묵은', '질긴', '짖궂은', '엄청난', '옳은', '외로운', '나쁜', '그리운', '날카로운', '네모난','열받은','잠오는']
-                b = ['할미꽃', '개망초','큰금계국', '백합', '수레국화','우유','연필','컵','커피','사과','고양이','강아지','물망초','냉장고','가방','서랍','책상']
+                a = randomname_list
+                b = randomname_list_2
                 random_name=random.choice(a)+" "+random.choice(b)
                 c=RandomName.objects.filter(name=random_name).exists() 
 
@@ -135,6 +137,7 @@ class CommentAPIView(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request, post_id):
+        print(post_id)
         posts=Post.objects.get(id=post_id)
         comments=posts.postcomment_set.all()
         category_name=posts.category
@@ -170,7 +173,8 @@ class PostDetailAPIView(APIView): # 게시글 상세 / 수정 / 삭제
     def put(self, request, post_id): #수정
         post=get_object_or_404(Post, id=post_id)
         if request.user == post.user:
-            serializer=PostCreateSerializer(post, data=request.data)
+            serializer=PostCreateSerializer(post, data=request.data, partial=True)
+            # print("사진",request.data["img"])
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
@@ -206,6 +210,7 @@ class CommentDetailAPIView(APIView):
         comment=get_object_or_404(PostComment, id=comment_id)
         if request.user== comment.user:
             comment.delete()
+            return Response("삭제완료",status=status.HTTP_204_NO_CONTENT)
         else:
             return Response("권한이 없습니다.", status=status.HTTP_403_FORBIDDEN)
 
@@ -213,6 +218,8 @@ class CommentDetailAPIView(APIView):
 
 # post like
 class PostLikeAPIView(APIView):
+    # permission_classes = [permissions.IsAuthenticated]
+
     def post(self, request, post_id):
         post=get_object_or_404(Post, id=post_id)
         if request.user in post.likes.all():
@@ -225,6 +232,8 @@ class PostLikeAPIView(APIView):
 
 # comment like
 class CommentLikeAPIView(APIView):
+    # permission_classes = [permissions.IsAuthenticated]
+
     def post(self, request, comment_id, post_id):
         comment=get_object_or_404(PostComment, id=comment_id) 
         if request.user in comment.likes.all():

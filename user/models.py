@@ -28,7 +28,7 @@ class UserManager(BaseUserManager):
         """
         if not email:
             raise ValueError('Users must have an email address')
-        if not email:
+        if not username:
             raise ValueError('Users must have an username')
 
         user = self.model(
