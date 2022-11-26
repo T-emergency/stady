@@ -10,10 +10,13 @@ CommentDetailSerializer, PostCreateSerializer,
 PostDetailSerializer, PostSearchSerializer, BlindCommentSerializer, BlindPostListSerializer, PostListSerializer, CommentDetailSerializer, TopPostListSerializer)
 from django.db.models import Q # 검색
 import random
-from randomname import randomname_list, randomname_list_2
+from .randomname import randomname_list, randomname_list_2
+from rest_framework.pagination import PageNumberPagination
+
 
 # 인기글
-class TopPostAPIView(APIView):
+class TopPostAPIView(APIView, PageNumberPagination):
+    page_size=12
     def get(self, request):
         posts=Post.objects.all()
         list = posts.order_by('-created_date')
@@ -25,8 +28,11 @@ class TopPostAPIView(APIView):
             else:
                 print(b)
                 pass
-        serializer=TopPostListSerializer(b, many=True)
+        results = self.paginate_queryset(b, request, view=self)
+        serializer=TopPostListSerializer(results, many=True)
+        return self.get_paginated_response(serializer.data)
         return Response(serializer.data,status=status.HTTP_200_OK)
+    
 
 # 검색
 class SearchAPIView(APIView):
@@ -43,10 +49,46 @@ class SearchAPIView(APIView):
             serializer=PostSearchSerializer(list, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+#페이지네이션 참고자료
+# class StudyListAPIView(APIView, PageNumberPagination):
+#     permission_classes = [permissions.IsAuthenticated]
+#     page_size = 6
 
+#     def get(self, request):
 
-class PostAPIView(APIView):
+#         studies = Study.objects.order_by('-create_dt')
+#         recommend_tags = get_recommend_tags(request)
+#         recommend_study = []
+
+#         # print("rec:", recommend_tags)
+
+#         if recommend_tags == None:
+#             pass
+#         else:
+#             for tag in recommend_tags:
+#                 # print("tag:", Tag.objects.get(tag_name=tag))
+#                 tag = Tag.objects.get(tag_name=tag)
+#                 recommend_studies = tag.tag_studies.order_by("?")[:3]
+#                 # print("recommend_studie: ", recommend_studies)
+#                 for s in recommend_studies:
+#                     recommend_study.append(s)
+#                 # recommend_study.append(*recommend_studies)
+
+#         results = self.paginate_queryset(studies, request, view=self)
+
+#         serializer = StudySerializer(results, many=True)
+#         serializer2 = StudySerializer(recommend_study[:3], many=True)
+
+#         data = {
+#             "studies": serializer.data,
+#             "recommend_studies": serializer2.data
+#         }
+#         return self.get_paginated_response(data)
+
+class PostAPIView(APIView, PageNumberPagination):
     # permission_classes = [permissions.IsAuthenticated]
+    page_size = 12
+
     def post(self, request):
         category = request.data.get('category')
         print(category)
@@ -55,7 +97,7 @@ class PostAPIView(APIView):
         if serializer.is_valid():
 
             post=serializer.save(user=request.user)
-            if category=='blind':
+            if category=='익명게시판':
                 a = randomname_list
                 b = randomname_list_2
                 random_name=random.choice(a)+" "+random.choice(b)
@@ -87,18 +129,25 @@ class PostAPIView(APIView):
         category_name=request.GET.get('category','')
 
         print(category_name)
-        if category_name=='blind':
+        if category_name=='익명게시판':
             posts=Post.objects.all()
             category_list=posts.filter(category=category_name)
             list = category_list.order_by('-created_date')
-            serializer=BlindPostListSerializer(list, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            print(list)
+            results = self.paginate_queryset(list, request, view=self)
+
+            serializer=BlindPostListSerializer(results, many=True)
+            return self.get_paginated_response(serializer.data)
+        
         else:
             posts=Post.objects.all()
             category_list=posts.filter(category=category_name)
             list = category_list.order_by('-created_date')
-            serializer=PostListSerializer(category_list, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            results = self.paginate_queryset(list, request, view=self)
+
+            serializer=PostListSerializer(results, many=True)
+            return self.get_paginated_response(serializer.data)
+            # return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 # 댓글 작성, 리스트

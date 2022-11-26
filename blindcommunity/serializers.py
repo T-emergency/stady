@@ -56,7 +56,7 @@ class PostListSerializer(serializers.ModelSerializer): # get 게시글 리스트
 
     class Meta:
         model = Post
-        fields = ("title","content","likes_count","user","comments_count","category","hits","id","created_date","img","user_id")
+        fields = ("title","content","likes_count","user","comments_count","category","hits","id","created_date","img","user_id","likes")
         read_only_fields=('likes_count',)
 
 
@@ -82,14 +82,14 @@ class BlindPostListSerializer(serializers.ModelSerializer):
         
     class Meta:
         model = Post
-        fields=('title','content','user','likes_count','comments_count','hits','category','id','created_date')
+        fields=('title','content','user','likes_count','comments_count','hits','category','id','created_date','likes')
 
 
 class BlindCommentSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField()
     likes_count = serializers.SerializerMethodField()
     user_id = serializers.SerializerMethodField()
-    content = serializers.CharField(min_length=5, max_length=200)
+    content = serializers.CharField(min_length=1, max_length=200)
     created_date= serializers.SerializerMethodField()
 
     
@@ -108,7 +108,7 @@ class BlindCommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PostComment
-        fields=("content","likes_count","user","id","user_id")
+        fields=("content","likes_count","user","id","user_id","likes")
 
 #게시글 댓글
 class CommentSerializer(serializers.ModelSerializer):
@@ -130,14 +130,18 @@ class CommentSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = PostComment
-        fields=("content","likes_count","user","id","user_id","created_date")
+        fields=("content","likes_count","user","id","user_id","created_date","likes")
 
 # 게시글 생성
 class PostCreateSerializer(serializers.ModelSerializer): # 게시글 생성
-    title=serializers.CharField(min_length=2, max_length=100)
-    content=serializers.CharField(min_length=2, max_length=200)
-    category=serializers.CharField(min_length=2, required=False)
+    title=serializers.CharField(min_length=1, max_length=100)
+    content=serializers.CharField(min_length=1, max_length=200)
+    category=serializers.CharField(min_length=1, required=False)
     # img = serializers.ImageField(use_url=True, required=False)
+
+    # def get_category(self,obj):
+    #     if category=='z'
+
 
     class Meta:
         model = Post

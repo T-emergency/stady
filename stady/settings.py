@@ -66,7 +66,6 @@ INSTALLED_APPS = [
     'study_group',
     'my_profile',
     'api',
-    'blind_community',
     'blindcommunity'
 ]
 

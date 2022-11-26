@@ -18,10 +18,12 @@ randomname_list_2=['가경자', '가는보라색우무', '가는쑥부쟁이', '
 q=soup.select('#mw-pages > div > div > div')
 # print(q)
 
-random_name_2=[]
-for i in range(200):
-    b=soup.select('li > a')[i]['title']
-    random_name_2.append(b)
-print(random_name_2)
+
+#크롤링 주석처리
+# random_name_2=[]
+# for i in range(200):
+#     b=soup.select('li > a')[i]['title']
+#     random_name_2.append(b)
+# print(random_name_2)
 
 
