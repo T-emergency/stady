@@ -30,13 +30,14 @@ class Study(models.Model):
     tags = models.ManyToManyField(
         "Tag", related_name='tag_studies', blank=True)
     # 벌금 스터디
-    total_money = models.IntegerField(default = 0)
-    week_money = models.IntegerField(default = 0) # 주가 끝나는 날 초기화
+    total_penalty = models.IntegerField(default = 0)
+    week_penalty = models.IntegerField(default = 0) # 주가 끝나는 날 초기화
 
     is_penalty = models.BooleanField(default = False)
     days = models.CharField(max_length = 7, blank = True)
     limit_type = models.CharField(max_length = 5, choices=STUDY_TYPE, blank = True)
-    limit_time = models.SmallIntegerField(null = True,blank = True)
+    limit_time = models.SmallIntegerField(null = True,blank = True)# 2400
+    penalty = models.SmallIntegerField(null = True, blank= True)
 
     def __str__(self):
         return f'{self.user} / {self.title}'
@@ -62,6 +63,7 @@ class StudentPost(models.Model):
     content = models.TextField()
     create_dt = models.DateTimeField(auto_now_add=True)
     update_dt = models.DateTimeField(auto_now=True)
+    like = models.ManyToManyField(Student, related_name='post_liker', blank=True) # User을 참조해도 될 듯
 
 
 class StudentPostComment(models.Model):

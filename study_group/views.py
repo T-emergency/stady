@@ -10,7 +10,9 @@ from .recommend import get_recommend_tags
 
 from .models import StudentPost, StudentPostComment, Study, Student, Tag, UserTagLog
 from .serializers import (
+    PrivateStudentPostDetailSerializer,
     PrivateStudentPostSerializer,
+    PrivateStudyAuthorDetailSerializer,
     PrivateStudyDetailSerializer,
     PrivateStudyPostCommentSerializer,
     StudySerializer,
@@ -83,6 +85,7 @@ class StudyListAPIView(APIView, PageNumberPagination):
 
         tags = request.data.get('tags')
         tag_list = []
+        print(request.data)
 
         # TODO 유효성 검사 구체화 필요
         for i in tags.split(','):
@@ -198,35 +201,25 @@ class StudyDetailAPIView(APIView):
 
 
 class StudentView(APIView):
-    def get(self, request, study_id, user_id):
-        student = get_object_or_404(Student, user_id=user_id, post_id=study_id)
-        serializer = StudentSerializer(student)
-        return Response(serializer.data)
+    permission_classes = [permissions.IsAuthenticated]
 
-    def post(self, request, study_id, user_id):
-        student = get_object_or_404(Student, post_id=study_id, user_id=user_id)
+    def post(self, request, study_id, student_id):
+        # student = get_object_or_404(Student, post_id=study_id, id = student_id)
+        student = get_object_or_404(Student, id = student_id)
         if student.post.user.id == request.user.id:
-            serializer = StudentSerializer(student, data=request.data)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data)
-            else:
-                return Response(serializer.errors)
+            student.is_accept = True
+            student.save()
+            return Response(status=status.HTTP_200_OK)
         else:
             return Response("권한이 없습니다.")
 
-    def delete(self, request, study_id, user_id):
-        student = get_object_or_404(Student, user_id=user_id, post_id=study_id)
+    def delete(self, request, study_id, student_id):
+        student = get_object_or_404(Student, id = student_id)
         if student.post.user == request.user:
             student.delete()
-            return Response("삭제 완료")
+            return Response("추방 완료")
         else:
             return Response("권한이 없습니다.")
-
-
-def create_recommand_csv(request):
-    return JsonResponse('dd', safe=False)
-
 
 class StudyProposeView(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -297,7 +290,7 @@ class StudentNumberPagination(PageNumberPagination):
 
 
 class PostPageNumberPagination(PageNumberPagination):
-    page_size = 10
+    page_size = 5
     
 
     def get_paginated_response(self, data):
@@ -320,6 +313,9 @@ class PrivateStudyView(RetrieveAPIView, ListAPIView, CreateAPIView): # 메인 �
 
         if community_type == 'info': # TODO default를 확실하게 픽스
             self.serializer_class = PrivateStudyDetailSerializer
+            obj = self.get_object()
+            if obj.user == request.user:
+                self.serializer_class = PrivateStudyAuthorDetailSerializer
             return self.retrieve(request, *args, **kwargs)
 
         elif community_type == 'album':
@@ -337,7 +333,7 @@ class PrivateStudyView(RetrieveAPIView, ListAPIView, CreateAPIView): # 메인 �
         self.pagination_class = PostPageNumberPagination
         obj = self.get_object()
         #TODO 카테고리 album, community
-        return StudentPost.objects.filter(study_id = obj.id)
+        return StudentPost.objects.filter(study_id = obj.id).order_by('-create_dt')
 
 
     def create(self, request, *args, **kwargs):
@@ -354,16 +350,16 @@ class PrivateStudyView(RetrieveAPIView, ListAPIView, CreateAPIView): # 메인 �
     def perform_create(self, serializer):
         study = self.get_object()
         try:
-            student = Student.objects.get(user_id = self.request.user.id , post_id = study.id)
+            student = Student.objects.get(user = self.request.user , post = study, is_accept = True)
         except Student.DoesNotExist:
             return False
-        serializer.save(study_id = study.id, author_id = student.id)
+        serializer.save(study = study, author = self.request.user)
         return True
 
 
 class PrivateStudyDetailView(RetrieveUpdateDestroyAPIView): # 상세, 수정, 삭제
 
-    serializer_class = PrivateStudentPostSerializer
+    serializer_class = PrivateStudentPostDetailSerializer
     permission_classes = [IsPrivatePostAuthorOrReadOnly, permissions.IsAuthenticated]
 
     def get_object(self):
@@ -371,6 +367,29 @@ class PrivateStudyDetailView(RetrieveUpdateDestroyAPIView): # 상세, 수정, �
         self.check_object_permissions(self.request, obj)
         return obj
 
+
+class PrivateStudyPostLikeView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self,request, study_id, post_id):
+        user = request.user
+        student = Student.objects.filter(is_accept = True, post_id = study_id, user_id = user.id)
+        post = get_object_or_404(StudentPost, id = post_id)
+        if student.exists():
+
+            student = student[0]
+            if post.like.filter(id = student.id): # like는 Studnet와 연결됐기 때문에 id는 곧 참여자id이다
+                post.like.remove(student)
+            else:
+                post.like.add(student)
+
+            return Response(status=status.HTTP_200_OK)
+
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+        
+
+
+        
 
 class PrivateStudyCommentView(ModelViewSet): # 댓글 생성 수정 삭제
     queryset = StudentPostComment.objects.all()
@@ -380,12 +399,12 @@ class PrivateStudyCommentView(ModelViewSet): # 댓글 생성 수정 삭제
     def get_object(self):
         self.permission_classes = [IsPrivatePostAuthorOrReadOnly]
         obj = get_object_or_404(StudentPostComment, id = self.kwargs["comment_id"])
-        self.check_object_permissions(self.request, obj.post)
+        self.check_object_permissions(self.request, obj)
         return obj
 
     def perform_create(self, serializer):
         self.permission_classes = [IsStudent]
         post = get_object_or_404(StudentPost, id = self.kwargs["post_id"])
-        self.check_object_permissions(self.request, post)
+        self.check_object_permissions(self.request, post.study)
         serializer.save(post_id = post.id , author = self.request.user)
         return
