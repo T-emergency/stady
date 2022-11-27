@@ -31,7 +31,6 @@ class TopPostAPIView(APIView, PageNumberPagination):
         results = self.paginate_queryset(b, request, view=self)
         serializer=TopPostListSerializer(results, many=True)
         return self.get_paginated_response(serializer.data)
-        return Response(serializer.data,status=status.HTTP_200_OK)
     
 
 # 검색
@@ -52,14 +51,12 @@ class SearchAPIView(APIView):
 
 
 class PostAPIView(APIView, PageNumberPagination):
-    # permission_classes = [permissions.IsAuthenticated]
     page_size = 12
 
     def post(self, request):
         category = request.data.get('category')
         print(category)
         serializer=PostCreateSerializer(data=request.data, partial=True)
-        # print(request.data['img'])
         if serializer.is_valid():
 
             post=serializer.save(user=request.user)
@@ -110,10 +107,8 @@ class PostAPIView(APIView, PageNumberPagination):
             category_list=posts.filter(category=category_name)
             list = category_list.order_by('-created_date')
             results = self.paginate_queryset(list, request, view=self)
-
             serializer=PostListSerializer(results, many=True)
             return self.get_paginated_response(serializer.data)
-            # return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 # 댓글 작성, 리스트
@@ -163,12 +158,10 @@ class CommentAPIView(APIView, PageNumberPagination):
             serializer=BlindCommentSerializer(results, many=True)
             return self.get_paginated_response(serializer.data)
 
-            # return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             serializer=CommentSerializer(results, many=True)
             return self.get_paginated_response(serializer.data)
 
-            # return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 
@@ -195,7 +188,6 @@ class PostDetailAPIView(APIView): # 게시글 상세 / 수정 / 삭제
         post=get_object_or_404(Post, id=post_id)
         if request.user == post.user:
             serializer=PostCreateSerializer(post, data=request.data, partial=True)
-            # print("사진",request.data["img"])
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)

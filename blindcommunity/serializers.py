@@ -8,7 +8,7 @@ class PostSearchSerializer(serializers.ModelSerializer):
         fields='__all__'
 
 
-# 인기글에서 익명글은 익명name으로 보여야지
+# 인기글에서 익명글은 익명name으로 보여야한다.
 class TopPostListSerializer(serializers.ModelSerializer):
     user =serializers.SerializerMethodField()
     likes_count = serializers.SerializerMethodField()
@@ -17,7 +17,7 @@ class TopPostListSerializer(serializers.ModelSerializer):
 
 
     def get_user(self, obj):
-        if obj.category=='blind':
+        if obj.category=='익명게시판':
             a=obj.id
             b=obj.user_id
             c=RandomName.objects.get(user_id=b, post_id=a)
@@ -139,16 +139,11 @@ class PostCreateSerializer(serializers.ModelSerializer): # 게시글 생성
     title=serializers.CharField(min_length=1, max_length=40)
     content=serializers.CharField(min_length=1, max_length=200)
     category=serializers.CharField(min_length=1, required=False)
-    # img = serializers.ImageField(use_url=True, required=False)
-
-    # def get_category(self,obj):
-    #     if category=='z'
 
 
     class Meta:
         model = Post
         fields = ("title","content","img","category")
-        # read_only_fields=("img",)
 
 class PostDetailSerializer(serializers.ModelSerializer): # 게시글 디테일
 
