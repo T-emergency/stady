@@ -10,13 +10,12 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def get_token(cls, user):
         token = super().get_token(user)
         token['username'] = user.username
+        token['user_id'] = user.id
 
         return token
 
 
 class UserSerializer(serializers.ModelSerializer):
-    
-
     class Meta:
         model = User
         fields = ['email', 'username', 'password','profile_image']
