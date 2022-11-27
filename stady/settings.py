@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'drf_yasg',
+    'django_crontab',
 
     # service app
     'user',
@@ -66,6 +67,7 @@ INSTALLED_APPS = [
     'study_group',
     'my_profile',
     'api',
+    'blindcommunity'
 ]
 
 MIDDLEWARE = [
@@ -167,12 +169,12 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 ## Debug = True
 # 하드 코딩
-STATIC_DIR = os.path.join(BASE_DIR, 'static')
+# STATIC_DIR = os.path.join(BASE_DIR, 'static')
 
-STATICFILES_DIRS = [
-    STATIC_DIR
-    # BASE_DIR / 'static',
-]
+# STATICFILES_DIRS = [
+#     STATIC_DIR
+#     # BASE_DIR / 'static',
+# ]
 
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
 
@@ -217,9 +219,6 @@ LOGIN_REDIRECT_URL = '/'  # 오류 생기면 홈으로 돌아와라.
 
 # Media files -업로드를 하는 url과 디렉토리 설정
 
-MEDIA_URL = 'media/'  # 업로드할 경로
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # 로컬 디렉토리 어디에 저정할 것인지
-
 # live server port 5500
 CORS_ORIGIN_WHITELIST = ['http://127.0.0.1:5500', 'http://localhost:5500']
 # 예외 없이 다 수락
@@ -258,3 +257,34 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_LIFETIME': timedelta(minutes=10000),
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
+
+
+
+# LOGGING = {
+#     'version': 1,	#logging 버젼
+#     'disable_existing_loggers': False, # 원래 있던 로깅들을 그래도 냅둠 # 만약 True면 못쓴다는 거겠죠? ㅎ
+#     'handlers': {					# 로깅 메세지에서 일어나는 일을 결정하는 녀석이라고 장고공식문서에 나와있는데, 아직 무슨말인지는 저도 모르겠네요 ㅎㅎ 
+#         'console': {
+#             'level': 'DEBUG',
+#             'class': 'logging.StreamHandler',
+#         }
+#     },
+#     'loggers': {				# 로깅을 console에 띄울지 ... 다른데 띄울지 그냥 DEBUG용으로 레벨을 설정할 수 도있고, 
+#         'django.db.backends': {
+#             'handlers': ['console'],
+#             'level': 'DEBUG',
+#         },
+#     }
+# }
+
+
+CRONJOBS = [
+    # 45분 마다
+    ('20 * * * *', 'study.cron.crontab_recent_check', '>> '+os.path.join(BASE_DIR, 'stady/log/cron.log')),
+    # 매일 2시마다
+    ('0 2 * * *', 'study_group.recommend.create_recommand_csv', '>> '+os.path.join(BASE_DIR, 'stady/log/cron.log')),
+    #매일 3 시
+    ('30 2 * * *', 'study_group.cron.crontab_penalty_student', '>> '+os.path.join(BASE_DIR, 'stady/log/cron.log')),
+    #매주 월요일 새벽 3시
+    ('0 3 * * 1', 'study_group.cron.crontab_week_penalty_reset', '>> '+os.path.join(BASE_DIR, 'stady/log/cron.log')),
+]

@@ -1,23 +1,45 @@
-import json
 # utils
 from . import utils
-from .models import User
+from .models import User,Todo
 
+#drf
 from rest_framework import serializers
 
+# models
+from study.models import StudyLog
 
-class UserSerializer(serializers.ModelSerializer):
+class StudyLogSerializer(serializers.ModelSerializer):
+    start_time = serializers.SerializerMethodField()
+    end_time = serializers.SerializerMethodField()
+    sub_time = serializers.SerializerMethodField()
+
+    def get_start_time(self, obj):
+        return utils.get_now_time(obj.start_time)
+
+    def get_end_time(self, obj):
+        return utils.get_now_time(obj.end_time)
+
+    def get_sub_time(self, obj):
+        return utils.get_sub_time(obj.start_time, obj.end_time)
 
     class Meta:
-        model = User
+        model = StudyLog
         fields = '__all__'
+        # read_only_fields = ['user',] # 이것이 있으면 partial= True 필요 x
 
-    def create(self, validated_data):
-        user = super().create(validated_data)  # 저장하고
-        password = user.password
-        user.set_password(password)  # 지정하고
-        user.save()  # 다시 저장?
-        return user
+
+class TodoSerializer(serializers.ModelSerializer):
+    create_at = serializers.SerializerMethodField()
+
+    def get_create_at(self, obj):
+        return str(obj.create_at)[:10]
+
+    class Meta:
+        model = Todo
+        fields = ('content', 'is_checked', 'create_at','id')
+        read_only_fields=('user',) 
+
+
 
 
 def log_to_json(study_log_list: list):

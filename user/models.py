@@ -6,6 +6,7 @@ from django.db import models
 from django.contrib.auth.models import (
     BaseUserManager, AbstractBaseUser
 )
+from django.utils import timezone
 
 # class User(AbstractUser):
 #     class Meta:
@@ -28,7 +29,7 @@ class UserManager(BaseUserManager):
         """
         if not email:
             raise ValueError('Users must have an email address')
-        if not email:
+        if not username:
             raise ValueError('Users must have an username')
 
         user = self.model(
@@ -70,6 +71,7 @@ class User(AbstractBaseUser):
     department = models.ForeignKey('study_group.Category', on_delete = models.CASCADE, null = True, blank = True)
     profile_image = models.ImageField(upload_to='media', height_field=None, width_field=None, default='default.jpeg', blank=True)
     kakao_id = models.CharField(max_length=100, blank=True)
+    recent_check = models.DateTimeField(default=timezone.now)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
 
@@ -96,3 +98,7 @@ class User(AbstractBaseUser):
         "Is the user a member of staff?"
         # Simplest possible answer: All admins are staff
         return self.is_admin
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    money = models.IntegerField()

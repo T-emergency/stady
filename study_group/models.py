@@ -10,7 +10,10 @@ class Tag(models.Model):
 
 
 class Study(models.Model):
-
+    STUDY_TYPE = (
+        ('TT', '총 공부 시간'), # total time
+        ('CT', '출석 체크 시간'), # check time
+    )
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     create_dt = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=100)
@@ -26,7 +29,15 @@ class Study(models.Model):
         "Student", related_name='submiter', blank=True)
     tags = models.ManyToManyField(
         "Tag", related_name='tag_studies', blank=True)
-    # category = #TODO 경민 - 조사 후 카테고리, 나눈 뒤 모델 생성
+    # 벌금 스터디
+    total_penalty = models.IntegerField(default = 0)
+    week_penalty = models.IntegerField(default = 0) # 주가 끝나는 날 초기화
+
+    is_penalty = models.BooleanField(default = False)
+    days = models.CharField(max_length = 7, blank = True)
+    limit_type = models.CharField(max_length = 5, choices=STUDY_TYPE, blank = True)
+    limit_time = models.SmallIntegerField(null = True,blank = True)# 2400
+    penalty = models.SmallIntegerField(null = True, blank= True)
 
     def __str__(self):
         return f'{self.user} / {self.title}'
@@ -39,6 +50,32 @@ class Student(models.Model):  # 참여자 모델
     post = models.ForeignKey(Study, on_delete=models.CASCADE)
     join_dt = models.DateField(auto_now_add=True)
     is_accept = models.BooleanField(default=None, null=True)
+    total_penalty = models.IntegerField(default = 0)
+    week_penalty = models.IntegerField(default = 0) # 주가 끝나는 날 초기화
+
+
+class StudentPost(models.Model):
+    class Meta:
+        db_table = "student_post"
+    study = models.ForeignKey(Study, on_delete= models.CASCADE)
+    author = models.ForeignKey(User, on_delete= models.CASCADE)
+    title = models.CharField(max_length=30)
+    content = models.TextField()
+    create_dt = models.DateTimeField(auto_now_add=True)
+    update_dt = models.DateTimeField(auto_now=True)
+    like = models.ManyToManyField(Student, related_name='post_liker', blank=True) # User을 참조해도 될 듯
+
+
+class StudentPostComment(models.Model):
+    class Meta:
+        db_table = "student_post_comment"
+    
+    post = models.ForeignKey(StudentPost, on_delete= models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.CharField(max_length=128)
+    create_dt = models.DateTimeField(auto_now_add = True)
+    update_dt = models.DateTimeField(auto_now = True)
+
 
 
 class Bookmark(models.Model):

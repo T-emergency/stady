@@ -126,7 +126,6 @@ class MemoView(APIView):
         return Response(serialize_log.data)
 
     def post(self, request, log_id):
-        print(request.user, type(request.user))
         memo_log = StudyLog.objects.get(id=log_id)
         serialize = StudyMemoSerializer(memo_log, data=request.data)
         print(serialize)
