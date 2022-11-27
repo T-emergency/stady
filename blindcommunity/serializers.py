@@ -46,6 +46,12 @@ class PostListSerializer(serializers.ModelSerializer): # get 게시글 리스트
     def get_comments_count(self,obj):
         return obj.postcomment_set.count()
     def get_user(self, obj):
+        post = obj.id
+        user = obj.user_id
+        category = Post.objects.filter(category = 'blind')
+        if category:
+            randomname = RandomName.objects.get(user_id=user,post_id=post )
+            return randomname.name
         return obj.user.username 
     def get_likes_count(self, obj):
         return obj.likes.count()
@@ -53,6 +59,10 @@ class PostListSerializer(serializers.ModelSerializer): # get 게시글 리스트
         return str(obj.created_date)[:19]
     def get_user_id(self, obj):
         return obj.user.id
+
+    def get_created_date(self,obj):
+        return str(obj.created_date)[:10]
+
 
     class Meta:
         model = Post
@@ -62,11 +72,11 @@ class PostListSerializer(serializers.ModelSerializer): # get 게시글 리스트
 
 # 익명게시판 리스트, 익명게시글 디테일
 class BlindPostListSerializer(serializers.ModelSerializer):
-    user =serializers.SerializerMethodField()
+    user = serializers.SerializerMethodField()
     likes_count = serializers.SerializerMethodField()
-    comments_count =serializers.SerializerMethodField()
-    created_date= serializers.SerializerMethodField()
-
+    comments_count = serializers.SerializerMethodField()
+    created_date = serializers.SerializerMethodField()
+    user_id = serializers.SerializerMethodField()
 
     def get_user(self, obj):
         a=obj.id

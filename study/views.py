@@ -1,29 +1,24 @@
-from study.machine import is_study
-from study.models import StudyLog
+# utils
 from study.utils import get_sub_time
 from django.utils import timezone
 from datetime import datetime, date, timedelta
-from user.models import User
-from django.shortcuts import render, get_object_or_404
 
 # drf
+from django.shortcuts import get_object_or_404
 from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 # serializers
 from api.serializers import StudyLogSerializer
+from .serializers import TodoSerializer
+
+#model
+from .models import StudyLog, Todo
+from user.models import User
 
 # machine-learning part
 from .machine import is_study
-
-
-# TODO 하루가 끝나면 공부로그에서 백 마지막 시간을 지정해 준다(11시55분경?)
-    # import schedule #pip install schedule
-    #schedule.every().day.at("23:55").do('함수')
-
-# TODO 하루 지나고 계속 공부 중일때(check함수에 새로운 공부로그 생성)
-
 
 class StudyLogView(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -35,7 +30,6 @@ class StudyLogView(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
         if type == 'start':
-            # TODO 프론트에서 is_running플래그를 통해 막음, 또한 페이지 이탈 시 공부 종료 기능 구현 시 필요없을 확률 높아짐
             try:  # 이미 공부 중일 경우
 
                 user.studylog_set.get(date=date.today(), end_time=None)
@@ -188,3 +182,53 @@ class GetLogView(APIView):
             "day_total_time": day_total_time
         }
         return Response(data)
+
+
+
+#todo가 들어왓을때
+#플러스 버튼을 누르면 추가할 수 있는 input과 버튼이 나타난다
+#content에 input값을 받아서 저장 날짜 저장
+#profile 페이지에서 get으로 받아올 때 todo.objects.filter(id = user_id).order_by(some)
+#근데 오늘 날짜만 나와야 한다 todo.objects.filter(id=user_id ,date = today() )
+#아마 데이터가 없으면 에러가 날테니 try/except도 필요할수 있다.
+
+
+class ToDoVIew(APIView):
+    def post(self, request):
+        
+        serializer = TodoSerializer(data = request.data)
+        if serializer.is_valid():
+            serializer.save(user = request.user)
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors)
+
+    def get(self,request):
+        today = date.today()
+
+        start_date = datetime.strptime(str(today.year)+" "+str(today.month)+" "+str(today.day) ,'%Y %m %d')
+        end_date = datetime.strptime(str(today.year)+" "+str(today.month)+" "+str(today.day)+" 23:59", '%Y %m %d %H:%M')
+        user = request.user
+        todo = Todo.objects.filter(user_id = user,  create_at__range=[start_date, end_date])
+        serializer = TodoSerializer(todo, many=True)
+        return Response(serializer.data)
+
+
+class TodoChangeView(APIView):
+
+    def put(self, request, todo_id):
+        todo = Todo.objects.get(id = todo_id)
+        serializer = TodoSerializer(todo, data = request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+
+        return Response(serializer.errors)
+    
+    def delete(self, request, todo_id):
+
+        todo = Todo.objects.get(id = todo_id)
+        todo.delete()
+        return Response('삭제 성공')
+

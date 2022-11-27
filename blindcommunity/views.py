@@ -19,14 +19,15 @@ class TopPostAPIView(APIView, PageNumberPagination):
     page_size=12
     def get(self, request):
         posts=Post.objects.all()
-        list = posts.order_by('-created_date')
+        posts = posts.order_by('-created_date')
 
         b=[]
-        for i in list:
+        for i in posts:
             if i.likes.count() >= 0:
                 b.append(i)
+                print(i)
             else:
-                print(b)
+                
                 pass
         results = self.paginate_queryset(b, request, view=self)
         serializer=TopPostListSerializer(results, many=True)
@@ -84,7 +85,6 @@ class PostAPIView(APIView, PageNumberPagination):
             else:
                 return Response({"message":"게시글이 생성됨"},status=status.HTTP_201_CREATED)
         else:
-            print(serializer.errors)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
 
@@ -134,8 +134,9 @@ class CommentAPIView(APIView, PageNumberPagination):
 
                 while True:
                     random_name=random.choice(a)+" "+random.choice(b)
-                    c=RandomName.objects.filter(name=random_name).exists()
-                    if c==True:
+                    c=RandomName.objects.filter(name=random_name).exists() 
+
+                    if c==False:
                         RandomName.objects.create(name=random_name, post_id=post.id, user_id=request.user.id)
                     else:
                         continue
@@ -144,7 +145,9 @@ class CommentAPIView(APIView, PageNumberPagination):
                 return Response(status=status.HTTP_201_CREATED)
 
         else:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            # return Response(status=status.HTTP_400_BAD_REQUEST)
+            print('is not valid')
+            return Response(serializer.errors)
 
     def get(self, request, post_id):
         print(post_id)

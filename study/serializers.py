@@ -1,5 +1,6 @@
 # utils
 from . import utils
+from .models import User,Todo
 
 #drf
 from rest_framework import serializers
@@ -27,9 +28,20 @@ class StudyLogSerializer(serializers.ModelSerializer):
         # read_only_fields = ['user',] # 이것이 있으면 partial= True 필요 x
 
 
+class TodoSerializer(serializers.ModelSerializer):
+    create_at = serializers.SerializerMethodField()
+
+    def get_create_at(self, obj):
+        return str(obj.create_at)[:10]
+
+    class Meta:
+        model = Todo
+        fields = ('content', 'is_checked', 'create_at','id')
+        read_only_fields=('user',) 
 
 
-# FBV에서 필요한 직렬화 함수
+
+
 def log_to_json(study_log_list: list):
     """
     StudyLog의 객체들을 json형식으로 보내기 위한 직렬화 함수
