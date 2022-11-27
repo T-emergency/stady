@@ -66,7 +66,6 @@ INSTALLED_APPS = [
     'study_group',
     'my_profile',
     'api',
-    'blind_community',
     'blindcommunity'
 ]
 
@@ -169,12 +168,12 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 ## Debug = True
 # 하드 코딩
-STATIC_DIR = os.path.join(BASE_DIR, 'static')
+# STATIC_DIR = os.path.join(BASE_DIR, 'static')
 
-STATICFILES_DIRS = [
-    STATIC_DIR
-    # BASE_DIR / 'static',
-]
+# STATICFILES_DIRS = [
+#     STATIC_DIR
+#     # BASE_DIR / 'static',
+# ]
 
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
 
@@ -218,9 +217,6 @@ SITE_ID = 1
 LOGIN_REDIRECT_URL = '/'  # 오류 생기면 홈으로 돌아와라.
 
 # Media files -업로드를 하는 url과 디렉토리 설정
-
-MEDIA_URL = 'media/'  # 업로드할 경로
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # 로컬 디렉토리 어디에 저정할 것인지
 
 # live server port 5500
 CORS_ORIGIN_WHITELIST = ['http://127.0.0.1:5500', 'http://localhost:5500']
