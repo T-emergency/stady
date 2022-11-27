@@ -19,10 +19,10 @@ class TopPostAPIView(APIView, PageNumberPagination):
     page_size=12
     def get(self, request):
         posts=Post.objects.all()
-        list = posts.order_by('-created_date')
+        post_list = posts.order_by('-created_date')
 
         b=[]
-        for i in list:
+        for i in post_list:
             if i.likes.count() >= 0:
                 b.append(i)
             else:
@@ -34,19 +34,22 @@ class TopPostAPIView(APIView, PageNumberPagination):
     
 
 # 검색
-class SearchAPIView(APIView):
+class SearchAPIView(APIView, PageNumberPagination):
+    page_size = 12
+
     def get(self, request, format=None):
         search=request.GET.get('search','')
-        print(search)
-        list = Post.objects.all()
-        print(list)
+        posts = Post.objects.all()
+        post_list = posts.order_by('-created_date')
+
         if search:
-            list = list.filter(
+            search_list = post_list.filter(
                 Q(title__icontains=search) |
                 Q(content__icontains=search)
             ).distinct()
-            serializer=PostSearchSerializer(list, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+            results = self.paginate_queryset(search_list, request, view=self)
+            serializer=TopPostListSerializer(results, many=True)
+            return self.get_paginated_response(serializer.data)
 
 
 
@@ -95,9 +98,8 @@ class PostAPIView(APIView, PageNumberPagination):
         if category_name=='익명게시판':
             posts=Post.objects.all()
             category_list=posts.filter(category=category_name)
-            list = category_list.order_by('-created_date')
-            print(list)
-            results = self.paginate_queryset(list, request, view=self)
+            time_list = category_list.order_by('-created_date')
+            results = self.paginate_queryset(time_list, request, view=self)
 
             serializer=BlindPostListSerializer(results, many=True)
             return self.get_paginated_response(serializer.data)
@@ -105,8 +107,8 @@ class PostAPIView(APIView, PageNumberPagination):
         else:
             posts=Post.objects.all()
             category_list=posts.filter(category=category_name)
-            list = category_list.order_by('-created_date')
-            results = self.paginate_queryset(list, request, view=self)
+            time_list = category_list.order_by('-created_date')
+            results = self.paginate_queryset(time_list, request, view=self)
             serializer=PostListSerializer(results, many=True)
             return self.get_paginated_response(serializer.data)
 
