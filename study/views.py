@@ -2,7 +2,7 @@ from study.machine import is_study
 from study.models import StudyLog
 from study.utils import get_sub_time
 from django.utils import timezone
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from user.models import User
 from django.shortcuts import render, get_object_or_404
 
@@ -35,23 +35,20 @@ class StudyLogView(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
         if type == 'start':
+            # TODO 프론트에서 is_running플래그를 통해 막음, 또한 페이지 이탈 시 공부 종료 기능 구현 시 필요없을 확률 높아짐
             try:  # 이미 공부 중일 경우
 
                 user.studylog_set.get(date=date.today(), end_time=None)
+                user.recent_check = timezone.now()
+                user.save()
                 return Response({'msg': '이미 공부 중'}, status=status.HTTP_200_OK)
 
             except StudyLog.DoesNotExist:
                 StudyLog.objects.create(user=user)
 
-            # study_log_list = user.studylog_set.filter(date = date.today()).order_by('start_time')
-
-            # serializer = StudyLogSerializer(study_log_list, many = True)
-            # day_total_time = sum([ item["sub_time"] for item in serializer.data])
-
-            # data = {
-            #     "study_log_list" : serializer.data,
-            #     "day_total_time" : day_total_time
-            # }
+            user.recent_check = timezone.now()
+            user.save()
+            
             data = self.study_log_with_time(user)
 
             return Response(data, status=status.HTTP_200_OK)
@@ -62,13 +59,19 @@ class StudyLogView(APIView):
             except StudyLog.DoesNotExist:
                 return Response({'msg': '공부 종료'})
 
-            log.end_time = timezone.now()
-            log.save()
+            if timezone.now() - timedelta(minutes = 5) >= log.start_time : # 통과
+                log.end_time = timezone.now()
+                log.save()
 
-            user.total_time += get_sub_time(log.start_time, log.end_time)
-            user.save()
+                user.total_time += get_sub_time(log.start_time, log.end_time)
+                user.save()
+                data = self.study_log_with_time(user)
 
-            data = self.study_log_with_time(user)
+            else:
+                log.delete()
+                data = self.study_log_with_time(user)
+                data["message"] = "5분 미만의 공부 로그는 저장이 안됩니다."
+
             return Response(data, status=status.HTTP_200_OK)
 
     # check start end >> 마지막에 공부 로그를 뿌려주는 행위는 비슷
@@ -81,7 +84,8 @@ class StudyLogView(APIView):
         if is_study(request):  # 사람이 있다
             try:
                 log = user.studylog_set.get(date=date.today(), end_time=None)
-
+                user.recent_check = timezone.now()
+                user.save()
                 return Response({'msg': '공부중'})
 
             except StudyLog.DoesNotExist:
@@ -100,13 +104,18 @@ class StudyLogView(APIView):
                 # 날짜가 바뀐 상태에서도 요청이 오고, 사람이 없다면 아무 일을 할 필요가 없다
                 return Response({'msg': 'None'})
 
-            log.end_time = timezone.now()
-            log.save()
+            if timezone.now() - timedelta(minutes = 5) >= log.start_time : # 통과
+                log.end_time = timezone.now()
+                log.save()
 
-            user.total_time += get_sub_time(log.start_time, log.end_time)
-            user.save()
+                user.total_time += get_sub_time(log.start_time, log.end_time)
+                user.save()
+                data = self.study_log_with_time(user)
 
-            data = self.study_log_with_time(user)
+            else:
+                log.delete()
+                data = self.study_log_with_time(user)
+                data["message"] = "5분 미만의 공부 로그는 저장이 안됩니다."
 
             return Response(data, status=status.HTTP_200_OK)
 

@@ -9,6 +9,7 @@ class StudyLog(models.Model):
     start_time = models.DateTimeField(auto_now_add = True)
     end_time = models.DateTimeField(blank = True, null= True)
     memo = models.TextField(blank = True)
+    is_delete = models.BooleanField(default=False)
 
 
 class InStudy(models.Model):

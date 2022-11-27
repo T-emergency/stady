@@ -3,8 +3,8 @@ from . import views
 
 urlpatterns = [
     #-----CBV View-----#
-    path('study/', views.StudyLogView.as_view()),
-    path('study/log/', views.GetLogView.as_view()),
+    path('', views.StudyLogView.as_view()),
+    path('log/', views.GetLogView.as_view()),
 
     #-----FBV View-----#
     # path('start/', views.start_study, name = 'start_study'),

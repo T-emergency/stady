@@ -8,8 +8,13 @@ from rest_framework.filters import SearchFilter
 from study.utils import get_sub_time
 from .recommend import get_recommend_tags
 
-from .models import Study, Student, Tag, UserTagLog
+from .models import StudentPost, StudentPostComment, Study, Student, Tag, UserTagLog
 from .serializers import (
+    PrivateStudentPostDetailSerializer,
+    PrivateStudentPostSerializer,
+    PrivateStudyAuthorDetailSerializer,
+    PrivateStudyDetailSerializer,
+    PrivateStudyPostCommentSerializer,
     StudySerializer,
     StudentSerializer,
     # StudyCreateSerializer,
@@ -47,11 +52,10 @@ class StudyListAPIView(APIView, PageNumberPagination):
     def get(self, request):
 
         studies = Study.objects.order_by('-create_dt')
-        recommend_tags = get_recommend_tags(request)
+        recommend_tags = None #get_recommend_tags(request)
         recommend_study = []
 
         # print("rec:", recommend_tags)
-
         if recommend_tags == None:
             pass
         else:
@@ -81,6 +85,7 @@ class StudyListAPIView(APIView, PageNumberPagination):
 
         tags = request.data.get('tags')
         tag_list = []
+        print(request.data)
 
         # TODO 유효성 검사 구체화 필요
         for i in tags.split(','):
@@ -94,7 +99,8 @@ class StudyListAPIView(APIView, PageNumberPagination):
         study = StudySerializer(data=request.data, context={'tags': tag_list})
 
         if study.is_valid():
-            study.save(user=request.user)  # 여기서 tags = tag_lsit 넣어줘도 똑같은 로직?
+            study = study.save(user=request.user)  # 여기서 tags = tag_lsit 넣어줘도 똑같은 로직?
+            Student.objects.create(user = request.user, post = study, is_accept = True)
             return Response(status=status.HTTP_201_CREATED)
         print(study.errors)
         return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -106,7 +112,7 @@ class StudySearchView(generics.ListAPIView):
     filter_backends = [filters.SearchFilter]
     search_fields = ('title',)
 
-
+####### TODO db조회를 14번하는(태그 미포함) 것을 줄일 필요 다분############## 심각 수준?
 class StudyDetailAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -120,7 +126,7 @@ class StudyDetailAPIView(APIView):
             tag_log.count += 1
             tag_log.save()  # 정크를 사용하면 한꺼번에 저장가능한가?
 
-        recommend_tags = get_recommend_tags(request)
+        recommend_tags = None#get_recommend_tags(request)
 
         if recommend_tags == None:
             pass
@@ -195,35 +201,25 @@ class StudyDetailAPIView(APIView):
 
 
 class StudentView(APIView):
-    def get(self, request, study_id, user_id):
-        student = get_object_or_404(Student, user_id=user_id, post_id=study_id)
-        serializer = StudentSerializer(student)
-        return Response(serializer.data)
+    permission_classes = [permissions.IsAuthenticated]
 
-    def post(self, request, study_id, user_id):
-        student = get_object_or_404(Student, post_id=study_id, user_id=user_id)
+    def post(self, request, study_id, student_id):
+        # student = get_object_or_404(Student, post_id=study_id, id = student_id)
+        student = get_object_or_404(Student, id = student_id)
         if student.post.user.id == request.user.id:
-            serializer = StudentSerializer(student, data=request.data)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data)
-            else:
-                return Response(serializer.errors)
+            student.is_accept = True
+            student.save()
+            return Response(status=status.HTTP_200_OK)
         else:
             return Response("권한이 없습니다.")
 
-    def delete(self, request, study_id, user_id):
-        student = get_object_or_404(Student, user_id=user_id, post_id=study_id)
+    def delete(self, request, study_id, student_id):
+        student = get_object_or_404(Student, id = student_id)
         if student.post.user == request.user:
             student.delete()
-            return Response("삭제 완료")
+            return Response("추방 완료")
         else:
             return Response("권한이 없습니다.")
-
-
-def create_recommand_csv(request):
-    return JsonResponse('dd', safe=False)
-
 
 class StudyProposeView(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -259,3 +255,156 @@ class StudyLikeView(APIView):
             study.like.add(user)
 
         return Response(status=status.HTTP_200_OK)
+
+#-----------------스터디원 전용 페이지 -------------------#
+from rest_framework.generics import RetrieveAPIView, CreateAPIView, ListAPIView, RetrieveUpdateDestroyAPIView, UpdateAPIView, DestroyAPIView
+from rest_framework.pagination import PageNumberPagination
+from collections import OrderedDict
+from rest_framework.viewsets import ModelViewSet
+
+# TODO isAuthenticated 상속 받아서 사용하기
+class IsStudent(permissions.BasePermission):
+    message = "스터디 참여자만 입장 가능합니다."
+    def has_object_permission(self, request, view, obj):
+        return obj.student_set.filter(user = request.user ,is_accept = True).exists()
+
+
+class IsPrivatePostAuthorOrReadOnly(permissions.BasePermission):
+    message = "스터디 참여자만 입장 가능합니다."
+    def has_object_permission(self, request, view, obj):
+        if request.method in permissions.SAFE_METHODS:
+            obj = obj.study
+            return obj.student_set.filter(user = request.user ,is_accept = True).exists()
+        
+        self.message = "작성자가 아닙니다."
+        return obj.author == request.user
+class StudentNumberPagination(PageNumberPagination):
+    page_size = 10
+    
+    def get_paginated_response(self, data):
+        return Response(OrderedDict([
+            ('student_list', data),
+            ('page_cnt', self.page.paginator.num_pages),
+            ('cur_page', self.page.number),
+        ]))
+
+
+class PostPageNumberPagination(PageNumberPagination):
+    page_size = 5
+    
+
+    def get_paginated_response(self, data):
+        return Response(OrderedDict([
+            ('post_list', data),
+            ('page_cnt', self.page.paginator.num_pages),
+            ('cur_page', self.page.number),
+        ]))
+
+
+
+class PrivateStudyView(RetrieveAPIView, ListAPIView, CreateAPIView): # 메인 정보(스터디 내용&사람들), 게시판(게시글 리스트), 글 생성
+    # get 요청에 유형을 달리하여 시리얼 라이저와 쿼리를 변경하여 요청
+    permission_classes = [IsStudent, permissions.IsAuthenticated]
+    serializer_class = PrivateStudentPostSerializer
+
+    def get(self, request, *args, **kwargs):
+
+        community_type = request.GET.get("community-type", '')
+
+        if community_type == 'info': # TODO default를 확실하게 픽스
+            self.serializer_class = PrivateStudyDetailSerializer
+            obj = self.get_object()
+            if obj.user == request.user:
+                self.serializer_class = PrivateStudyAuthorDetailSerializer
+            return self.retrieve(request, *args, **kwargs)
+
+        elif community_type == 'album':
+            pass
+
+        return self.list(request, *args, **kwargs)
+
+
+    def get_object(self):
+        obj = get_object_or_404(Study, id = self.kwargs["study_id"])
+        self.check_object_permissions(self.request, obj)
+        return obj
+
+    def get_queryset(self):
+        self.pagination_class = PostPageNumberPagination
+        obj = self.get_object()
+        #TODO 카테고리 album, community
+        return StudentPost.objects.filter(study_id = obj.id).order_by('-create_dt')
+
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        flag = self.perform_create(serializer)
+        if not flag:
+            return Response({"message" : "참여자가 아닙니다."},status = status.HTTP_400_BAD_REQUEST)
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def perform_create(self, serializer):
+        study = self.get_object()
+        try:
+            student = Student.objects.get(user = self.request.user , post = study, is_accept = True)
+        except Student.DoesNotExist:
+            return False
+        serializer.save(study = study, author = self.request.user)
+        return True
+
+
+class PrivateStudyDetailView(RetrieveUpdateDestroyAPIView): # 상세, 수정, 삭제
+
+    serializer_class = PrivateStudentPostDetailSerializer
+    permission_classes = [IsPrivatePostAuthorOrReadOnly, permissions.IsAuthenticated]
+
+    def get_object(self):
+        obj = get_object_or_404(StudentPost, id = self.kwargs["post_id"])
+        self.check_object_permissions(self.request, obj)
+        return obj
+
+
+class PrivateStudyPostLikeView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self,request, study_id, post_id):
+        user = request.user
+        student = Student.objects.filter(is_accept = True, post_id = study_id, user_id = user.id)
+        post = get_object_or_404(StudentPost, id = post_id)
+        if student.exists():
+
+            student = student[0]
+            if post.like.filter(id = student.id): # like는 Studnet와 연결됐기 때문에 id는 곧 참여자id이다
+                post.like.remove(student)
+            else:
+                post.like.add(student)
+
+            return Response(status=status.HTTP_200_OK)
+
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+        
+
+
+        
+
+class PrivateStudyCommentView(ModelViewSet): # 댓글 생성 수정 삭제
+    queryset = StudentPostComment.objects.all()
+    serializer_class = PrivateStudyPostCommentSerializer
+    # permission_classes = [IsPrivatePostAuthorOrReadOnly]
+
+    def get_object(self):
+        self.permission_classes = [IsPrivatePostAuthorOrReadOnly]
+        obj = get_object_or_404(StudentPostComment, id = self.kwargs["comment_id"])
+        self.check_object_permissions(self.request, obj)
+        return obj
+
+    def perform_create(self, serializer):
+        self.permission_classes = [IsStudent]
+        post = get_object_or_404(StudentPost, id = self.kwargs["post_id"])
+        self.check_object_permissions(self.request, post.study)
+        serializer.save(post_id = post.id , author = self.request.user)
+        return
