@@ -88,13 +88,54 @@ feature/diary: 준호
 ![Untitled 7](https://user-images.githubusercontent.com/113074274/204202291-3358238a-4af8-471e-8229-5867f7b27d46.png)
 
 ## User API
-
+| 기능 | method | url | request | response | 비고 |  |
+| --- | --- | --- | --- | --- | --- | --- |
+| 회원가입 | GET | /user/join/ |  |  |  |  |
+|  | POST | /user/join/ | {</br>’email’ : email,</br>’username’ : username,</br>’password’ : password,</br>’password2’ : password2,</br>} |  |  |  |
+| 로그인 | POST | /api/token/ | {</br>’email’ : email ,</br>’password’ : password</br>} | {</br>’refresh’ : refresh,</br>’access’ : access</br>} |  |  |
+|  |  |  |  |  |  |  |
+| 로그아웃 | GET | /user/logout/ |  |  |  |  |
+|  |  |  |  |  |  |  |
+| 정보수정 | PUT | /user/update/ | {</br>’email’ : email,</br>’username’ : username,</br>} |  |  |  |
+|  |  |  |  |  |  |  |
+| 회원탈퇴 | GET | /user/delete/ |  |  |  |  |
 ## 공부 로그 Service API
-
+| 기능 | Method | URL | Request | Response | 비고 |
+| --- | --- | --- | --- | --- | --- |
+| 공부 시작 | GET | /study/ | {</br>’type’ : ‘start’</br>} | - |  |
+| 공부 종료 | GET | /study/ | {</br>’type’ : ‘finish’</br>} | - |  |
+| 공부 참여 체크 | POST | /study/ | {</br>’img’ : img</br>} | - |  |
+| 공부 메모 | PUT | /study/ | {</br>’log_id’ : log_id ,</br>’memo’ : memo</br>} |  |  |
+| 공부 로그 에러 처리 | DELETE | /study/ | - | {</br>’study_log_list’:study_log_list</br>} |  |
+|  |  |  |  |  |  |
+| 공부 로그 가져오기 | GET | /study/log/ | {</br>’day’ : day</br>} | {</br>’study_log_list’:study_log_list</br>} | 특정 날짜의 로그를 보내주는 api |
+|  |  |  |  |  |  |
+| 일기 작성 | GET | /study/diary/ |  |  |  |
+|  | POST |  | {</br>’title’:title,</br>’content’:content,</br>’feeling’:feeling</br>} |  |  |
 ## 스터디 서비스 API
+| 기능 | Method | URL | Request | Response | 비고 |
+| --- | --- | --- | --- | --- | --- |
+| 스터디 메인 | GET | /studies/ |  | {</br>”studies” : studies</br>} |  |
+| 스터디 모집글 생성 | POST | /studies/ | {</br>”title” : title,</br>”content” : content,</br>”headcount” : headcount,</br>”is_online” : is_online,</br>”is_penalty” : is_penalty,</br>”days” : days,</br>”penalty” : penalty,</br>”tags” : tags</br>} |  |  |
+| 스터디 보기 | GET | /studies/<int:study_id>/ |  | {</br>”title” : title,</br>”is_author”: is_author,</br>”is_student”:is_student,</br>”is_like” : is_like,</br>”sended”: sended,</br>”content” : content,</br>”headcount” : headcount,</br>”is_online” : is_online,</br>”is_penalty” : is_penalty,</br>”days” : days,</br>”penalty” : penalty,</br>”tags” : tags</br>} |  || 스터디 모집글 수정 | PUT | /studies/<int:study_id>/ | {</br>”title” : title,</br>”content” : content,</br>”headcount” : headcount,</br>”is_online” : is_online,</br>”is_penalty” : is_penalty,</br>”days” : days,</br>”penalty” : penalty,</br>”tags” : tags</br>} |  |  |
+| 스터디 모집글 삭제 | DELETE | /studies/<int:study_id>/ |  |  |  |
+|  |  |  |  |  |  |
+| 스터디 즐겨찾기 | POST | /studies/<int:study_id>/like/ |  |  |  |
+|  |  |  |  |  |  |
+| 스터디 신청 | GET | /studies/<int:study_id>/propose/ |  |  |  |
+|  |  |  |  |  |  |
+| 스터디 승낙 | POST | /studies/<int:study_id>/accept/<int:user_id> |  |  |  |
+|  |  |  |  |  |  |
+| 회원 프로필 - 공부로그 | GET | /profile/<int:user_id>/ |  |  |  |
+|  | POST | /profile/<int:user_id>/ |  |  |  |
+| 회원 프로필 - 스터디 | GET | /profile/<int:user_id>/study/ |  |  |  |
+|  | POST | /profile/<int:user_id>/study/ |  |  |  |
+|  |  |  |  |  |  |
+|  |  |  |  |  |  |
+| 스터디원 전용 페이지 | GET | /studies/<int:study_id>/private/ | {</br>”community-type” : “info”,</br>} | {</br>”students”: students,</br>”study_info” : study_info,</br>”week_penalty”:week_penalty,</br>”total_penalty”:total_penalty</br>} |  |
+| 스터디원 전용 게시판 | GET | /studies/<int:study_id>/private/ | - | {</br>”post_list” : post_list,</br>”page_cnt”:page_cnt,</br>”cur_page”: cur_page</br>} |  |
+| 스터디원 전용 게시글 작성 | POST | /studies/<int:study_id>/private/ | {</br>”title” : title,</br>”content”: content,</br>”image”: image</br>} |  |  |
+| 스터디원 전용 게시글 보기 수정 삭제 | PUT DELETE | /studies/<int:study_id>/private/<int:post_id>/ | {</br>”title” : title,</br>”content”: content,</br>”image”: image</br>} |  |  |
+| 스터디원 전용 댓글 | POST | /studies/<int:study_id>/private/<int:post_id>/comment | {</br>”content” : content</br>} |  |  |
+| 스터디원 전용 댓글 수정 삭제 | PUT DELETE | /studies/<int:study_id>/private/<int:post_id>/comment/<int:comment_id>/ | {</br>”content” : content</br>} |  |  |
 
-![Untitled](https://www.notion.so/Stady-Project-e26f69aaaa914a09a8f067f2fd4ca1fb#dc7ee797842d4a5285182c8c8b938d39)
-
-![Untitled](https://www.notion.so/Stady-Project-e26f69aaaa914a09a8f067f2fd4ca1fb#d5c5e194fcf7492981fc7efb6aeff106)
-
-![Untitled](https://www.notion.so/Stady-Project-e26f69aaaa914a09a8f067f2fd4ca1fb#962845bc1bd94850a67b466ab6b0438a)
