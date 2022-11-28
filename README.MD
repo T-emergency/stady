@@ -28,7 +28,7 @@
 - 팀장 :이원채
 - 팀원 : 강기훈, 현준호, 김민수, 김경민
 
-## 프로젝트 이름 - [ **Stady (스테디) ]\*\*
+## 프로젝트 이름 - [ **Stady (스테디)** ]
 
 stay와 study의 합성어로 자리에 머물러 공부를 한다는 의미로, 자리에 앉아 공부하는 사람을 인식해 주는 프로그램의 목적에 맞게 이름을 지었다.
 
@@ -75,24 +75,17 @@ feature/diary: 준호
 - 커뮤니티
 
 ## 와이어 프레임
+<img width="832" alt="Untitled" src="https://user-images.githubusercontent.com/113074274/204202089-44f0a772-2359-45f4-b603-f8ab52764e26.png">
+<img width="400" alt="Untitled 1" src="https://user-images.githubusercontent.com/113074274/204202131-2b88987e-e4fc-4e13-a46a-e1c02fd735dd.png">
+<img width="413" alt="Untitled 2" src="https://user-images.githubusercontent.com/113074274/204202135-574d70b6-9876-4cba-a39b-571e616f950d.png">
+<img width="345" alt="Untitled 3" src="https://user-images.githubusercontent.com/113074274/204202143-9613c51e-b030-4785-8d31-8b8dff4d5d8b.png">
+<img width="449" alt="Untitled 4" src="https://user-images.githubusercontent.com/113074274/204202203-65bd0e1b-2f11-4b16-a3b4-d5b1aaabcffc.png">
+<img width="360" alt="Untitled 5" src="https://user-images.githubusercontent.com/113074274/204202208-8e4b8ab2-e49d-48e4-97e9-6e49b3c042a4.png">
+<img width="361" alt="Untitled 6" src="https://user-images.githubusercontent.com/113074274/204202221-4316aa99-0885-450f-8e2f-d0ac1c2e4a05.png">
 
-![Untitled](Stady%20Project%20%E1%84%83%E1%85%B5%E1%86%B8%E1%84%85%E1%85%A5%E1%84%82%E1%85%B5%E1%86%BC%20e26f69aaaa914a09a8f067f2fd4ca1fb/Untitled.png)
-
-![Untitled](Stady%20Project%20%E1%84%83%E1%85%B5%E1%86%B8%E1%84%85%E1%85%A5%E1%84%82%E1%85%B5%E1%86%BC%20e26f69aaaa914a09a8f067f2fd4ca1fb/Untitled%201.png)
-
-![Untitled](Stady%20Project%20%E1%84%83%E1%85%B5%E1%86%B8%E1%84%85%E1%85%A5%E1%84%82%E1%85%B5%E1%86%BC%20e26f69aaaa914a09a8f067f2fd4ca1fb/Untitled%202.png)
-
-![Untitled](Stady%20Project%20%E1%84%83%E1%85%B5%E1%86%B8%E1%84%85%E1%85%A5%E1%84%82%E1%85%B5%E1%86%BC%20e26f69aaaa914a09a8f067f2fd4ca1fb/Untitled%203.png)
-
-![Untitled](Stady%20Project%20%E1%84%83%E1%85%B5%E1%86%B8%E1%84%85%E1%85%A5%E1%84%82%E1%85%B5%E1%86%BC%20e26f69aaaa914a09a8f067f2fd4ca1fb/Untitled%204.png)
-
-![Untitled](Stady%20Project%20%E1%84%83%E1%85%B5%E1%86%B8%E1%84%85%E1%85%A5%E1%84%82%E1%85%B5%E1%86%BC%20e26f69aaaa914a09a8f067f2fd4ca1fb/Untitled%205.png)
-
-![Untitled](Stady%20Project%20%E1%84%83%E1%85%B5%E1%86%B8%E1%84%85%E1%85%A5%E1%84%82%E1%85%B5%E1%86%BC%20e26f69aaaa914a09a8f067f2fd4ca1fb/Untitled%206.png)
 
 ## ERD
-
-![Untitled](Stady%20Project%20%E1%84%83%E1%85%B5%E1%86%B8%E1%84%85%E1%85%A5%E1%84%82%E1%85%B5%E1%86%BC%20e26f69aaaa914a09a8f067f2fd4ca1fb/Untitled%207.png)
+![Untitled 7](https://user-images.githubusercontent.com/113074274/204202291-3358238a-4af8-471e-8229-5867f7b27d46.png)
 
 ## User API
 
