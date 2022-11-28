@@ -9,7 +9,7 @@ from django.contrib import auth
 from django.contrib.auth import views as auth_views
 
 from .serializers import CustomTokenObtainPairSerializer, UserSerializer
-from .models import User
+from .models import User, UserProfile
 
 # Create your views here.
 
@@ -23,7 +23,8 @@ class UserView(APIView):
     def post(self, request):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            user = serializer.save()
+            UserProfile.objects.create(user = user)
             return Response({'msg': '가입완료'}, status=status.HTTP_201_CREATED)
         else:
             data = dict()
