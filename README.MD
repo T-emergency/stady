@@ -139,3 +139,27 @@ feature/diary: 준호
 | 스터디원 전용 댓글 | POST | /studies/<int:study_id>/private/<int:post_id>/comment | {</br>”content” : content</br>} |  |  |
 | 스터디원 전용 댓글 수정 삭제 | PUT DELETE | /studies/<int:study_id>/private/<int:post_id>/comment/<int:comment_id>/ | {</br>”content” : content</br>} |  |  |
 
+| 기능 | method | url | request | response | 비고 |
+| --- | --- | --- | --- | --- | --- |
+| 게시글 리스트 | GET | /community/ | {</br>’category’ : category} | {</br>”post_list” : post_list</br>} | 조회수, 조회수 탑 |
+| 게시글 작성 | POST | /community/ | {</br>’title : title’,</br>’content’:’content’,</br>’category’:’category’,</br>’img’:’img’</br>} |  | url 수정가능 |
+|  |  |  |  |  |  |
+| 게시글 디테일 | GET | /community/<int:post_id>/ |  | {</br>”title” : title,</br>”content” : content,</br>”image” : image,</br>”comment_list” : comment_list</br>} |  |
+| 게시글 수정 | PUT | /community/<int:post_id>/ | {</br>’title : title’,</br>’content’:’content’,</br>’img’:’img’</br>} |  |  |
+| 게시글 삭제 | DELETE | /community/<int:post_id>/ |  |  |  |
+|  |  |  |  |  |  |
+| 게시글 좋아요  | POST | /community/<int:post_id>/like/ | - | 200OK |  |
+|  |  |  |  |  |  |
+| 댓글 작성 | POST | /community/<int:post_id>/comment/ | {</br>”content” : content</br>} |  |  |
+| 댓글 수정 | PUT | /community/<int:post_id>/comment/<int:comment_id>/ | {</br>”content” : content</br>} |  |  |
+| 댓글 삭제 | DELETE | /community/<int:post_id>/comment/<int:comment_id>/ |  |  |  |
+| 댓글 좋아요 | POST | /community/comment/<int:comment_id>/like/ | - |  |  |
+|  |  |  |  |  |  |
+| 검색 | GET | /community/search?= | {search:value} |  |  |
+
+| 기능 | method | url | request | response | 비고 |
+| --- | --- | --- | --- | --- | --- |
+| 해야할일 작성 | POST | /todo/ | {  ”content” : content  } |  |  |
+| 해야할일 목록 | GET | /todo/ |  |  |  |
+| 해야할일 수정 | PUT | /todo/<int:todo_id>/ | {  ”content” : content  } |  |  |
+| 해야할일 삭제 | DELETE | /todo/<int:todo_id>/ |  |  |  |
