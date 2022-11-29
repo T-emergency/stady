@@ -1,10 +1,17 @@
-# Stady Service
+![스테디배너](https://user-images.githubusercontent.com/113074274/204524489-54a8e293-0e50-471e-889b-6322837f7d73.png)
+# Stady
+- stay와 study의 합성어이며 자리에 머물러 공부를 한다는 의미로 공부하는 이들을 위한 서비스.
+# Service 기능
+- 웹캠을 통하여 사람을 인식해 순수 공부 시간 파악에 도움을 주고 공부 로그를 남기며 기록하는 서비스.
+- TODO List 기능을 제공하여 계획에 도움을 주는 서비스.
+- 스터디 모임 & 전용 페이지 제공하는 서비스
+- 커뮤니티를 통하여 사람들과 소통을 할 수 있는 서비스.
 
 ### 툴
 
 ---
 
-[피그마](https://www.figma.com/file/kBCcltpdL2D6QG6kQV01cD/Untitled?node-id=0%3A1)
+[피그마](https://www.figma.com/file/4euWhIaup0RZ53UDJXCTk3/Untitled?t=SFakNXjLpgUrg56C-0)
 
 [ERD](https://www.erdcloud.com/d/BYxpMAdg9QcLRupjg)
 
@@ -21,9 +28,6 @@
 - 팀명 : (주) 스테디
 - 팀원 : 강기훈, 현준호, 김민수, 김경민, 이원채
 
-## 제공 서비스
-
-stay와 study의 합성어로 자리에 머물러 공부를 한다는 의미로, 자리에 앉아 공부하는 사람을 인식해 주는 프로그램의 목적에 맞게 이름을 지었다.
 
 ## 기능
 
@@ -94,6 +98,7 @@ stay와 study의 합성어로 자리에 머물러 공부를 한다는 의미로,
 </details>
 
 ## 와이어 프레임
+![image](https://user-images.githubusercontent.com/113074274/204526136-093a5077-2073-4562-a364-5b008fc636ef.png)
 
 ## ERD
 
