@@ -1,10 +1,11 @@
 from django.utils import timezone
 from study.utils import get_sub_time
-# 일차적으로 프론트에서 페이지를 나갈 경우 종료를 시키는 함수가 존재하나 방어 코드를 대비
-# 공부 인증을 마지막으로 페이지를 벗어나면 생기는 공부 지속
 from study.models import StudyLog
+
 def crontab_recent_check():
-    
+    """
+    최근 인증 시간과 현재 시간을 체크하고 기준 시간 이상일 경우 공부로그 종료 함수
+    """    
     not_end_log = StudyLog.objects.filter(end_time = None)
     studying_user = [log.user for log in not_end_log]
     fake_study_user = []

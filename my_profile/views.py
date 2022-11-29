@@ -95,10 +95,13 @@ class StudyListView(APIView):
         studies = Study.objects.filter(user=user_id)
         # study_apply = Study.objects.filter(submit=user_id)
 
-        study_apply = []
-        study = Student.objects.filter(user_id=user_id)
-        for i in study:
-            study_apply.append(Study.objects.get(id=i.post.id))
+        # 이 코드로 변경하면 된다 user 참조해서
+        study_apply = [study.post for study in request.user.student_set.all(
+        ) if study.is_accept == None]
+        # study_apply = []
+        # study = Student.objects.filter(user_id=user_id)
+        # for i in study:
+        #     study_apply.append(Study.objects.get(id=i.post.id))
 
         serialize_like = StudySerializer(study_like, many=True)
         serialize_study = StudySerializer(studies, many=True)

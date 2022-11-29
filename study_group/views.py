@@ -166,9 +166,10 @@ class StudyDetailAPIView(APIView):
         study = get_object_or_404(Study, id=study_id)
         if request.user == study.user:
             # student_list = [student.user for student in Student.objects.filter(post=study, is_accept= None)]
-            serializer = StudySerializer(study, data=request.data)
+            serializer = StudySerializer(study, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save(user=request.user)
+                print("t성공?!")
                 return Response(serializer.data)
             else:
                 return Response(serializer.errors)

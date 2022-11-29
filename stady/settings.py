@@ -280,11 +280,11 @@ SIMPLE_JWT = {
 
 CRONJOBS = [
     # 45분 마다
-    ('20 * * * *', 'study.cron.crontab_recent_check', '>> '+os.path.join(BASE_DIR, 'stady/log/cron.log')),
+    ('*/30 * * * *', 'study.cron.crontab_recent_check', '>> '+os.path.join(BASE_DIR, 'stady/log/cron.log')),
+    #매일 1 시
+    ('0 1 * * *', 'study_group.cron.crontab_penalty_student', '>> '+os.path.join(BASE_DIR, 'stady/log/cron.log')),
     # 매일 2시마다
     ('0 2 * * *', 'study_group.recommend.create_recommand_csv', '>> '+os.path.join(BASE_DIR, 'stady/log/cron.log')),
-    #매일 3 시
-    ('30 2 * * *', 'study_group.cron.crontab_penalty_student', '>> '+os.path.join(BASE_DIR, 'stady/log/cron.log')),
     #매주 월요일 새벽 3시
     ('0 3 * * 1', 'study_group.cron.crontab_week_penalty_reset', '>> '+os.path.join(BASE_DIR, 'stady/log/cron.log')),
 ]
