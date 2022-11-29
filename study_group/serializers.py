@@ -29,14 +29,12 @@ class StudySerializer(serializers.ModelSerializer):
     class Meta:
         model = Study
         fields = '__all__'
-        # fields = ["id", "user", "title", "content", "is_online",
-                #   "now_cnt", "headcount", "thumbnail_img", "tags"]
         read_only_fields = ['tags', 'like']
         
         
 
     user = serializers.SerializerMethodField()
-    tags = serializers.SerializerMethodField()  # readonly fields
+    tags = serializers.SerializerMethodField()
     now_cnt = serializers.SerializerMethodField()
 
     def get_user(self, obj):
@@ -61,7 +59,6 @@ class TagSerializer(serializers.ModelSerializer):
         model = Tag
         fileds = ['name', ]
 
-# 다른 방법은 없는지 찾아보고 & 여쭤보기 # 이방법은 데이터 베이스를 많이 참조하지 않나라는 생각?
 
 
 class StudyDetailSerializer(serializers.ModelSerializer):
@@ -72,7 +69,6 @@ class StudyDetailSerializer(serializers.ModelSerializer):
     sended = serializers.SerializerMethodField()
     thumbnail_img = serializers.SerializerMethodField()
     now_cnt = serializers.SerializerMethodField()
-    # tags = TagSerializer(read_only = True, many = True)
     tags = serializers.SerializerMethodField()
 
     def get_user(self, obj):
@@ -167,7 +163,6 @@ class PrivateStudyDetailSerializer(serializers.ModelSerializer):
     students = serializers.SerializerMethodField()
 
     def get_students(self, obj):
-        # 외래키를 사용하지 않았을 경우 생각하여
         obj_list = Student.objects.filter(post_id = obj.id, is_accept = True)
         return StudentSerializer(obj_list, many= True).data
 
@@ -180,7 +175,6 @@ class PrivateStudyAuthorDetailSerializer(serializers.ModelSerializer):
     propose_students = serializers.SerializerMethodField()
 
     def get_students(self, obj):
-        # 외래키를 사용하지 않았을 경우 생각하여
         obj_list = Student.objects.filter(post_id = obj.id, is_accept = True)
         return StudentSerializer(obj_list, many= True).data
     

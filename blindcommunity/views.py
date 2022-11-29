@@ -71,7 +71,7 @@ class PostAPIView(APIView, PageNumberPagination):
                     return Response(status=status.HTTP_201_CREATED)         
                 if d==True:
                     while True:
-                        random_name=random.choice(a)+" "+random.choice(b)
+                        random_name=random.choice(random_adjective)+" "+random.choice(random_noun)
                         exist=RandomName.objects.filter(name=random_name).exists()
 
 

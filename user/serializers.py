@@ -26,11 +26,11 @@ class UserSerializer(serializers.ModelSerializer):
 
 
     def create(self, validated_data):
-        user  = super().create(validated_data) # 저장하고
+        user  = super().create(validated_data)
         print(validated_data)
         password = user.password
         print(password)
-        user.set_password(password) # 지정하고
-        user.save() # 다시 저장?
+        user.set_password(password)
+        user.save()
         return user
 

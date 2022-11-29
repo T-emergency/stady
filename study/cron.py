@@ -21,6 +21,5 @@ def crontab_recent_check():
 
     StudyLog.objects.bulk_update(fake_study_user, ['end_time', 'is_delete'])
 
-    StudyLog.objects.filter(is_delete = True).delete() # 5분 미만 삭제
+    StudyLog.objects.filter(is_delete = True).delete()
 
-    # django-bulk-update를 사용해야하나, []

@@ -20,6 +20,7 @@ from user.models import User
 # machine-learning part
 from .machine import is_study
 
+
 class StudyLogView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -30,7 +31,7 @@ class StudyLogView(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
         if type == 'start':
-            try:  # 이미 공부 중일 경우
+            try:
 
                 user.studylog_set.get(date=date.today(), end_time=None)
                 user.recent_check = timezone.now()
@@ -53,7 +54,7 @@ class StudyLogView(APIView):
             except StudyLog.DoesNotExist:
                 return Response({'msg': '공부 종료'})
 
-            if timezone.now() - timedelta(minutes = 5) >= log.start_time : # 통과
+            if timezone.now() - timedelta(minutes = 5) >= log.start_time :
                 log.end_time = timezone.now()
                 log.save()
 
@@ -68,14 +69,14 @@ class StudyLogView(APIView):
 
             return Response(data, status=status.HTTP_200_OK)
 
-    # check start end >> 마지막에 공부 로그를 뿌려주는 행위는 비슷
+        
     def post(self, request):
         """
         사람인식 part
         """
         user = request.user
 
-        if is_study(request):  # 사람이 있다
+        if is_study(request):
             try:
                 log = user.studylog_set.get(date=date.today(), end_time=None)
                 user.recent_check = timezone.now()
@@ -90,12 +91,11 @@ class StudyLogView(APIView):
 
             return Response(data, status=status.HTTP_200_OK)
 
-        else:  # 공부 중이 아닐 때(check를 하지만 사람이 없다)
+        else:
 
             try:
                 log = user.studylog_set.get(date=date.today(), end_time=None)
             except StudyLog.DoesNotExist:
-                # 날짜가 바뀐 상태에서도 요청이 오고, 사람이 없다면 아무 일을 할 필요가 없다
                 return Response({'msg': 'None'})
 
             if timezone.now() - timedelta(minutes = 5) >= log.start_time : # 통과
@@ -164,10 +164,11 @@ class StudyLogView(APIView):
         return data
 
 
+    
 class GetLogView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    # TODO 달력을 만든다면 년도와 월을 인자로 받아서 해야하나 고민
+    # TODO
     def get(self, request):
         user = request.user
         print(user)
@@ -183,14 +184,6 @@ class GetLogView(APIView):
         }
         return Response(data)
 
-
-
-#todo가 들어왓을때
-#플러스 버튼을 누르면 추가할 수 있는 input과 버튼이 나타난다
-#content에 input값을 받아서 저장 날짜 저장
-#profile 페이지에서 get으로 받아올 때 todo.objects.filter(id = user_id).order_by(some)
-#근데 오늘 날짜만 나와야 한다 todo.objects.filter(id=user_id ,date = today() )
-#아마 데이터가 없으면 에러가 날테니 try/except도 필요할수 있다.
 
 
 class ToDoVIew(APIView):

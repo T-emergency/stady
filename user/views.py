@@ -11,7 +11,6 @@ from django.contrib.auth import views as auth_views
 from .serializers import CustomTokenObtainPairSerializer, UserSerializer
 from .models import User, UserProfile
 
-# Create your views here.
 
 
 class UserView(APIView):
@@ -31,9 +30,8 @@ class UserView(APIView):
             for key in serializer.errors.keys():
                 data[key] = f"이미 존재하는 {key} 또는 형식에 맞지 않습니다."
             return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
-            # return Response({"msg" : f"{serializer.errors}"}, status = status.HTTP_400_BAD_REQUEST)
 
-    def put(self, request):  # 회원 정보 저장 ( 관심 분야, 닉네임, 이메일 변경?)
+    def put(self, request):
         user = User.objects.get(pk=request.user.id)
 
         serializer = UserSerializer(user, data=request.data, partial=True)

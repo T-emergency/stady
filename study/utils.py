@@ -1,6 +1,3 @@
-
-from django.utils import timezone
-
 from datetime import datetime
 
 
@@ -15,5 +12,4 @@ def get_sub_time(start_time, end_time):
     
     if end_time ==  None:
         return int((datetime.now() - start_time).total_seconds()//60)
-    # print(int((end_time - start_time).total_seconds()//60),'분')
     return int((end_time - start_time).total_seconds()//60)
