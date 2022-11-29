@@ -1,4 +1,4 @@
-# Stady Project 딥러닝
+# Stady Project
 
 ### 레퍼런스
 
@@ -88,78 +88,11 @@ feature/diary: 준호
 ![Untitled 7](https://user-images.githubusercontent.com/113074274/204202291-3358238a-4af8-471e-8229-5867f7b27d46.png)
 
 ## User API
-| 기능 | method | url | request | response | 비고 |  |
-| --- | --- | --- | --- | --- | --- | --- |
-| 회원가입 | GET | /user/join/ |  |  |  |  |
-|  | POST | /user/join/ | {</br>’email’ : email,</br>’username’ : username,</br>’password’ : password,</br>’password2’ : password2,</br>} |  |  |  |
-| 로그인 | POST | /api/token/ | {</br>’email’ : email ,</br>’password’ : password</br>} | {</br>’refresh’ : refresh,</br>’access’ : access</br>} |  |  |
-|  |  |  |  |  |  |  |
-| 로그아웃 | GET | /user/logout/ |  |  |  |  |
-|  |  |  |  |  |  |  |
-| 정보수정 | PUT | /user/update/ | {</br>’email’ : email,</br>’username’ : username,</br>} |  |  |  |
-|  |  |  |  |  |  |  |
-| 회원탈퇴 | GET | /user/delete/ |  |  |  |  |
+![image_1](https://user-images.githubusercontent.com/113074274/204511286-4206c1da-e351-42d2-9e85-54a533f581ed.png)
+
 ## 공부 로그 Service API
-| 기능 | Method | URL | Request | Response | 비고 |
-| --- | --- | --- | --- | --- | --- |
-| 공부 시작 | GET | /study/ | {</br>’type’ : ‘start’</br>} | - |  |
-| 공부 종료 | GET | /study/ | {</br>’type’ : ‘finish’</br>} | - |  |
-| 공부 참여 체크 | POST | /study/ | {</br>’img’ : img</br>} | - |  |
-| 공부 메모 | PUT | /study/ | {</br>’log_id’ : log_id ,</br>’memo’ : memo</br>} |  |  |
-| 공부 로그 에러 처리 | DELETE | /study/ | - | {</br>’study_log_list’:study_log_list</br>} |  |
-|  |  |  |  |  |  |
-| 공부 로그 가져오기 | GET | /study/log/ | {</br>’day’ : day</br>} | {</br>’study_log_list’:study_log_list</br>} | 특정 날짜의 로그를 보내주는 api |
-|  |  |  |  |  |  |
-| 일기 작성 | GET | /study/diary/ |  |  |  |
-|  | POST |  | {</br>’title’:title,</br>’content’:content,</br>’feeling’:feeling</br>} |  |  |
+![image_2](https://user-images.githubusercontent.com/113074274/204511296-e1571494-13dc-4b36-8bbc-7b3ec8244a48.png)
+
 ## 스터디 서비스 API
-| 기능 | Method | URL | Request | Response | 비고 |
-| --- | --- | --- | --- | --- | --- |
-| 스터디 메인 | GET | /studies/ |  | {</br>”studies” : studies</br>} |  |
-| 스터디 모집글 생성 | POST | /studies/ | {</br>”title” : title,</br>”content” : content,</br>”headcount” : headcount,</br>”is_online” : is_online,</br>”is_penalty” : is_penalty,</br>”days” : days,</br>”penalty” : penalty,</br>”tags” : tags</br>} |  |  |
-| 스터디 보기 | GET | /studies/<int:study_id>/ |  | {</br>”title” : title,</br>”is_author”: is_author,</br>”is_student”:is_student,</br>”is_like” : is_like,</br>”sended”: sended,</br>”content” : content,</br>”headcount” : headcount,</br>”is_online” : is_online,</br>”is_penalty” : is_penalty,</br>”days” : days,</br>”penalty” : penalty,</br>”tags” : tags</br>} |  || 스터디 모집글 수정 | PUT | /studies/<int:study_id>/ | {</br>”title” : title,</br>”content” : content,</br>”headcount” : headcount,</br>”is_online” : is_online,</br>”is_penalty” : is_penalty,</br>”days” : days,</br>”penalty” : penalty,</br>”tags” : tags</br>} |  |  |
-| 스터디 모집글 삭제 | DELETE | /studies/<int:study_id>/ |  |  |  |
-|  |  |  |  |  |  |
-| 스터디 즐겨찾기 | POST | /studies/<int:study_id>/like/ |  |  |  |
-|  |  |  |  |  |  |
-| 스터디 신청 | GET | /studies/<int:study_id>/propose/ |  |  |  |
-|  |  |  |  |  |  |
-| 스터디 승낙 | POST | /studies/<int:study_id>/accept/<int:user_id> |  |  |  |
-|  |  |  |  |  |  |
-| 회원 프로필 - 공부로그 | GET | /profile/<int:user_id>/ |  |  |  |
-|  | POST | /profile/<int:user_id>/ |  |  |  |
-| 회원 프로필 - 스터디 | GET | /profile/<int:user_id>/study/ |  |  |  |
-|  | POST | /profile/<int:user_id>/study/ |  |  |  |
-|  |  |  |  |  |  |
-|  |  |  |  |  |  |
-| 스터디원 전용 페이지 | GET | /studies/<int:study_id>/private/ | {</br>”community-type” : “info”,</br>} | {</br>”students”: students,</br>”study_info” : study_info,</br>”week_penalty”:week_penalty,</br>”total_penalty”:total_penalty</br>} |  |
-| 스터디원 전용 게시판 | GET | /studies/<int:study_id>/private/ | - | {</br>”post_list” : post_list,</br>”page_cnt”:page_cnt,</br>”cur_page”: cur_page</br>} |  |
-| 스터디원 전용 게시글 작성 | POST | /studies/<int:study_id>/private/ | {</br>”title” : title,</br>”content”: content,</br>”image”: image</br>} |  |  |
-| 스터디원 전용 게시글 보기 수정 삭제 | PUT DELETE | /studies/<int:study_id>/private/<int:post_id>/ | {</br>”title” : title,</br>”content”: content,</br>”image”: image</br>} |  |  |
-| 스터디원 전용 댓글 | POST | /studies/<int:study_id>/private/<int:post_id>/comment | {</br>”content” : content</br>} |  |  |
-| 스터디원 전용 댓글 수정 삭제 | PUT DELETE | /studies/<int:study_id>/private/<int:post_id>/comment/<int:comment_id>/ | {</br>”content” : content</br>} |  |  |
-
-| 기능 | method | url | request | response | 비고 |
-| --- | --- | --- | --- | --- | --- |
-| 게시글 리스트 | GET | /community/ | {</br>’category’ : category} | {</br>”post_list” : post_list</br>} | 조회수, 조회수 탑 |
-| 게시글 작성 | POST | /community/ | {</br>’title : title’,</br>’content’:’content’,</br>’category’:’category’,</br>’img’:’img’</br>} |  | url 수정가능 |
-|  |  |  |  |  |  |
-| 게시글 디테일 | GET | /community/<int:post_id>/ |  | {</br>”title” : title,</br>”content” : content,</br>”image” : image,</br>”comment_list” : comment_list</br>} |  |
-| 게시글 수정 | PUT | /community/<int:post_id>/ | {</br>’title : title’,</br>’content’:’content’,</br>’img’:’img’</br>} |  |  |
-| 게시글 삭제 | DELETE | /community/<int:post_id>/ |  |  |  |
-|  |  |  |  |  |  |
-| 게시글 좋아요  | POST | /community/<int:post_id>/like/ | - | 200OK |  |
-|  |  |  |  |  |  |
-| 댓글 작성 | POST | /community/<int:post_id>/comment/ | {</br>”content” : content</br>} |  |  |
-| 댓글 수정 | PUT | /community/<int:post_id>/comment/<int:comment_id>/ | {</br>”content” : content</br>} |  |  |
-| 댓글 삭제 | DELETE | /community/<int:post_id>/comment/<int:comment_id>/ |  |  |  |
-| 댓글 좋아요 | POST | /community/comment/<int:comment_id>/like/ | - |  |  |
-|  |  |  |  |  |  |
-| 검색 | GET | /community/search?= | {search:value} |  |  |
-
-| 기능 | method | url | request | response | 비고 |
-| --- | --- | --- | --- | --- | --- |
-| 해야할일 작성 | POST | /todo/ | {  ”content” : content  } |  |  |
-| 해야할일 목록 | GET | /todo/ |  |  |  |
-| 해야할일 수정 | PUT | /todo/<int:todo_id>/ | {  ”content” : content  } |  |  |
-| 해야할일 삭제 | DELETE | /todo/<int:todo_id>/ |  |  |  |
+![image_3](https://user-images.githubusercontent.com/113074274/204511317-0afcb819-0088-4ae2-b5cb-56284c7a63cb.png)
+![image_4](https://user-images.githubusercontent.com/113074274/204511358-59245fc9-fa23-4c1d-825f-aed88b38e3a9.png)
