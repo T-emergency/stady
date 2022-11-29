@@ -9,6 +9,7 @@ class StudyLog(models.Model):
     start_time = models.DateTimeField(auto_now_add = True)
     end_time = models.DateTimeField(blank = True, null= True)
     memo = models.TextField(blank = True)
+    is_delete = models.BooleanField(default=False)
 
 
 class InStudy(models.Model):
@@ -22,3 +23,10 @@ class OutStudy(models.Model):
     log = models.ForeignKey(StudyLog, on_delete = models.CASCADE)
     out_time = models.DateTimeField(auto_now_add = True)
     in_time = models.DateTimeField(null = True)
+
+
+class Todo(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.CharField(max_length=256)
+    is_checked = models.BooleanField(default=False)
+    create_at = models.DateTimeField(auto_now_add=True)

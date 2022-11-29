@@ -43,7 +43,7 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.index, name='index'),
+    # path('', views.index, name='index'),
     path('user/', include('user.urls')),
     # path('profile/', include('user.urls')),
     path('study/', include('study.urls')),
