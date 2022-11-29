@@ -1,21 +1,18 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from study.models import StudyLog
 from user.models import User
-from study_group.models import Study, Student
-from rest_framework.generics import get_object_or_404
+from study_group.models import Study
 
 
-from rest_framework import status
 from rest_framework.response import Response
-from rest_framework import permissions
 from rest_framework.views import APIView
 
-from .serializers import StudyListSerializer, StudyLogSerializer, StudyMemoSerializer, UserLogSerializer
+from .serializers import StudyLogSerializer, StudyMemoSerializer, UserLogSerializer
 
 from study_group.serializers import StudySerializer
 
 
-from datetime import datetime, date
+from datetime import date
 from study.serializers import get_day_log, log_to_json
 
 
@@ -52,16 +49,9 @@ class ProfileViews(APIView):
 class StudyLogViews(APIView):
     def get(self, request):
         user = request.user
-        # study_log_list = user.studylog_set.filter(
-        #     date=date.today()).order_by('start_time')
-        # study_log_all_list = user.studylog_set.all().order_by('start_time')
-
-        # study_log_list = user.studylog_set.filter(date=date.today()).order_by('start_time')
         study_log_all_list = user.studylog_set.all().order_by('start_time')
         profile_image = user.profile_image.url
         print(study_log_all_list)
-        # study_date = list(set([s.date for s in study_log_list]))
-
         serialize_log = StudyLogSerializer(study_log_all_list,  many=True)
 
         context = {
@@ -91,17 +81,11 @@ class StudyDayLogViews(APIView):
 class StudyListView(APIView):
     def get(self, request, user_id):
 
-        study_like = Study.objects.filter(like=user_id)  # 모든 스터디 가져와
+        study_like = Study.objects.filter(like=user_id)
         studies = Study.objects.filter(user=user_id)
-        # study_apply = Study.objects.filter(submit=user_id)
 
-        # 이 코드로 변경하면 된다 user 참조해서
         study_apply = [study.post for study in request.user.student_set.all(
         ) if study.is_accept == None]
-        # study_apply = []
-        # study = Student.objects.filter(user_id=user_id)
-        # for i in study:
-        #     study_apply.append(Study.objects.get(id=i.post.id))
 
         serialize_like = StudySerializer(study_like, many=True)
         serialize_study = StudySerializer(studies, many=True)
@@ -115,9 +99,9 @@ class StudyListView(APIView):
         print("serialize_apply: ", serialize_apply.data)
         return Response(serializers)
 
+    
+
 # 메모 생성
-
-
 class MemoView(APIView):
     def get(self, request, log_id):
         print('메모 get')
@@ -132,7 +116,6 @@ class MemoView(APIView):
         if serialize.is_valid():
             print('메모 is valid')
             serialize.save(user=request.user)
-            # save(user=request.user)를 통해 user값 전달 가능
             return Response('저장완료')
         else:
             print('메모 post error')

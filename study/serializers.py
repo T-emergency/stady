@@ -25,7 +25,6 @@ class StudyLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = StudyLog
         fields = '__all__'
-        # read_only_fields = ['user',] # 이것이 있으면 partial= True 필요 x
 
 
 class TodoSerializer(serializers.ModelSerializer):
@@ -62,8 +61,6 @@ def log_to_json(study_log_list: list):
         log_list.append(log_dict)
 
     return log_list
-
-# TODO 공부한 날짜만 관리하는 테이블을 만들어서 조회를 줄인다.
 
 
 def get_day_log(user):

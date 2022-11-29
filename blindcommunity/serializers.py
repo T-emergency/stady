@@ -18,10 +18,10 @@ class TopPostListSerializer(serializers.ModelSerializer):
 
     def get_user(self, obj):
         if obj.category=='익명게시판':
-            a=obj.id
-            b=obj.user_id
-            c=RandomName.objects.get(user_id=b, post_id=a)
-            return c.name
+            post=obj.id
+            user=obj.user_id
+            random_name=RandomName.objects.get(user_id=user, post_id=post)
+            return random_name.name
         else:
             return obj.user.username
     def get_comments_count(self,obj):
@@ -48,7 +48,7 @@ class PostListSerializer(serializers.ModelSerializer): # get 게시글 리스트
     def get_user(self, obj):
         post = obj.id
         user = obj.user_id
-        category = Post.objects.filter(category = 'blind')
+        category = Post.objects.filter(category = '익명게시판')
         if category:
             randomname = RandomName.objects.get(user_id=user,post_id=post )
             return randomname.name
@@ -79,10 +79,10 @@ class BlindPostListSerializer(serializers.ModelSerializer):
     user_id = serializers.SerializerMethodField()
 
     def get_user(self, obj):
-        a=obj.id
-        b=obj.user_id
-        c=RandomName.objects.get(user_id=b, post_id=a)
-        return c.name
+        post=obj.id
+        user=obj.user_id
+        random_name=RandomName.objects.get(user_id=user, post_id=post)
+        return random_name.name
     def get_comments_count(self,obj):
         return obj.postcomment_set.count()
     def get_likes_count(self, obj):
@@ -94,7 +94,7 @@ class BlindPostListSerializer(serializers.ModelSerializer):
         
     class Meta:
         model = Post
-        fields=('title','content','user','likes_count','comments_count','hits','category','id','created_date','likes','user_id')
+        fields=('title','content','user','likes_count','comments_count','hits','category','id','created_date','likes','user_id','img')
 
 
 class BlindCommentSerializer(serializers.ModelSerializer):
@@ -108,10 +108,10 @@ class BlindCommentSerializer(serializers.ModelSerializer):
     def get_user_id(self, obj):
         return obj.user.id
     def get_user(self, obj):
-        a=obj.user_id
-        b=obj.post_id
-        c=RandomName.objects.get(post_id=b, user_id=a) # 하나밖에 없음
-        return c.name
+        user=obj.user_id
+        post=obj.post_id
+        random_name=RandomName.objects.get(post_id=post, user_id=user) # 하나밖에 없음
+        return random_name.name
     def get_likes_count(self, obj):
         return obj.likes.count()
     def get_created_date(self,obj):
@@ -155,6 +155,7 @@ class PostCreateSerializer(serializers.ModelSerializer): # 게시글 생성
         model = Post
         fields = ("title","content","img","category")
 
+        
 class PostDetailSerializer(serializers.ModelSerializer): # 게시글 디테일
 
     class Meta:

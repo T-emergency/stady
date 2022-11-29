@@ -22,9 +22,8 @@ def crontab_penalty_student():
     update_studies = []
 
     for study in penalty_studies:
-        #list(filter(lambda student: student.study == study, all_accept_student))
         study_type = study.limit_type
-        study_students = [student for student in all_accept_student if student.post == study] # all_accept_student.filter(study = study)
+        study_students = [student for student in all_accept_student if student.post == study]
 
         for student in study_students:
             is_penalty_student = False
@@ -41,8 +40,6 @@ def crontab_penalty_student():
                 if logs.exists():
                     
                     first_log_time = logs[0].start_time
-                    #TODO 시:분으로 세분화 필요, 저장
-                    # first_log_time = int(f"{first_log_time.hour}{first_log_time.minute}")
                     first_log_time = first_log_time.hour
 
                     if first_log_time > study.limit_time:
@@ -79,10 +76,8 @@ def crontab_week_penalty_reset():
     """
     penalty_studies = Study.objects.filter(is_penalty = True)
     all_accept_student = Student.objects.filter(is_accept = True)
-    # TODO 전 주에 공부로그가 남은 사람만 제공
     all_user = UserProfile.objects.all()
 
-    #TODO 리스트로 담지 않아도 되는지 확인하기
     stuies = []
     students = []
     users = []

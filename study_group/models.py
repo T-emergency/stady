@@ -11,8 +11,8 @@ class Tag(models.Model):
 
 class Study(models.Model):
     STUDY_TYPE = (
-        ('TT', '총 공부 시간'), # total time
-        ('CT', '출석 체크 시간'), # check time
+        ('TT', '총 공부 시간'),
+        ('CT', '출석 체크 시간'),
     )
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     create_dt = models.DateTimeField(auto_now_add=True)
@@ -20,30 +20,28 @@ class Study(models.Model):
     content = models.TextField()
     thumbnail_img = models.ImageField(
         upload_to='media', height_field=None, default='default.jpeg', blank=True)
-    # None 0 1 로 구분이 안된다면 CharField로 구분
     is_online = models.BooleanField(default=True)
-    headcount = models.IntegerField()  # IntegerChoices? 선택인원 최소 2~10 지정할 수 있으면 지정하기
+    headcount = models.IntegerField()
     like = models.ManyToManyField(User, related_name='liker')
-    # 참여자와 연동되는 이유는 여러 유저를 참조하는 것은 맞으나 is_accept를 사용하기 위해서
     submit = models.ManyToManyField(
         "Student", related_name='submiter', blank=True)
     tags = models.ManyToManyField(
         "Tag", related_name='tag_studies', blank=True)
-    # 벌금 스터디
+    
     total_penalty = models.IntegerField(default = 0)
-    week_penalty = models.IntegerField(default = 0) # 주가 끝나는 날 초기화
+    week_penalty = models.IntegerField(default = 0)
 
     is_penalty = models.BooleanField(default = False)
     days = models.CharField(max_length = 7, blank = True)
     limit_type = models.CharField(max_length = 5, choices=STUDY_TYPE, blank = True)
-    limit_time = models.SmallIntegerField(null = True,blank = True)# 2400
+    limit_time = models.SmallIntegerField(null = True,blank = True)
     penalty = models.SmallIntegerField(null = True, blank= True)
 
     def __str__(self):
         return f'{self.user} / {self.title}'
 
 
-class Student(models.Model):  # 참여자 모델
+class Student(models.Model):
     class Meta:
         db_table = 'student'
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -51,7 +49,7 @@ class Student(models.Model):  # 참여자 모델
     join_dt = models.DateField(auto_now_add=True)
     is_accept = models.BooleanField(default=None, null=True)
     total_penalty = models.IntegerField(default = 0)
-    week_penalty = models.IntegerField(default = 0) # 주가 끝나는 날 초기화
+    week_penalty = models.IntegerField(default = 0)
 
 
 class StudentPost(models.Model):
@@ -63,7 +61,7 @@ class StudentPost(models.Model):
     content = models.TextField()
     create_dt = models.DateTimeField(auto_now_add=True)
     update_dt = models.DateTimeField(auto_now=True)
-    like = models.ManyToManyField(Student, related_name='post_liker', blank=True) # User을 참조해도 될 듯
+    like = models.ManyToManyField(Student, related_name='post_liker', blank=True)
 
 
 class StudentPostComment(models.Model):

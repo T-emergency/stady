@@ -9,12 +9,12 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 def create_recommand_csv(request):
 
-    users_id = [user.id for user in User.objects.all()]  # index 값 유저 고유 아이디
-    tags_name = [tag.tag_name for tag in Tag.objects.all()]  # 태그 이름들 columns
+    users_id = [user.id for user in User.objects.all()]
+    tags_name = [tag.tag_name for tag in Tag.objects.all()]
 
-    users = [user for user in User.objects.all()]  # 사용할 유저 객체들
-    tags = [tag for tag in Tag.objects.all()]  # 사용할 태그 객체들
-    user_log_count = []  # 유저가 태그를 방문한 횟수
+    users = [user for user in User.objects.all()]
+    tags = [tag for tag in Tag.objects.all()]
+    user_log_count = []
 
     for user in users:
         ins_user_count = []
@@ -39,7 +39,6 @@ def create_recommand_csv(request):
     append_tags = []
     
     for id in users_id:
-        # 태그 개수 10개 이하시 오류뜸.. index 오류인듯
 
         similar = user_based_collab.loc[id].sort_values(
             ascending=False)[0:10].index[1]  # 인덱스 (순서 x)기반 인덱싱
@@ -70,6 +69,6 @@ def get_recommend_tags(request):
         return None
 
     a = a["tags"]
-    x = ast.literal_eval(a)  # str list to list
+    x = ast.literal_eval(a)
 
     return x
