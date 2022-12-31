@@ -31,13 +31,13 @@
 
 ## 기능
 TODO <br>
-![todo](https://user-images.githubusercontent.com/112795528/210121740-febcb10a-d06d-4d92-a5fc-9aca7a889b7a.gif)
+![todo](https://user-images.githubusercontent.com/112795528/210121740-febcb10a-d06d-4d92-a5fc-9aca7a889b7a.gif) <br>
 STADY 기능 <br>
-![메인기능](https://user-images.githubusercontent.com/112795528/210121734-876d78cd-7504-45a6-b433-b370ad85954d.gif)
+![메인기능](https://user-images.githubusercontent.com/112795528/210121734-876d78cd-7504-45a6-b433-b370ad85954d.gif) <br>
 스터디 생성 <br>
-![스터디 신청](https://user-images.githubusercontent.com/112795528/210121753-b254d210-d489-4ace-a01e-3b638e059d86.gif)
+![스터디 신청](https://user-images.githubusercontent.com/112795528/210121753-b254d210-d489-4ace-a01e-3b638e059d86.gif) <br>
 스터디 수락, 추방, 스터디원 전용 게시판 <br>
-![스터디 신청,관리](https://user-images.githubusercontent.com/112795528/210121758-6f941b88-8b38-49e1-9d65-270f4e1794ed.gif)
+![스터디 신청,관리](https://user-images.githubusercontent.com/112795528/210121758-6f941b88-8b38-49e1-9d65-270f4e1794ed.gif) <br>
 
 <details>
 <summary><h3>:one:차(22.10.17~22.10.20) </h3></summary>
