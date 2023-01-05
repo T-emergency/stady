@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     # select google
     'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.kakao',
 
     'rest_framework',
     'rest_framework_simplejwt',
@@ -75,7 +76,7 @@ MIDDLEWARE = [
 
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
+    # 'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -83,8 +84,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ORIGIN_WHITELIST = ['http://127.0.0.1:5500', 'http://localhost:5500']
-CORS_ALLOW_CREDENTIALS = True
 
 
 ROOT_URLCONF = 'stady.urls'
@@ -119,7 +118,6 @@ WSGI_APPLICATION = 'stady.wsgi.application'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': ['rest_framework_simplejwt.authentication.JWTAuthentication', ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    # 'PAGE_SIZE' : 6
 }
 
 # Database
@@ -217,13 +215,27 @@ SITE_ID = 1
 
 LOGIN_REDIRECT_URL = '/'  # 오류 생기면 홈으로 돌아와라.
 
-# Media files -업로드를 하는 url과 디렉토리 설정
-
 # live server port 5500
-CORS_ORIGIN_WHITELIST = ['http://127.0.0.1:5500', 'http://localhost:5500']
+# CORS_ORIGIN_WHITELIST = ['http://127.0.0.1:5500', 'http://localhost:5500']
 # 예외 없이 다 수락
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = [
+'http://127.0.0.1:5500', 'http://localhost:8000'
+]
+
+# Media files -업로드를 하는 url과 디렉토리 설정
 # CORS_ALLOW_ALL_ORIGINS = True
+# CORS_ALLOW_CREDENTIALS = True
+
+# CSRF_COOKIE_SECURE = True
+# CSRF_COOKIE_HTTP_ONLY = True
+# CSRF_TRUSTED_ORIGINS = [
+# 'http://127.0.0.1:5500', 'http://localhost:5500']
+# CORS_EXPOSE_HEADERS = ["Content-Type", "X-CSRFToken"]
+# SESSION_COOKIE_SECURE = True
+# CSRF_COOKIE_SAMESITE = "None"
+# SESSION_COOKIE_SAMESITE = "None"
 
 
 SIMPLE_JWT = {
