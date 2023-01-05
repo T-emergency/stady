@@ -49,7 +49,6 @@ urlpatterns = [
     #커뮤니티
     path('community/', include('blindcommunity.urls')),
 
-
     path('studies/', include('study_group.urls')),
 
     path('my_profile/', include('my_profile.urls')),

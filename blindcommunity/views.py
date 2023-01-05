@@ -9,6 +9,7 @@ from django.db.models import Q
 import random
 from .randomname import randomname_list, randomname_list_2
 from rest_framework.pagination import PageNumberPagination
+from django.http import HttpResponse, JsonResponse
 
 
 # 인기글
@@ -146,13 +147,11 @@ class CommentAPIView(APIView, PageNumberPagination):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request, post_id):
-        print(post_id)
         posts=Post.objects.get(id=post_id)
         comments=posts.postcomment_set.all()
         category_name=posts.category
         results = self.paginate_queryset(comments, request, view=self)
 
-        print(category_name)
         if category_name=='익명게시판':
             serializer=BlindCommentSerializer(results, many=True)
             return self.get_paginated_response(serializer.data)
@@ -162,25 +161,86 @@ class CommentAPIView(APIView, PageNumberPagination):
             return self.get_paginated_response(serializer.data)
 
 
-
-
+        # x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        # if x_forwarded_for:
+        #     ip = x_forwarded_for.split(',')[0]
+        #     print("아이피1",ip)
+        #     print("아이피2",x_forwarded_for)
+        # else:
+        #     ip = request.META.get('REMOTE_ADDR')
+        #     print("아이피3",ip)
+        #     print("아이피4",x_forwarded_for)
+import datetime
+from django.db import transaction
+from django.http import HttpResponse, HttpRequest
 # 게시글 상세, 수정, 삭제
 class PostDetailAPIView(APIView):
+    @transaction.atomic
     def get(self, request, post_id):
-        post=get_object_or_404(Post, id=post_id)
-        category_name=post.category
-        try:
-            post.hits = post.hits+1
-            post.save()
-        except:
-            pass
+        instance=get_object_or_404(Post, id=post_id)
+        # 당일날 밤 12시에 쿠키 초기화
+        tomorrow = datetime.datetime.replace(datetime.datetime.now(), hour=23, minute=59, second=0)
+        expires = datetime.datetime.strftime(tomorrow, "%a, %d-%b-%Y %H:%M:%S GMT")
+        
+        # response를 미리 받고 쿠키를 만들어야 한다
+        serializer=BlindPostListSerializer(instance)
+        response = Response(serializer.data, status=status.HTTP_200_OK)
+        
+        # 쿠키 읽기 & 생성
+        if request.COOKIES.get('hit') is not None: # 쿠키에 hit 값이 이미 있을 경우
+            cookies = request.COOKIES.get('hit')
+            cookies_list = cookies.split('|') # '|'는 다르게 설정 가능 ex) '.'
+            if str(post_id) not in cookies_list:
+                response.set_cookie('hit', cookies+f'|{post_id}', expires=expires) # 쿠키 생성
+                with transaction.atomic(): # 모델 필드인 views에 1 추가
+                    instance.hits += 1
+                    instance.save()
+                    
+        else: # 쿠키에 hit 값이 없을 경우(즉 현재 보는 게시글이 첫 게시글임)
+            print("첫 쿠키")
+            response.set_cookie('hit', post_id, expires=expires)
+            instance.hits += 1
+            instance.save()
 
-        if category_name=='익명게시판':
-            serializer=BlindPostListSerializer(post)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        else:
-            serializer=PostListSerializer(post)
-            return Response(serializer.data, status=status.HTTP_200_OK)  
+        # views가 추가되면 해당 instance를 serializer에 표시
+        serializer=BlindPostListSerializer(instance)
+        response = Response(serializer.data, status=status.HTTP_200_OK)
+        print(request.COOKIES)
+        # print(HttpResponse.COOKIES)
+        print(request.header)
+        return response
+        # category_name=post.category
+        # tomorrow = datetime.datetime.replace(datetime.datetime.now(), hour=23, minute=59, second=0)
+        # expires = datetime.datetime.strftime(tomorrow, "%a, %d-%b-%Y %H:%M:%S GMT")
+        # if category_name=='익명게시판':
+        #     cookies_item=''
+        #     cookie_name='hits'
+        #     serializer=BlindPostListSerializer(post)
+        #     print("0",request.COOKIES.get(cookie_name))
+        #     response = Response(serializer.data, status=status.HTTP_200_OK)
+        #     if request.COOKIES.get(cookie_name) is not None: # 쿠기에 hit있다면
+        #         cookies = request.COOKIES.get(cookie_name)
+        #         cookies_list = cookies.split('|')
+        #         print("1",cookies_list)
+        #         if str(post_id) not in cookies_list: # 쿠키리스트에 post id 없다면
+        #             cookies_item=f'{cookies}|{post_id}'
+        #             post.hits=post.hits+1
+        #             post.save()
+        #     else: #hits 없다면
+        #         response.set_cookie(cookie_name, post_id, expires=expires)
+        #         post.hits=post.hits+1
+        #         post.save()
+        #         print("else")
+        #     # if cookies_item:
+        #     #     print("3",cookies_item)
+        #     #     good=response.set_cookie(cookie_name, cookies_item, expires=expires)
+        #     #     print(good)
+        #     serializer=BlindPostListSerializer(post)
+        #     response = Response(serializer.data, status=status.HTTP_200_OK)
+        #     return response
+        # else:
+        #     serializer=PostListSerializer(post)
+        #     return Response(serializer.data, status=status.HTTP_200_OK)  
 
 
     def put(self, request, post_id): #수정

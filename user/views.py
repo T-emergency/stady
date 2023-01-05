@@ -10,8 +10,12 @@ from django.contrib.auth import views as auth_views
 
 from .serializers import CustomTokenObtainPairSerializer, UserSerializer
 from .models import User, UserProfile
+import os
 
-
+# 카카오
+from my_settings import SOCIAL_AUTH_KAKAO_CLIENT_ID
+from rest_framework_simplejwt.tokens import RefreshToken
+import requests
 
 class UserView(APIView):
     def get(self, request):
@@ -56,3 +60,62 @@ class UserView(APIView):
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
+    
+KAKAO_CALLBACK_URI = 'http://127.0.0.1:8000/' + 'user/api/kakao/callback/'
+client_id = SOCIAL_AUTH_KAKAO_CLIENT_ID
+# 카카오
+class KakaoView(APIView):
+    def post(self, request):
+        try:
+            code = request.data.get("code")
+            access_token = requests.post(
+                "https://kauth.kakao.com/oauth/token",
+                headers={
+                    "Content-Type": "application/x-www-form-urlencoded;charset=utf-8"
+                    },
+                data={
+                    "grant_type": "authorization_code",
+                    "client_id": client_id,
+                    "redirect_uri": "http://127.0.0.1:5500/index.html",
+                    "code": code,
+                },
+            )
+            access_token = access_token.json().get("access_token")
+            user_data = requests.get(
+                "https://kapi.kakao.com/v2/user/me",
+                headers={
+                    "Authorization": f"Bearer {access_token}",
+                    "Content-type": "application/x-www-form-urlencoded;charset=utf-8",
+                },
+            )
+            user_data = user_data.json()
+
+            kakao_email = user_data.get("kakao_account")["email"]
+            kakao_nickname = user_data.get("properties")["nickname"]
+            # 유저가 카카오 이메일로 로그인하면 토큰 줘야한다. 로그인 프론트 참조
+            # 첫로그인이면 이메일 있는지 중복확인
+
+            try:
+                exitst_user = User.objects.filter(email=kakao_email).exists()
+                if exitst_user:
+                    user=User.objects.get(email=kakao_email)
+                    refresh = RefreshToken.for_user(user)
+                    return Response({
+                        'refresh': str(refresh),
+                        'access': str(refresh.access_token),
+                    },status=status.HTTP_200_OK
+                    )
+                else:
+                    user=User.objects.create(username = kakao_nickname, email=kakao_email)
+                    refresh = RefreshToken.for_user(user)
+                    return Response({
+                        'refresh': str(refresh),
+                        'access': str(refresh.access_token),
+                    },status=status.HTTP_200_OK
+                    )
+            except:
+                return Response(status=status.HTTP_200_OK)
+        except Exception:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
